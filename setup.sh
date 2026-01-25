@@ -48,8 +48,49 @@ echo "[4/5] Upgrading pip..."
 python -m pip install --upgrade pip
 
 echo ""
-echo "[5/5] Installing dependencies..."
+echo "[5/6] Installing dependencies..."
 pip install -r requirements.txt
+
+echo ""
+echo "[6/6] Creating desktop shortcut..."
+
+# Determine desktop path based on OS
+if [ -d "$HOME/Desktop" ]; then
+    DESKTOP_DIR="$HOME/Desktop"
+elif [ -d "$HOME/desktop" ]; then
+    DESKTOP_DIR="$HOME/desktop"
+elif [ -d "$HOME/Escritorio" ]; then
+    DESKTOP_DIR="$HOME/Escritorio"
+else
+    DESKTOP_DIR="$HOME"
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DESKTOP_FILE="$DESKTOP_DIR/RegressionLab.desktop"
+ICON_PATH="$SCRIPT_DIR/images/RegressionLab_icon_low_res.ico"
+
+# Create .desktop file
+cat > "$DESKTOP_FILE" << EOF
+[Desktop Entry]
+Version=$(grep -E '^APP_VERSION=' "$SCRIPT_DIR/.env" | cut -d '=' -f2 | tr -d '"')
+Type=Application
+Name=RegressionLab
+Comment=RegressionLab - Quick Launch
+Exec=$SCRIPT_DIR/bin/run.sh
+Path=$SCRIPT_DIR
+Icon=$ICON_PATH
+Terminal=true
+Categories=Utility;Science;
+EOF
+
+# Make it executable
+chmod +x "$DESKTOP_FILE"
+
+if [ -f "$DESKTOP_FILE" ]; then
+    echo "      Desktop shortcut created successfully at: $DESKTOP_FILE"
+else
+    echo "      Warning: Could not create desktop shortcut"
+fi
 
 echo ""
 echo "===================================="
@@ -60,7 +101,8 @@ echo "To run RegressionLab:"
 echo "  1. Activate the virtual environment: source .venv/bin/activate"
 echo "  2. Run the program: python main_program.py"
 echo ""
-echo "Or simply use: ./run.sh"
+echo "Or simply use: ./bin/run.sh"
+echo "Or double-click the desktop shortcut: RegressionLab.desktop"
 echo ""
 echo "To configure the application:"
 echo "  1. Copy .env.example to .env: cp .env.example .env"

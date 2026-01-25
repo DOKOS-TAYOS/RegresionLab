@@ -11,6 +11,9 @@ set -e  # Exit on error
 # export LANGUAGE=es    # For Spanish (default)
 # export LANGUAGE=en    # For English
 
+# Change to project root directory (parent of bin)
+cd "$(dirname "$0")/.."
+
 # Check if virtual environment exists
 if [ ! -d ".venv" ]; then
     echo "ERROR: Virtual environment not found"
