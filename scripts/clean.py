@@ -48,10 +48,12 @@ def find_pycache_dirs(root_dir: Path) -> List[Path]:
     for dirpath, dirnames, _ in os.walk(root_dir):
         # Skip virtual environment directories (modify dirnames in-place)
         dirnames[:] = [d for d in dirnames if d not in venv_names]
-        
-        if '__pycache__' in dirnames:
-            pycache_path = Path(dirpath) / '__pycache__'
-            pycache_dirs.append(pycache_path)
+
+        # Include both __pycache__ and .pytest_cache
+        for cache_dir in ['__pycache__', '.pytest_cache']:
+            if cache_dir in dirnames:
+                cache_path = Path(dirpath) / cache_dir
+                pycache_dirs.append(cache_path)
     return pycache_dirs
 
 

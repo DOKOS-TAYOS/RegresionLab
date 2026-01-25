@@ -1,0 +1,469 @@
+# API Documentation
+
+This section provides technical documentation for RegressionLab's Python API. It's intended for developers who want to understand the codebase, contribute to the project, or integrate RegressionLab into their own applications.
+
+## Architecture Overview
+
+RegressionLab follows a modular architecture with clear separation of concerns:
+
+```
+RegressionLab/
+├── src/
+│   ├── config.py              # Configuration and constants
+│   ├── i18n.py                # Internationalization
+│   ├── main_program.py        # Entry point for Tkinter app
+│   │
+│   ├── fitting/               # Curve fitting core
+│   │   ├── fitting_functions.py
+│   │   ├── fitting_utils.py
+│   │   ├── workflow_controller.py
+│   │   └── custom_function_evaluator.py
+│   │
+│   ├── frontend/              # User interface (Tkinter)
+│   │   ├── ui_main_menu.py
+│   │   └── ui_dialogs.py
+│   │
+│   ├── loaders/               # Data loading
+│   │   ├── data_loader.py
+│   │   └── loading_utils.py
+│   │
+│   ├── plotting/              # Visualization
+│   │   └── plot_utils.py
+│   │
+│   ├── streamlit_app/         # Web interface
+│   │   └── app.py
+│   │
+│   └── utils/                 # Utilities
+│       ├── exceptions.py
+│       ├── logger.py
+│       └── validators.py
+```
+
+## Module Reference
+
+### Core Modules
+
+- **[config](config.md)** - Configuration management and application constants
+- **[i18n](i18n.md)** - Internationalization and translation system
+
+### Fitting Modules
+
+- **[fitting.fitting_functions](fitting_functions.md)** - Mathematical functions and curve fitting implementations
+- **[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities and helpers
+- **[fitting.workflow_controller](workflow_controller.md)** - Orchestrates fitting workflows and modes
+- **[fitting.custom_function_evaluator](custom_function_evaluator.md)** - Evaluates user-defined custom formulas
+
+### Data Loading
+
+- **[loaders.data_loader](data_loader.md)** - High-level data loading interface
+- **[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers
+
+### Visualization
+
+- **[plotting.plot_utils](plot_utils.md)** - Plot generation and styling
+
+### User Interface
+
+- **[frontend.ui_main_menu](ui_main_menu.md)** - Main menu and navigation (Tkinter)
+- **[frontend.ui_dialogs](ui_dialogs.md)** - Dialog windows and user input (Tkinter)
+- **[streamlit_app.app](streamlit_app.md)** - Web interface (Streamlit)
+
+### Utilities
+
+- **[utils.exceptions](exceptions.md)** - Custom exception classes
+- **[utils.logger](logger.md)** - Logging configuration and utilities
+- **[utils.validators](validators.md)** - Data validation functions
+
+## Quick Start for Developers
+
+### Setting Up Development Environment
+
+```bash
+# Clone repository
+git clone https://github.com/your-repo/RegressionLab.git
+cd RegressionLab
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies including dev tools
+pip install -r requirements-dev.txt
+
+# Run tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=src --cov-report=html
+```
+
+### Running the Application
+
+```bash
+# Tkinter (desktop)
+python src/main_program.py
+
+# Streamlit (web)
+streamlit run src/streamlit_app/app.py
+```
+
+### Code Style
+
+RegressionLab follows PEP 8 with these conventions:
+
+- **Line length**: 100 characters max
+- **Docstrings**: Google style
+- **Type hints**: Required for function signatures
+- **Imports**: Sorted alphabetically, grouped by standard/third-party/local
+
+Example:
+
+```python
+from typing import Optional, Tuple
+
+import numpy as np
+from numpy.typing import NDArray
+
+
+def example_function(data: NDArray, threshold: float = 0.5) -> Tuple[NDArray, float]:
+    """
+    Short description of what the function does.
+    
+    Longer explanation if needed, including mathematical
+    formulation or algorithmic details.
+    
+    Args:
+        data: Input data array
+        threshold: Cutoff value for filtering
+        
+    Returns:
+        Tuple of (filtered_data, metric_value)
+        
+    Raises:
+        ValueError: If data is empty or threshold is negative
+    """
+    if len(data) == 0:
+        raise ValueError("Data cannot be empty")
+    
+    filtered = data[data > threshold]
+    metric = np.mean(filtered)
+    
+    return filtered, metric
+```
+
+## Common Development Tasks
+
+### Adding a New Fitting Function
+
+See [Extending RegressionLab](../extending.md) for detailed instructions.
+
+Quick summary:
+1. Add mathematical function to `fitting_functions.py`
+2. Create fitting wrapper function
+3. Register in `config.py` and `fitting_utils.py`
+4. Add translations to locales
+5. Test thoroughly
+
+### Modifying the UI
+
+**Tkinter**:
+- Main menu: Edit `frontend/ui_main_menu.py`
+- Dialogs: Edit `frontend/ui_dialogs.py`
+- Styling: Configure in `.env` file
+
+**Streamlit**:
+- All UI in `streamlit_app/app.py`
+- CSS in `SIDEBAR_CSS` constant
+- Add new modes by creating new functions
+
+### Adding a New Data Format
+
+1. Create reader function in `loaders/loading_utils.py`
+2. Update `load_data()` in `loaders/data_loader.py`
+3. Add file type option to `ask_file_type()` in `frontend/ui_dialogs.py`
+4. Test with sample data
+
+### Changing Plot Style
+
+- **Per-plot**: Pass parameters to `create_plot()` in `plotting/plot_utils.py`
+- **Globally**: Configure in `.env` file
+- **Programmatically**: Modify `get_plot_config()` in `config.py`
+
+## Testing
+
+### Test Structure
+
+```
+tests/
+├── __init__.py
+├── run_tests.py              # Test runner
+├── test_config.py            # Test configuration
+├── test_fitting_functions.py # Test curve fitting
+├── test_data_loader.py       # Test data loading
+├── test_validators.py        # Test validation
+└── ...
+```
+
+### Running Tests
+
+```bash
+# All tests
+pytest tests/
+
+# Specific test file
+pytest tests/test_fitting_functions.py
+
+# Specific test
+pytest tests/test_fitting_functions.py::test_linear_fit
+
+# With coverage
+pytest tests/ --cov=src
+
+# Verbose output
+pytest tests/ -v
+
+# Stop on first failure
+pytest tests/ -x
+```
+
+### Writing Tests
+
+Example test:
+
+```python
+import numpy as np
+import pandas as pd
+import pytest
+from fitting.fitting_functions import func_lineal, ajlineal
+
+
+def test_func_lineal_scalar():
+    """Test linear function with scalar input."""
+    result = func_lineal(5.0, 2.0)
+    assert result == 10.0
+
+
+def test_func_lineal_array():
+    """Test linear function with array input."""
+    t = np.array([1, 2, 3])
+    result = func_lineal(t, 2.0)
+    expected = np.array([2, 4, 6])
+    np.testing.assert_array_equal(result, expected)
+
+
+def test_ajlineal_perfect_fit():
+    """Test linear fitting with perfect data."""
+    # Generate perfect linear data
+    x = np.linspace(0, 10, 50)
+    y = 3.0 * x  # y = 3*x
+    
+    data = pd.DataFrame({'x': x, 'y': y})
+    
+    param_text, y_fitted, equation, r_squared = ajlineal(data, 'x', 'y')
+    
+    # Check R² is nearly perfect
+    assert r_squared > 0.9999
+    
+    # Check fitted values match data
+    np.testing.assert_array_almost_equal(y_fitted, y, decimal=10)
+
+
+@pytest.mark.parametrize("slope,n_points", [
+    (1.0, 10),
+    (2.5, 50),
+    (-1.5, 100),
+])
+def test_ajlineal_various_slopes(slope, n_points):
+    """Test linear fitting with various slopes and data sizes."""
+    x = np.linspace(0, 10, n_points)
+    y = slope * x + np.random.normal(0, 0.1, n_points)
+    
+    data = pd.DataFrame({'x': x, 'y': y})
+    
+    _, _, _, r_squared = ajlineal(data, 'x', 'y')
+    
+    # Even with noise, should be good fit
+    assert r_squared > 0.95
+```
+
+## API Conventions
+
+### Return Values
+
+**Fitting functions** return a 4-tuple:
+```python
+(parameter_text: str, y_fitted: NDArray, equation: str, r_squared: float)
+```
+
+**Data loaders** return pandas DataFrame
+
+**Plot functions** return path to saved plot (str or Path)
+
+### Error Handling
+
+- Use `FittingError` for curve fitting failures
+- Use `DataLoadError` for data loading problems
+- Use standard Python exceptions for other errors
+- Always log errors before raising
+
+Example:
+```python
+from utils.exceptions import FittingError
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+def risky_operation(data):
+    try:
+        result = perform_fit(data)
+        return result
+    except RuntimeError as e:
+        logger.error(f"Fitting failed: {e}", exc_info=True)
+        raise FittingError(f"Could not fit data: {str(e)}")
+```
+
+### Logging
+
+Use the logger from `utils.logger`:
+
+```python
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+logger.debug("Detailed diagnostic information")
+logger.info("General informational message")
+logger.warning("Warning message")
+logger.error("Error message", exc_info=True)  # Include traceback
+logger.critical("Critical error")
+```
+
+### Type Hints
+
+Always include type hints:
+
+```python
+from typing import Optional, List, Tuple, Callable
+from numpy.typing import NDArray
+import numpy as np
+
+def process_data(
+    data: NDArray[np.floating],
+    threshold: float,
+    callback: Optional[Callable[[float], None]] = None
+) -> Tuple[NDArray[np.floating], List[int]]:
+    """Process data and return results."""
+    ...
+```
+
+## Performance Considerations
+
+### NumPy Best Practices
+
+- Use vectorized operations instead of loops
+- Pre-allocate arrays when possible
+- Use in-place operations to reduce memory
+
+```python
+# Bad - loop
+result = []
+for x_val in x:
+    result.append(a * x_val + b)
+result = np.array(result)
+
+# Good - vectorized
+result = a * x + b
+
+# Bad - creates new array
+data = data + 1
+
+# Good - in-place
+data += 1
+```
+
+### Caching
+
+Use `functools.lru_cache` for expensive computations:
+
+```python
+from functools import lru_cache
+
+@lru_cache(maxsize=128)
+def expensive_computation(param1: float, param2: float) -> float:
+    """Cache results of expensive computation."""
+    ...
+```
+
+### Lazy Imports
+
+Import heavy libraries only when needed:
+
+```python
+def function_using_scipy():
+    """Function that uses SciPy."""
+    # Import here, not at module level
+    from scipy.optimize import curve_fit
+    
+    result = curve_fit(...)
+    return result
+```
+
+## Documentation
+
+### Docstring Format
+
+Use Google-style docstrings:
+
+```python
+def example_function(param1: int, param2: str, param3: Optional[float] = None) -> bool:
+    """
+    Short one-line summary.
+    
+    Longer description with more details about what the function does,
+    including any important algorithms or mathematical formulations.
+    
+    Args:
+        param1: Description of first parameter
+        param2: Description of second parameter
+        param3: Optional parameter with default value
+        
+    Returns:
+        Description of return value
+        
+    Raises:
+        ValueError: When param1 is negative
+        KeyError: When param2 not found in database
+        
+    Examples:
+        >>> example_function(5, "test")
+        True
+        >>> example_function(0, "hello", 3.14)
+        False
+        
+    Note:
+        Additional notes or warnings for users.
+    """
+    ...
+```
+
+## Module Details
+
+For detailed documentation of each module, see the individual module pages:
+
+- **Core**: [config](config.md), [i18n](i18n.md)
+- **Fitting**: [fitting_functions](fitting_functions.md), [fitting_utils](fitting_utils.md), [workflow_controller](workflow_controller.md)
+- **Loaders**: [data_loader](data_loader.md), [loading_utils](loading_utils.md)
+- **Plotting**: [plot_utils](plot_utils.md)
+- **Utils**: [exceptions](exceptions.md), [logger](logger.md), [validators](validators.md)
+
+## Contributing
+
+See [Contributing Guide](../contributing.md) for:
+- Code style guidelines
+- Pull request process
+- Development workflow
+- Testing requirements
+
+---
+
+*Last updated: January 2026*

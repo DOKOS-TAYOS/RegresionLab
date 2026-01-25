@@ -94,7 +94,7 @@ def initialize_i18n(language: Optional[str] = None) -> None:
     if language is None:
         language = _get_language_from_env()
     
-    # Normalize language
+    # Normalize language (SUPPORTED_LANGUAGES)
     if language.lower() in ('español', 'spanish', 'es', 'esp'):
         language = 'es'
     elif language.lower() in ('english', 'inglés', 'ingles', 'en', 'eng'):

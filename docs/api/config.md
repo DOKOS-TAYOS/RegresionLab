@@ -1,0 +1,377 @@
+# config
+
+Configuration module for RegressionLab.
+
+## Overview
+
+The `config.py` module centralizes all application configuration, constants, and settings. It reads from the `.env` file and provides typed access to configuration values.
+
+## Key Components
+
+### Application Metadata
+
+```python
+__version__ = "0.8.0"
+__author__ = "Alejandro Mata Ali"
+__email__ = "alejandro.mata.ali@gmail.com"
+```
+
+### Available Equations
+
+```python
+AVAILABLE_EQUATION_TYPES = [
+    'linear_function',
+    'linear_function_with_n',
+    'quadratic_function_complete',
+    'quadratic_function',
+    'fourth_power',
+    'sin_function',
+    'sin_function_with_c',
+    'cos_function',
+    'cos_function_with_c',
+    'sinh_function',
+    'cosh_function',
+    'ln_function',
+    'inverse_function',
+    'inverse_square_function',
+]
+```
+
+This list defines which equations appear in the UI and are available for fitting.
+
+### Configuration Dictionaries
+
+The module provides configuration dictionaries that are loaded from environment variables:
+
+#### `PLOT_CONFIG`
+
+Dictionary containing plot configuration settings:
+
+```python
+PLOT_CONFIG = {
+    'figsize': (12, 6),           # Figure size (width, height) in inches
+    'dpi': 100,                   # Resolution
+    'line_color': 'black',        # Fitted curve color
+    'line_width': 1.0,            # Fitted curve width
+    'line_style': '-',            # Line style ('-', '--', '-.', ':')
+    'marker_format': 'o',         # Marker style ('o', 's', '^', 'd')
+    'marker_size': 5,             # Marker size
+    'error_color': 'crimson',     # Error bar color
+    'marker_face_color': 'crimson',  # Marker fill color
+    'marker_edge_color': 'crimson',  # Marker edge color
+    'show_title': False           # Show plot title
+}
+```
+
+#### `UI_THEME`
+
+Dictionary containing UI theme configuration for Tkinter:
+
+```python
+UI_THEME = {
+    'background': 'midnight blue',
+    'foreground': 'snow',
+    'button_fg': 'lime green',
+    'button_fg_cancel': 'red2',
+    'button_fg_cyan': 'cyan2',
+    'active_bg': 'navy',
+    'active_fg': 'snow',
+    'border_width': 8,
+    'relief': 'ridge',
+    'padding_x': 8,
+    'padding_y': 8,
+    'button_width': 12,
+    'button_width_wide': 28,
+    'font_size': 16,
+    'font_size_large': 20,
+    'font_family': 'Menlo',
+    'spinbox_width': 10,
+    'entry_width': 25
+}
+```
+
+#### `UI_STYLE`
+
+Backwards-compatible mapping for dialog components (uses `UI_THEME` values).
+
+#### `FONT_CONFIG`
+
+Dictionary containing font configuration for plots:
+
+```python
+FONT_CONFIG = {
+    'family': 'serif',
+    'title_size': 'xx-large',
+    'title_weight': 'semibold',
+    'axis_size': 30,
+    'axis_style': 'italic',
+    'tick_size': 16,
+    'param_font': ('Courier', 10)
+}
+```
+
+### Configuration Functions
+
+#### `get_env(key, default, cast_type=str)`
+
+Generic function to get environment variables with type casting.
+
+```python
+def get_env(key: str, default, cast_type=str):
+    """
+    Get environment variable with type casting and default value.
+    
+    Args:
+        key: Environment variable name
+        default: Default value if variable not found
+        cast_type: Type to cast the value to (str, int, float, bool)
+        
+    Returns:
+        The environment variable value cast to the specified type, or default
+    """
+```
+
+#### `setup_fonts()`
+
+Setup and return font properties for plots.
+
+```python
+def setup_fonts() -> Tuple[FontProperties, FontProperties]:
+    """
+    Setup and return font properties for plots.
+    Uses caching to avoid recreating fonts on every call.
+    
+    Returns:
+        Tuple of (title_font, axis_font) FontProperties objects
+    """
+```
+
+#### `get_project_root() -> Path`
+
+Get the project root directory.
+
+```python
+def get_project_root() -> Path:
+    """
+    Get the project root directory.
+    
+    Returns:
+        Path to the project root (parent of src/)
+    """
+```
+
+#### `ensure_output_directory(output_dir=None) -> str`
+
+Create output directory if it doesn't exist.
+
+```python
+def ensure_output_directory(output_dir: str = None) -> str:
+    """
+    Create output directory if it doesn't exist.
+    
+    Args:
+        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir']
+        
+    Returns:
+        The output directory path (absolute path from project root)
+        
+    Raises:
+        OSError: If directory cannot be created
+    """
+```
+
+#### `get_output_path(fit_name, output_dir=None) -> str`
+
+Get the full output path for a plot.
+
+```python
+def get_output_path(fit_name: str, output_dir: str = None) -> str:
+    """
+    Get the full output path for a plot.
+    
+    Args:
+        fit_name: Name of the fit/adjustment (used in filename)
+        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir']
+        
+    Returns:
+        Full path to the output file
+    """
+```
+
+## Environment Variables
+
+Configuration is loaded from `.env` file using `python-dotenv`.
+
+### Example Configuration
+
+```ini
+# Language
+LANGUAGE="es"
+
+# Plot settings
+PLOT_FIGSIZE_WIDTH=12
+PLOT_FIGSIZE_HEIGHT=6
+DPI=100
+PLOT_LINE_COLOR="black"
+
+# UI settings (Tkinter)
+UI_BACKGROUND="midnight blue"
+UI_FOREGROUND="snow"
+UI_FONT_SIZE=16
+
+# File paths
+FILE_INPUT_DIR="input"
+FILE_OUTPUT_DIR="output"
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=regressionlab.log
+```
+
+See [Configuration Guide](../configuration.md) for complete documentation.
+
+## Constants
+
+### Signals
+
+```python
+EXIT_SIGNAL = "Salir"  # Returned when user cancels operation
+```
+
+### File Configuration
+
+```python
+FILE_CONFIG = {
+    'input_dir': 'input',           # Input directory for data files
+    'output_dir': 'output',         # Output directory for plots
+    'filename_template': 'fit_{}.png'  # Filename template for plots
+}
+```
+
+### Equation Mapping
+
+```python
+EQUATION_FUNCTION_MAP = {
+    'linear_function_with_n': 'fit_linear_function_with_n',
+    'linear_function': 'fit_linear_function',
+    'ln_function': 'fit_ln_function',
+    # ... and more
+}
+```
+
+Maps equation type names to their corresponding fitting function names.
+
+## Usage Examples
+
+### Getting Current Configuration
+
+```python
+from config import PLOT_CONFIG, UI_THEME, FONT_CONFIG, __version__, get_project_root
+
+# Application version
+print(f"RegressionLab v{__version__}")
+
+# Plot configuration (dictionary, not function)
+print(f"Figure size: {PLOT_CONFIG['figsize']}")
+print(f"DPI: {PLOT_CONFIG['dpi']}")
+
+# UI theme configuration
+print(f"Background: {UI_THEME['background']}")
+print(f"Font size: {UI_THEME['font_size']}")
+
+# Font configuration
+print(f"Font family: {FONT_CONFIG['family']}")
+
+# Project root
+root = get_project_root()
+print(f"Project root: {root}")
+```
+
+### Checking Available Equations
+
+```python
+from config import AVAILABLE_EQUATION_TYPES
+
+# List all equations
+print(f"Available equations: {len(AVAILABLE_EQUATION_TYPES)}")
+for eq in AVAILABLE_EQUATION_TYPES:
+    print(f"  - {eq}")
+
+# Check if equation exists
+if 'linear_function' in AVAILABLE_EQUATION_TYPES:
+    print("Linear fitting available")
+```
+
+### Adding New Equations
+
+To add a new equation to the system:
+
+1. Implement the function in `fitting_functions.py`
+2. Add to `AVAILABLE_EQUATION_TYPES`:
+
+```python
+AVAILABLE_EQUATION_TYPES = [
+    # ... existing equations ...
+    'exponential_decay',  # New equation
+]
+```
+
+3. Add translations in `locales/en.json` and `locales/es.json`
+4. Register in `fitting_utils.py`
+
+## Configuration Best Practices
+
+### For End Users
+
+1. **Copy template**: Start with `.env.example`
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Modify gradually**: Change one setting at a time
+3. **Restart app**: Changes require restart
+4. **Keep backup**: Save working configuration
+
+### For Developers
+
+1. **Add defaults**: Always provide fallback values
+   ```python
+   line_width = float(os.getenv('PLOT_LINE_WIDTH', 1.0))
+   ```
+
+2. **Validate input**: Check types and ranges
+   ```python
+   dpi = int(os.getenv('DPI', 100))
+   if dpi < 50 or dpi > 1200:
+       dpi = 100  # Reset to default
+   ```
+
+3. **Document new settings**: Update `.env.example` and docs
+4. **Type hints**: Use proper types in getters
+   ```python
+   def get_dpi() -> int:
+       return int(os.getenv('DPI', 100))
+   ```
+
+## Technical Details
+
+### Loading Order
+
+1. Environment variables loaded from `.env`
+2. Defaults applied for missing values
+3. Validation performed
+4. Configuration frozen (immutable during runtime)
+
+### Thread Safety
+
+Configuration is loaded once at startup. Changes to `.env` during runtime are not reflected until restart.
+
+### Performance
+
+- Configuration loaded once per module
+- Values cached in memory
+- No disk I/O after initial load
+
+---
+
+*For complete configuration options, see [Configuration Guide](../configuration.md)*

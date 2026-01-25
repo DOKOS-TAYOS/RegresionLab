@@ -1,6 +1,6 @@
 {
   "menu": {
-    "title": "Regresiones",
+    "title": "RegressionLab",
     "welcome": "Bienvenido, científico. ¿Qué deseas hacer?",
     "normal_fitting": "Ajuste normal",
     "multiple_datasets": "Ajuste múltiples datos",
