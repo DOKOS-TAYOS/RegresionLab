@@ -16,8 +16,14 @@ sys.path.insert(0, os.path.abspath('../../src'))
 project = 'RegressionLab'
 copyright = '2026, Alejandro Mata Ali'
 author = 'Alejandro Mata Ali'
-from dotenv import load_dotenv
-load_dotenv(dotenv_path=os.path.abspath('../../.env'))
+# Try to load .env if available (optional for ReadTheDocs)
+try:
+    from dotenv import load_dotenv
+    env_path = os.path.abspath('../../.env')
+    if os.path.exists(env_path):
+        load_dotenv(dotenv_path=env_path)
+except ImportError:
+    pass  # dotenv not required for documentation build
 
 release = '0.8.0'
 version = '0.8.0'
@@ -61,23 +67,27 @@ source_suffix = {
 }
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['README.md']  # Exclude README.md from docs if present
 
-language = 'es'
+language = 'en'
 
-# The master toctree document
-master_doc = 'index'
+# The root toctree document (replaces deprecated master_doc)
+root_doc = 'index'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'sphinx_rtd_theme'
+# Create _static directory if it doesn't exist
+import os
+static_path = os.path.join(os.path.dirname(__file__), '_static')
+if not os.path.exists(static_path):
+    os.makedirs(static_path, exist_ok=True)
 html_static_path = ['_static']
 
 # Theme options
 html_theme_options = {
     'logo_only': False,
-    'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': True,
     'vcs_pageview_mode': '',
@@ -110,19 +120,19 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files
 latex_documents = [
-    (master_doc, 'RegressionLab.tex', 'RegressionLab Documentation',
+    (root_doc, 'RegressionLab.tex', 'RegressionLab Documentation',
      'Alejandro Mata Ali', 'manual'),
 ]
 
 # -- Options for manual page output ------------------------------------------
 man_pages = [
-    (master_doc, 'regressionlab', 'RegressionLab Documentation',
+    (root_doc, 'regressionlab', 'RegressionLab Documentation',
      [author], 1)
 ]
 
 # -- Options for Texinfo output ----------------------------------------------
 texinfo_documents = [
-    (master_doc, 'RegressionLab', 'RegressionLab Documentation',
+    (root_doc, 'RegressionLab', 'RegressionLab Documentation',
      author, 'RegressionLab', 'Scientific curve fitting application with GUI',
      'Miscellaneous'),
 ]

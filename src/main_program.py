@@ -67,9 +67,10 @@ class ApplicationState:
     
     Using a class for state management (instead of module-level globals)
     provides better:
-    - Testability: Easy to create fresh state for tests
-    - Encapsulation: State changes go through methods
-    - Clarity: All state in one place
+
+        - Testability: Easy to create fresh state for tests
+        - Encapsulation: State changes go through methods
+        - Clarity: All state in one place
     
     Attributes:
         menu_window: Reference to the main Tkinter menu window
@@ -202,9 +203,10 @@ def normal_fitting() -> None:
     5. If loop mode: user can modify data and refit without restarting
     
     Loop mode is useful for:
-    - Exploring different data subsets
-    - Iteratively cleaning outliers
-    - Testing sensitivity to data modifications
+
+        - Exploring different data subsets
+        - Iteratively cleaning outliers
+        - Testing sensitivity to data modifications
     """
     logger.info(t('log.normal_fitting_workflow'))
     menu = _get_menu_window()

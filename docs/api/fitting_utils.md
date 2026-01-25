@@ -8,43 +8,32 @@ This module provides the core fitting utilities used by all fitting functions in
 
 ## Core Functions
 
-### `generic_fit(data, x_name, y_name, fit_func, param_names, equation_template, initial_guess=None)`
+### Fitting Operations
+
+#### `generic_fit(data: dict, x_name: str, y_name: str, fit_func: Callable, param_names: List[str], equation_template: str, initial_guess: Optional[List[float]] = None) -> Tuple[str, NDArray, str, float]`
 
 The main fitting function used by all equation-specific fitters.
 
-```python
-def generic_fit(
-    data: dict,
-    x_name: str,
-    y_name: str,
-    fit_func: Callable,
-    param_names: List[str],
-    equation_template: str,
-    initial_guess: Optional[List[float]] = None
-) -> Tuple[str, NDArray, str, float]:
-    """
-    Generic curve fitting using scipy.optimize.curve_fit.
-    
-    Args:
-        data: Data dictionary containing x, y and their uncertainties
-        x_name: Name of the x variable
-        y_name: Name of the y variable
-        fit_func: Function to fit (e.g., linear_function_with_n, sin_function, etc.)
-        param_names: List of parameter names (e.g., ['m', 'n'] or ['a', 'b', 'c'])
-        equation_template: Template for equation display (e.g., "y={m}x+{n}")
-        initial_guess: Optional initial parameter values for fitting (improves convergence)
-        
-    Returns:
-        Tuple containing:
-            - text: Formatted text with parameters and uncertainties
-            - y_fitted: Array with fitted y values
-            - equation: Formatted equation with parameter values
-            - r_squared: Coefficient of determination (R²)
-            
-    Raises:
-        FittingError: If curve_fit fails to converge
-    """
-```
+Generic curve fitting using `scipy.optimize.curve_fit`. This function handles weighted fitting based on uncertainties, calculates parameter uncertainties, and computes R².
+
+**Parameters:**
+- `data`: Data dictionary containing x, y and their uncertainties
+- `x_name`: Name of the x variable
+- `y_name`: Name of the y variable
+- `fit_func`: Function to fit (e.g., `linear_function_with_n`, `sin_function`, etc.)
+- `param_names`: List of parameter names (e.g., `['m', 'n']` or `['a', 'b', 'c']`)
+- `equation_template`: Template for equation display (e.g., `"y={m}x+{n}"`)
+- `initial_guess`: Optional initial parameter values for fitting (improves convergence)
+
+**Returns:**
+- Tuple containing:
+  - `text`: Formatted text with parameters and uncertainties
+  - `y_fitted`: Array with fitted y values
+  - `equation`: Formatted equation with parameter values
+  - `r_squared`: Coefficient of determination (R²)
+
+**Raises:**
+- `FittingError`: If `curve_fit` fails to converge
 
 **Example:**
 ```python
@@ -71,23 +60,15 @@ print(f"Equation: {equation}")
 print(f"R² = {r_squared:.4f}")
 ```
 
-### `get_fitting_function(equation_name)`
+#### `get_fitting_function(equation_name: str) -> Optional[Callable]`
 
 Factory function that returns the appropriate fitting function for a given equation name.
 
-```python
-def get_fitting_function(equation_name: str) -> Optional[Callable]:
-    """
-    Get fitting function by equation name.
-    
-    Args:
-        equation_name: Name from config.EQUATION_FUNCTION_MAP
-                      (e.g., 'linear_function_with_n')
-    
-    Returns:
-        Fitting function (e.g., fit_linear_function_with_n) or None if not found
-    """
-```
+**Parameters:**
+- `equation_name`: Name from `config.EQUATION_FUNCTION_MAP` (e.g., 'linear_function_with_n')
+
+**Returns:**
+- Fitting function (e.g., `fit_linear_function_with_n`) or `None` if not found
 
 **Example:**
 ```python
@@ -102,58 +83,35 @@ param_text, y_fitted, equation, r2 = fit_func(data, 'x', 'y')
 
 ## Helper Functions
 
-### `estimate_trigonometric_parameters(x, y)`
+### Parameter Estimation
+
+#### `estimate_trigonometric_parameters(x: NDArray, y: NDArray) -> Tuple[float, float]`
 
 Estimates initial parameters for trigonometric functions using peak detection.
 
-```python
-def estimate_trigonometric_parameters(
-    x: NDArray,
-    y: NDArray
-) -> Tuple[float, float]:
-    """
-    Estimate initial parameters for trigonometric functions (sin/cos).
-    
-    This function estimates the amplitude (a) and angular frequency (b) 
-    for functions of the form: y = a * sin(b*x) or y = a * cos(b*x)
-    
-    Uses peak detection to estimate the period and calculates frequency from it.
-    
-    Args:
-        x: Independent variable array
-        y: Dependent variable array
-        
-    Returns:
-        Tuple of (amplitude, frequency):
-            - amplitude: Estimated amplitude parameter (a)
-            - frequency: Estimated angular frequency parameter (b)
-    """
-```
+This function estimates the amplitude (a) and angular frequency (b) for functions of the form: `y = a * sin(b*x)` or `y = a * cos(b*x)`. Uses peak detection to estimate the period and calculates frequency from it.
 
-### `estimate_phase_shift(x, y, amplitude, frequency)`
+**Parameters:**
+- `x`: Independent variable array
+- `y`: Dependent variable array
+
+**Returns:**
+- Tuple of `(amplitude, frequency)`:
+  - `amplitude`: Estimated amplitude parameter (a)
+  - `frequency`: Estimated angular frequency parameter (b)
+
+#### `estimate_phase_shift(x: np.ndarray, y: np.ndarray, amplitude: float, frequency: float) -> float`
 
 Estimates phase shift for trigonometric functions.
 
-```python
-def estimate_phase_shift(
-    x: np.ndarray,
-    y: np.ndarray,
-    amplitude: float,
-    frequency: float
-) -> float:
-    """
-    Estimate phase shift given amplitude and frequency.
-    
-    Args:
-        x: Independent variable
-        y: Dependent variable
-        amplitude: Known amplitude
-        frequency: Known frequency
-        
-    Returns:
-        Estimated phase shift (c parameter)
-    """
-```
+**Parameters:**
+- `x`: Independent variable
+- `y`: Dependent variable
+- `amplitude`: Known amplitude
+- `frequency`: Known frequency
+
+**Returns:**
+- Estimated phase shift (c parameter)
 
 ## Statistical Functions
 

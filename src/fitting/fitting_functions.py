@@ -2,9 +2,10 @@
 Fitting functions and operations for curve fitting.
 
 This module provides:
-1. Mathematical functions commonly used for curve fitting (func_lineal, func_sin, etc.)
-2. High-level fitting wrapper functions (ajlineal, ajsin, etc.) that perform the actual curve fitting
-3. Factory functions to generate custom fitting functions dynamically
+
+    1. Mathematical functions commonly used for curve fitting (func_lineal, func_sin, etc.)
+    2. High-level fitting wrapper functions (ajlineal, ajsin, etc.) that perform the actual curve fitting
+    3. Factory functions to generate custom fitting functions dynamically
 """
 
 import numpy as np

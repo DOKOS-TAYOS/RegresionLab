@@ -43,11 +43,12 @@ class ColoredFormatter(logging.Formatter):
     Custom formatter that adds color to console log output.
     
     Colors are applied based on log level:
-    - DEBUG: Cyan
-    - INFO: Green
-    - WARNING: Yellow
-    - ERROR: Red
-    - CRITICAL: Bright Red
+
+        - DEBUG: Cyan
+        - INFO: Green
+        - WARNING: Yellow
+        - ERROR: Red
+        - CRITICAL: Bright Red
     """
     
     def format(self, record: logging.LogRecord) -> str:

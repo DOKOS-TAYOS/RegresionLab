@@ -6,36 +6,25 @@ High-level data loading interface for RegressionLab.
 
 The `data_loader` module provides functions for loading experimental data from various file formats into pandas DataFrames. It handles file type detection, encoding issues, and data validation.
 
-## Main Functions
+## Key Functions
 
-### `load_data_workflow(filename, file_type)`
+### Data Loading
+
+#### `load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str]`
 
 Complete data loading workflow - recommended entry point.
 
-```python
-def load_data_workflow(
-    filename: str,
-    file_type: str
-) -> Tuple[pd.DataFrame, str]:
-    """
-    Complete data loading workflow.
-    
-    This convenience function combines path preparation and data loading
-    into a single operation. It's the main entry point for loading data
-    files in the application.
-    
-    Args:
-        filename: File name without extension (e.g., 'Ejemplo')
-        file_type: File type ('csv', 'xls', 'xlsx')
-        
-    Returns:
-        Tuple of (data DataFrame, complete file path)
-        The file path is returned so it can be used for reloading in loop mode
-        
-    Raises:
-        DataLoadError: If data cannot be loaded
-    """
-```
+This convenience function combines path preparation and data loading into a single operation. It's the main entry point for loading data files in the application.
+
+**Parameters:**
+- `filename`: File name without extension (e.g., 'Ejemplo')
+- `file_type`: File type ('csv', 'xls', 'xlsx')
+
+**Returns:**
+- Tuple of (data DataFrame, complete file path). The file path is returned so it can be used for reloading in loop mode.
+
+**Raises:**
+- `DataLoadError`: If data cannot be loaded
 
 **Example:**
 ```python
@@ -47,30 +36,22 @@ print(data.head())
 print(f"Loaded from: {file_path}")
 ```
 
-### `load_data(file_path, file_type)`
+#### `load_data(file_path: str, file_type: str) -> pd.DataFrame`
 
 Primary function for loading data files.
 
-```python
-def load_data(
-    file_path: str,
-    file_type: str
-) -> pd.DataFrame:
-    """
-    Load data based on file type.
-    
-    Args:
-        file_path: Complete path to the file
-        file_type: File type ('csv', 'xls', 'xlsx')
-        
-    Returns:
-        DataFrame with loaded data
-        
-    Raises:
-        InvalidFileTypeError: If file type is not supported
-        DataLoadError: If file cannot be loaded
-    """
-```
+Loads data from CSV or Excel files based on the specified file type.
+
+**Parameters:**
+- `file_path`: Complete path to the file
+- `file_type`: File type ('csv', 'xls', 'xlsx')
+
+**Returns:**
+- DataFrame with loaded data
+
+**Raises:**
+- `InvalidFileTypeError`: If file type is not supported
+- `DataLoadError`: If file cannot be loaded
 
 **Example:**
 ```python
@@ -86,30 +67,20 @@ print(data.head())
 print(f"Columns: {data.columns.tolist()}")
 ```
 
-### `get_variable_names(data, filter_uncertainty=False)`
+### Variable Extraction
+
+#### `get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> List[str]`
 
 Extract variable names from DataFrame.
 
-```python
-def get_variable_names(
-    data: pd.DataFrame,
-    filter_uncertainty: bool = False
-) -> List[str]:
-    """
-    Extract variable names from the dataset.
+When `filter_uncertainty` is False, returns all column names (e.g., 'x', 'ux', 'y', 'uy'). When True, excludes uncertainty columns (e.g., 'ux', 'uy') so only base variables like 'x', 'y' are returned. Uncertainty columns are assumed to be named 'u<varname>'.
 
-    When filter_uncertainty is False, returns all column names (e.g. 'x', 'ux', 'y', 'uy').
-    When True, excludes uncertainty columns (e.g. 'ux', 'uy') so only base variables
-    like 'x', 'y' are returned. Uncertainty columns are assumed to be named 'u<varname>'.
-    
-    Args:
-        data: DataFrame with the data
-        filter_uncertainty: If True, exclude uncertainty columns from the result
-        
-    Returns:
-        List of column names as strings
-    """
-```
+**Parameters:**
+- `data`: DataFrame with the data
+- `filter_uncertainty`: If True, exclude uncertainty columns from the result
+
+**Returns:**
+- List of column names as strings
 
 **Example:**
 ```python
@@ -124,32 +95,21 @@ data_vars = get_variable_names(data, filter_uncertainty=True)
 print(f"Data columns: {data_vars}")  # ['x', 'y']
 ```
 
-### `prepare_data_path(filename, file_type, base_dir=None)`
+### Path Management
+
+#### `prepare_data_path(filename: str, file_type: str, base_dir: str = None) -> str`
 
 Construct the complete path to a data file.
 
-```python
-def prepare_data_path(
-    filename: str,
-    file_type: str,
-    base_dir: str = None
-) -> str:
-    """
-    Construct the complete path to a data file.
-    
-    This function builds an absolute path from the project root to the data file,
-    ensuring cross-platform compatibility using pathlib.
-    
-    Args:
-        filename: File name without extension (e.g., 'Ejemplo', 'Exper1')
-        file_type: File extension ('csv', 'xls', 'xlsx')
-        base_dir: Base directory where data files are located (relative to project root).
-                  If None, uses FILE_INPUT_DIR from environment variables or default 'input'
-        
-    Returns:
-        Complete file path (absolute from project root)
-    """
-```
+This function builds an absolute path from the project root to the data file, ensuring cross-platform compatibility using pathlib.
+
+**Parameters:**
+- `filename`: File name without extension (e.g., 'Ejemplo', 'Exper1')
+- `file_type`: File extension ('csv', 'xls', 'xlsx')
+- `base_dir`: Base directory where data files are located (relative to project root). If None, uses FILE_INPUT_DIR from environment variables or default 'input'
+
+**Returns:**
+- Complete file path (absolute from project root)
 
 **Example:**
 ```python
@@ -160,36 +120,23 @@ file_path = prepare_data_path('Ejemplo', 'xlsx')
 print(f"Full path: {file_path}")  # e.g., 'C:/Users/user/project/input/Ejemplo.xlsx'
 ```
 
-### `get_file_list_by_type(file_type, csv, xls, xlsx)`
+#### `get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> list`
 
 Get list of files based on selected type.
 
-```python
-def get_file_list_by_type(
-    file_type: str,
-    csv: list,
-    xls: list,
-    xlsx: list
-) -> list:
-    """
-    Get list of files based on selected type.
-    
-    This function acts as a selector/router that returns the appropriate
-    file list based on the user's file type selection.
-    
-    Args:
-        file_type: File type ('csv', 'xls', 'xlsx')
-        csv: List of CSV file names (without extension)
-        xls: List of XLS file names (without extension)
-        xlsx: List of XLSX file names (without extension)
-        
-    Returns:
-        List of files of the specified type
-        
-    Raises:
-        InvalidFileTypeError: If file type is not valid
-    """
-```
+This function acts as a selector/router that returns the appropriate file list based on the user's file type selection.
+
+**Parameters:**
+- `file_type`: File type ('csv', 'xls', 'xlsx')
+- `csv`: List of CSV file names (without extension)
+- `xls`: List of XLS file names (without extension)
+- `xlsx`: List of XLSX file names (without extension)
+
+**Returns:**
+- List of files of the specified type
+
+**Raises:**
+- `InvalidFileTypeError`: If file type is not valid
 
 **Example:**
 ```python

@@ -870,12 +870,13 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
     Display help and information dialog about the application.
     
     Shows information about:
-    - Application objective and purpose
-    - Key advantages and features
-    - What each fitting mode does
-    - How to navigate the application
-    - Where data files should be located
-    - Where output plots are saved
+
+        - Application objective and purpose
+        - Key advantages and features
+        - What each fitting mode does
+        - How to navigate the application
+        - Where data files should be located
+        - Where output plots are saved
     
     Args:
         parent_window: Parent Tkinter window

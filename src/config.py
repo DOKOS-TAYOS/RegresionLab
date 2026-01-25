@@ -4,10 +4,11 @@
 Central configuration file for the RegressionLab project.
 
 This file consolidates all configuration settings for:
-- UI Theme and appearance
-- Plot styling and fonts
-- File paths and output directories
-- Environment variable loading
+
+    - UI Theme and appearance
+    - Plot styling and fonts
+    - File paths and output directories
+    - Environment variable loading
 
 All modules should import configuration from this central file.
 """

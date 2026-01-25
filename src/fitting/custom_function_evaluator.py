@@ -7,10 +7,11 @@ This module provides safe runtime evaluation of custom mathematical functions
 for curve fitting.
 
 Key features:
-- Safe evaluation with restricted namespace
-- Automatic conversion of mathematical notation to NumPy functions
-- Integration with the generic_fit function
-- No dynamic file generation required
+
+    - Safe evaluation with restricted namespace
+    - Automatic conversion of mathematical notation to NumPy functions
+    - Integration with the generic_fit function
+    - No dynamic file generation required
 """
 
 import numpy as np

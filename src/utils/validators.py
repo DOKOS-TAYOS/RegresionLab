@@ -187,10 +187,11 @@ def validate_fitting_data(data: pd.DataFrame, x_name: str, y_name: str) -> None:
     Comprehensive validation for fitting data.
     
     Validates:
-    - DataFrame is not empty
-    - Required columns exist
-    - Data is numeric
-    - Uncertainty columns exist and are valid
+
+        - DataFrame is not empty
+        - Required columns exist
+        - Data is numeric
+        - Uncertainty columns exist and are valid
     
     Args:
         data: DataFrame with data to fit

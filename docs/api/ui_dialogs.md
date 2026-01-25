@@ -8,7 +8,7 @@ The `ui_dialogs.py` module provides all dialog windows used in the Tkinter inter
 
 ## File Selection Dialogs
 
-### `ask_file_type(parent_window) -> str`
+#### `ask_file_type(parent_window) -> str`
 
 Dialog to ask for data file type.
 
@@ -31,7 +31,7 @@ if file_type and file_type != EXIT_SIGNAL:
     print(f"Selected: {file_type}")
 ```
 
-### `ask_file_name(parent_window, file_list: list) -> str`
+#### `ask_file_name(parent_window, file_list: list) -> str`
 
 Dialog to select a specific file from the list.
 
@@ -54,7 +54,7 @@ if selected:
 
 ## Variable Selection Dialog
 
-### `ask_variables(parent_window, variable_names: list) -> Tuple[str, str, str]`
+#### `ask_variables(parent_window, variable_names: list) -> Tuple[str, str, str]`
 
 Dialog to select independent (x) and dependent (y) variables and plot name.
 
@@ -85,7 +85,7 @@ if x_name and y_name:
 
 ## Data Display Dialog
 
-### `show_data_dialog(parent_window, data) -> None`
+#### `show_data_dialog(parent_window, data) -> None`
 
 Dialog to display loaded data.
 
@@ -110,7 +110,7 @@ show_data_dialog(root, data)
 
 ## Equation Selection Dialog
 
-### `ask_equation_type(parent_window) -> str`
+#### `ask_equation_type(parent_window) -> str`
 
 Dialog to select fitting equation type.
 
@@ -146,7 +146,7 @@ elif selected and selected != EXIT_SIGNAL:
 
 ## Custom Equation Dialogs
 
-### `ask_num_parameters(parent_window) -> int`
+#### `ask_num_parameters(parent_window) -> int`
 
 Dialog to ask for number of parameters in a custom function.
 
@@ -164,7 +164,7 @@ num_params = ask_num_parameters(root)
 print(f"Number of parameters: {num_params}")
 ```
 
-### `ask_parameter_names(parent_window, num_params: int) -> List[str]`
+#### `ask_parameter_names(parent_window, num_params: int) -> List[str]`
 
 Dialog to ask for parameter names in a custom function.
 
@@ -191,7 +191,7 @@ print(f"Parameters: {param_names}")
 - Exit option available
 - Validates parameter names
 
-### `ask_custom_formula(parent_window, parameter_names: List[str]) -> str`
+#### `ask_custom_formula(parent_window, parameter_names: List[str]) -> str`
 
 Dialog to ask for custom function formula.
 
@@ -219,7 +219,7 @@ print(f"Formula: {formula}")
 
 ## Multiple Fits Dialog
 
-### `ask_num_fits(parent_window, min_val: int = 2, max_val: int = 10) -> int`
+#### `ask_num_fits(parent_window, min_val: int = 2, max_val: int = 10) -> int`
 
 Dialog to ask for number of multiple fits.
 
@@ -241,7 +241,7 @@ print(f"Number of fits: {num_fits}")
 
 ## Help Dialog
 
-### `show_help_dialog(parent_window: Tk | Toplevel) -> None`
+#### `show_help_dialog(parent_window: Tk | Toplevel) -> None`
 
 Display help and information dialog about the application.
 
@@ -270,7 +270,7 @@ show_help_dialog(root)
 
 ## Result Display Dialog
 
-### `create_result_window(fit_name: str, text: str, equation_str: str, output_path: str, r_squared: float = None) -> Toplevel`
+#### `create_result_window(fit_name: str, text: str, equation_str: str, output_path: str, r_squared: float = None) -> Toplevel`
 
 Create a Tkinter window to display the fitting results.
 

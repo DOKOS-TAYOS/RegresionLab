@@ -235,7 +235,7 @@ See [Configuration Guide](../configuration.md) for complete documentation.
 ### Signals
 
 ```python
-EXIT_SIGNAL = "Salir"  # Returned when user cancels operation
+EXIT_SIGNAL = "Exit"  # Returned when user cancels operation
 ```
 
 ### File Configuration

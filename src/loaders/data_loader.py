@@ -8,10 +8,11 @@ It provides a clean separation between data access logic (backend) and
 user interface (frontend).
 
 Key features:
-- Path construction for data files
-- Loading from CSV and Excel formats
-- Variable name extraction from datasets
-- File categorization by type
+
+    - Path construction for data files
+    - Loading from CSV and Excel formats
+    - Variable name extraction from datasets
+    - File categorization by type
 
 All functions are UI-independent and can be used in both GUI and CLI contexts.
 """

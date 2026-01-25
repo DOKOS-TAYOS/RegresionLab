@@ -8,7 +8,7 @@ The `app.py` module provides a complete web-based interface for RegressionLab us
 
 ## Main Application
 
-### `main() -> None`
+#### `main() -> None`
 
 Main Streamlit application entry point.
 
@@ -118,7 +118,7 @@ Load data from uploaded file.
 - `uploaded_file`: Streamlit UploadedFile object
 
 **Returns:**
-- DataFrame with loaded data or None if loading fails
+- DataFrame with loaded data or `None` if loading fails
 
 **Example:**
 ```python
@@ -145,7 +145,7 @@ Perform curve fitting and return results.
 - `parameter_names`: Optional parameter names for custom formula
 
 **Returns:**
-- Dictionary with fitting results or None if fitting fails
+- Dictionary with fitting results or `None` if fitting fails
 
 **Result Dictionary:**
 ```python
@@ -176,39 +176,50 @@ if result:
 
 ## UI Components
 
-### Sidebar
+### UI Components
+
+#### `_setup_sidebar(version: str) -> str`
+
+Setup the application sidebar.
 
 The sidebar contains:
 - **Brand header**: Application name and version
 - **Language selector**: Toggle between Spanish and English
 - **Operation mode selector**: Radio buttons for mode selection
 
-**Function:** `_setup_sidebar(version: str) -> str`
+**Parameters:**
+- `version`: Application version string
 
-### Help Section
+**Returns:**
+- Selected operation mode
 
-Expandable help section with:
+#### `show_help_section() -> None`
+
+Display expandable help section.
+
+Shows information about:
 - Application objective
 - Advantages
 - Fitting modes explanation
 - Data format requirements
 
-**Function:** `show_help_section() -> None`
+#### `_select_variables(data, key_prefix='') -> Tuple[str, str, str]`
 
-### Variable Selection
+Show variable selection widgets and return selected values.
 
-**Function:** `_select_variables(data, key_prefix='') -> Tuple[str, str, str]`
-
-Shows variable selection widgets and returns selected values.
+**Parameters:**
+- `data`: DataFrame with data
+- `key_prefix`: Optional prefix for Streamlit widget keys
 
 **Returns:**
 - Tuple of `(x_name, y_name, plot_name)`
 
-### Equation Selector
+#### `show_equation_selector(equation_types: List[str]) -> Tuple[str, Optional[str], Optional[List[str]]]`
 
-**Function:** `show_equation_selector(equation_types: List[str]) -> Tuple[str, Optional[str], Optional[List[str]]]`
+Show equation type selector and return selection.
 
-Shows equation type selector and returns selection.
+**Parameters:**
+- `equation_types`: List of available equation type names
 
 **Returns:**
 - Tuple of `(equation_name, custom_formula, parameter_names)`
@@ -218,11 +229,14 @@ Shows equation type selector and returns selection.
 - Custom formula input with parameter configuration
 - Formula examples
 
-### Results Display
+#### `show_results(results: List[Dict[str, Any]]) -> None`
 
-**Function:** `show_results(results: List[Dict[str, Any]]) -> None`
+Display fitting results.
 
-Displays fitting results with:
+**Parameters:**
+- `results`: List of result dictionaries from `perform_fit()`
+
+Displays:
 - Equation display
 - Parameter values
 - R² value
@@ -231,7 +245,9 @@ Displays fitting results with:
 
 ## Session State Management
 
-### `initialize_session_state() -> None`
+### Session State Management
+
+#### `initialize_session_state() -> None`
 
 Initialize Streamlit session state variables.
 
@@ -240,9 +256,11 @@ Initialize Streamlit session state variables.
 - `results`: List of fitting results
 - `plot_counter`: Counter for plot filenames
 
-### `toggle_language() -> None`
+#### `toggle_language() -> None`
 
 Toggle between Spanish and English.
+
+Updates the session state language and re-initializes the i18n system.
 
 ## Configuration
 

@@ -8,8 +8,9 @@ logs, and errors to be displayed in different languages based on the LANGUAGE
 environment variable.
 
 Supported languages:
-- 'es' or 'español': Spanish (default)
-- 'en' or 'english': English
+
+    - 'es' or 'español': Spanish (default)
+    - 'en' or 'english': English
 
 Usage:
     from i18n import t
