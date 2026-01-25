@@ -20,7 +20,7 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-echo "[1/5] Checking Python version..."
+echo "[1/7] Checking Python version..."
 python3 --version
 
 # Check Python version is 3.11 or higher
@@ -31,7 +31,7 @@ python3 -c "import sys; exit(0 if sys.version_info >= (3, 11) else 1)" || {
 echo "      Python version OK"
 
 echo ""
-echo "[2/5] Creating virtual environment..."
+echo "[2/7] Creating virtual environment..."
 if [ -d ".venv" ]; then
     echo "      Virtual environment already exists, skipping creation"
 else
@@ -40,19 +40,32 @@ else
 fi
 
 echo ""
-echo "[3/5] Activating virtual environment..."
+echo "[3/7] Activating virtual environment..."
 source .venv/bin/activate
 
 echo ""
-echo "[4/5] Upgrading pip..."
+echo "[4/7] Upgrading pip..."
 python -m pip install --upgrade pip
 
 echo ""
-echo "[5/6] Installing dependencies..."
+echo "[5/7] Installing dependencies..."
 pip install -r requirements.txt
 
 echo ""
-echo "[6/6] Creating desktop shortcut..."
+echo "[6/7] Setting up environment file..."
+if [ -f ".env" ]; then
+    echo "      .env file already exists, skipping"
+else
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        echo "      .env file created from .env.example"
+    else
+        echo "      Warning: .env.example not found, skipping .env creation"
+    fi
+fi
+
+echo ""
+echo "[7/7] Creating desktop shortcut..."
 
 # Determine desktop path based on OS
 if [ -d "$HOME/Desktop" ]; then
@@ -105,6 +118,5 @@ echo "Or simply use: ./bin/run.sh"
 echo "Or double-click the desktop shortcut: RegressionLab.desktop"
 echo ""
 echo "To configure the application:"
-echo "  1. Copy .env.example to .env: cp .env.example .env"
-echo "  2. Edit .env with your preferences"
+echo "  1. Edit .env with your preferences (already created during setup)"
 echo ""

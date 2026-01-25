@@ -20,7 +20,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo [1/5] Checking Python version...
+echo [1/7] Checking Python version...
 python --version
 
 REM Check Python version is 3.11 or higher
@@ -33,7 +33,7 @@ if errorlevel 1 (
 echo       Python version OK
 
 echo.
-echo [2/5] Creating virtual environment...
+echo [2/7] Creating virtual environment...
 if exist .venv (
     echo       Virtual environment already exists, skipping creation
 ) else (
@@ -42,19 +42,32 @@ if exist .venv (
 )
 
 echo.
-echo [3/5] Activating virtual environment...
+echo [3/7] Activating virtual environment...
 call .venv\Scripts\activate.bat
 
 echo.
-echo [4/5] Upgrading pip...
+echo [4/7] Upgrading pip...
 python -m pip install --upgrade pip
 
 echo.
-echo [5/6] Installing dependencies...
+echo [5/7] Installing dependencies...
 pip install -r requirements.txt
 
 echo.
-echo [6/6] Creating desktop shortcut...
+echo [6/7] Setting up environment file...
+if exist .env (
+    echo       .env file already exists, skipping
+) else (
+    if exist .env.example (
+        copy .env.example .env >nul
+        echo       .env file created from .env.example
+    ) else (
+        echo       Warning: .env.example not found, skipping .env creation
+    )
+)
+
+echo.
+echo [7/7] Creating desktop shortcut...
 set "DESKTOP=%USERPROFILE%\Desktop"
 set "SHORTCUT_NAME=RegressionLab.lnk"
 set "TARGET_PATH=%~dp0bin\run.bat"
@@ -83,8 +96,7 @@ echo Or simply use: bin\run.bat
 echo Or double-click the desktop shortcut: RegressionLab.lnk
 echo.
 echo To configure the application:
-echo   1. Copy .env.example to .env
-echo   2. Edit .env with your preferences
+echo   1. Edit .env with your preferences (already created during setup)
 echo.
 
 pause
