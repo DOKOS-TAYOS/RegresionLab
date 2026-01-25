@@ -8,6 +8,8 @@ Contains the main application window and exit confirmation dialog.
 from tkinter import Tk, Toplevel, Frame, Label, Button, TOP, LEFT, RIGHT
 from typing import Callable, Optional
 import sys
+import os
+from PIL import Image, ImageTk
 from config import UI_STYLE
 from i18n import t
 
@@ -48,6 +50,38 @@ def create_main_menu(
         bg=UI_STYLE['bg'],
         bd=UI_STYLE['border_width']
     )
+    
+    # Load and display logo
+    logo_label = None
+    try:
+        # Get the project root directory (3 levels up from this file)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        logo_path = os.path.join(project_root, 'images', 'RegressionLab_logo_app.png')
+        
+        if os.path.exists(logo_path):
+            # Load the image and resize it to fit nicely
+            logo_image = Image.open(logo_path)
+            # Resize to a reasonable width (e.g., 400 pixels) while maintaining aspect ratio
+            max_width = 600
+            aspect_ratio = logo_image.height / logo_image.width
+            new_height = int(max_width * aspect_ratio)
+            logo_image = logo_image.resize((max_width, new_height), Image.LANCZOS)
+            
+            # Convert to PhotoImage
+            logo_photo = ImageTk.PhotoImage(logo_image)
+            
+            # Create label for logo
+            logo_label = Label(
+                main_frame,
+                image=logo_photo,
+                bg=UI_STYLE['bg']
+            )
+            # Keep a reference to prevent garbage collection
+            logo_label.image = logo_photo
+    except Exception as e:
+        # If logo fails to load, continue without it
+        print(f"Warning: Could not load logo: {e}")
     
     # Welcome message
     message = Label(
@@ -126,14 +160,29 @@ def create_main_menu(
     
     # Layout
     main_frame.grid(column=0, row=0)
-    message.grid(column=0, row=0, columnspan=2, padx=UI_STYLE['padding'], pady=6)
-    normal_fitting_button.grid(column=0, row=1, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    multiple_datasets_button.grid(column=1, row=1, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    multiple_fits_button.grid(column=0, row=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    all_fits_button.grid(column=1, row=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    help_button.grid(column=0, row=3, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    view_data_button.grid(column=1, row=3, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    exit_button.grid(column=1, row=4, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    
+    # Place logo if it was loaded successfully
+    current_row = 0
+    if logo_label:
+        logo_label.grid(column=0, row=current_row, columnspan=2, padx=UI_STYLE['padding'], pady=6)
+        current_row += 1
+    
+    message.grid(column=0, row=current_row, columnspan=2, padx=UI_STYLE['padding'], pady=6)
+    current_row += 1
+    
+    normal_fitting_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    multiple_datasets_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    current_row += 1
+    
+    multiple_fits_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    all_fits_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    current_row += 1
+    
+    help_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    view_data_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    current_row += 1
+    
+    exit_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     
     normal_fitting_button.focus_set()
     

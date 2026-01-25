@@ -5,12 +5,27 @@ UI Dialogs module.
 Contains all Tkinter dialog windows for user interaction.
 """
 
-from tkinter import Toplevel, Frame, Label, Spinbox, Button, Entry, StringVar, IntVar, Text, Scrollbar, Radiobutton
-from tkinter import ttk
+import re
 from typing import Tuple, List
-from config import UI_STYLE, EXIT_SIGNAL
-from i18n import t
+from tkinter import (
+    Tk,
+    Toplevel, 
+    Frame, 
+    Label, 
+    Spinbox, 
+    Button, 
+    Entry, 
+    StringVar, 
+    IntVar, 
+    Text, 
+    Scrollbar, 
+    Radiobutton, 
+    PhotoImage,
+    ttk
+)
 
+from config import UI_STYLE, EXIT_SIGNAL, UI_THEME
+from i18n import t
 
 def ask_file_type(parent_window) -> str:
     """
@@ -850,11 +865,13 @@ def ask_num_fits(parent_window, min_val: int = 2, max_val: int = 10) -> int:
     return number_fits_level.num.get()
 
 
-def show_help_dialog(parent_window) -> None:
+def show_help_dialog(parent_window: Tk | Toplevel) -> None:
     """
     Display help and information dialog about the application.
     
     Shows information about:
+    - Application objective and purpose
+    - Key advantages and features
     - What each fitting mode does
     - How to navigate the application
     - Where data files should be located
@@ -863,10 +880,23 @@ def show_help_dialog(parent_window) -> None:
     Args:
         parent_window: Parent Tkinter window
     """
+    def remove_markdown_bold(text: str) -> str:
+        """Remove Markdown bold markers (**) from text for Tkinter display."""
+        return re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    
     help_level = Toplevel()
     help_level.title(t('dialog.help_title'))
     help_level.configure(background=UI_STYLE['bg'])
     help_level.resizable(width=True, height=True)
+    
+    # Keep the dialog readable without taking the whole screen
+    screen_width = help_level.winfo_screenwidth()
+    screen_height = help_level.winfo_screenheight()
+    dialog_width = min(900, int(screen_width * 0.7))
+    dialog_height = min(650, int(screen_height * 0.7))
+    offset_x = max(0, (screen_width - dialog_width) // 2)
+    offset_y = max(0, (screen_height - dialog_height) // 2)
+    help_level.geometry(f"{dialog_width}x{dialog_height}+{offset_x}+{offset_y}")
     
     # Main frame
     main_frame = Frame(
@@ -895,7 +925,7 @@ def show_help_dialog(parent_window) -> None:
         wrap='word',
         yscrollcommand=scrollbar.set,
         width=80,
-        height=25
+        height=22
     )
     help_text.pack(side='left', fill='both', expand=True)
     
@@ -903,44 +933,57 @@ def show_help_dialog(parent_window) -> None:
     scrollbar.config(command=help_text.yview)
     
     # Help content - build dynamically from translations
+    # Remove markdown bold markers for Tkinter display
     help_content = f"""
 ════════════════════════════════════════════════
-    {t('help.title').upper()}
+    {remove_markdown_bold(t('help.title')).upper()}
 ════════════════════════════════════════════════
 
-{t('help.fitting_modes')}
+{remove_markdown_bold(t('help.objective_title'))}
 ──────────────────────────────────────────────────
 
-{t('help.normal_fitting')}
+{remove_markdown_bold(t('help.objective_description'))}
 
-{t('help.multiple_datasets')}
-
-{t('help.checker_fitting')}
-
-{t('help.total_fitting')}
-
-{t('help.loop_mode')}
-
-{t('help.navigation')}
+{remove_markdown_bold(t('help.advantages_title'))}
 ──────────────────────────────────────────────────
 
-{t('help.navigation_spinbox')}
+{('\n\n').join([remove_markdown_bold(t(f'help.advantage_{i}')) for i in range(1, 10)])}
 
-{t('help.navigation_accept')}
-
-{t('help.data_location')}
+{remove_markdown_bold(t('help.fitting_modes'))}
 ──────────────────────────────────────────────────
 
-{t('help.data_input')}
+{remove_markdown_bold(t('help.normal_fitting'))}
 
-{t('help.data_formats')}
+{remove_markdown_bold(t('help.multiple_datasets'))}
 
-{t('help.output_location')}
+{remove_markdown_bold(t('help.checker_fitting'))}
+
+{remove_markdown_bold(t('help.total_fitting'))}
+
+{remove_markdown_bold(t('help.loop_mode'))}
+
+{remove_markdown_bold(t('help.data_format_title'))}
 ──────────────────────────────────────────────────
 
-{t('help.output_plots')}
+{remove_markdown_bold(t('help.data_format_named'))}
 
-{t('help.output_logs')}
+{remove_markdown_bold(t('help.data_format_u_prefix'))}
+
+{remove_markdown_bold(t('help.data_format_non_negative'))}
+
+{remove_markdown_bold(t('help.data_location'))}
+──────────────────────────────────────────────────
+
+{remove_markdown_bold(t('help.data_input'))}
+
+{remove_markdown_bold(t('help.data_formats'))}
+
+{remove_markdown_bold(t('help.output_location'))}
+──────────────────────────────────────────────────
+
+{remove_markdown_bold(t('help.output_plots'))}
+
+{remove_markdown_bold(t('help.output_logs'))}
 
 ═════════════════════════════════════════════════
 """
@@ -980,8 +1023,6 @@ def create_result_window(fit_name: str, text: str, equation_str: str, output_pat
     Returns:
         The created Toplevel window
     """
-    from tkinter import PhotoImage
-    from config import UI_THEME, FONT_CONFIG
     
     plot_level = Toplevel()
     plot_level.title(fit_name)

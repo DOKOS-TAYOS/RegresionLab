@@ -16,23 +16,10 @@ from typing import Tuple, List
 from utils.exceptions import DataLoadError, FileNotFoundError
 from utils.validators import validate_file_path, validate_dataframe
 from utils.logger import get_logger
-from config import FILE_CONFIG
+from config import FILE_CONFIG, get_project_root
 from i18n import t
 
 logger = get_logger(__name__)
-
-
-def get_project_root() -> Path:
-    """
-    Get the project root directory (parent of src/).
-    
-    This function navigates up from the current file location to find
-    the project root. Useful for constructing relative paths to data files.
-    
-    Returns:
-        Path object pointing to the project root directory
-    """
-    return Path(__file__).parent.parent.parent
 
 
 def csv_reader(file_path: str) -> pd.DataFrame:

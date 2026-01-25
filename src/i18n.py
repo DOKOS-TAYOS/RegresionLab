@@ -164,5 +164,7 @@ def t(key: str, **kwargs) -> str:
     
     return str(value)
 
-# Initialize on module import
-initialize_i18n()
+# Initialize on module import - COMMENTED OUT for performance optimization
+# Apps should call initialize_i18n() explicitly when needed
+# This reduces startup time by deferring translation loading
+# initialize_i18n()

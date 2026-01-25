@@ -7,7 +7,6 @@ Entry point for the curve fitting application with GUI interface.
 __author__ = "Alejandro Mata Ali"
 __copyright__ = "Public content for science use"
 __credits__ = ["Alejandro Mata Ali"]
-__version__ = "0.8.0"
 __maintainer__ = "Alejandro Mata Ali"
 __email__ = "alejandro.mata.ali@gmail.com"
 __status__ = "Beta"
@@ -22,7 +21,7 @@ if str(src_dir) not in sys.path:
 from tkinter import messagebox
 from typing import Optional, Callable
 
-from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL
+from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL, __version__
 from i18n import t, initialize_i18n
 from frontend.ui_main_menu import start_main_menu
 from frontend.ui_dialogs import (
@@ -47,8 +46,6 @@ from fitting.workflow_controller import (
     coordinate_data_viewing,
     coordinate_equation_selection
 )
-from plotting.plot_utils import create_plot
-from frontend.ui_dialogs import create_result_window
 from utils.logger import setup_logging, get_logger
 
 # Initialize i18n and logging at module level
@@ -147,6 +144,10 @@ def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Call
     Returns:
         Wrapped function that performs fitting and shows results
     """
+    # Lazy import heavy modules only when visualization is actually needed
+    from plotting.plot_utils import create_plot
+    from frontend.ui_dialogs import create_result_window
+    
     def wrapped_function(data, x_name: str, y_name: str, plot_name: str = None) -> None:
         """Execute fitting and display results."""
         try:

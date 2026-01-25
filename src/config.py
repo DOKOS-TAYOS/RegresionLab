@@ -171,13 +171,24 @@ FONT_CONFIG = {
 }
 
 
+# Cache for font properties to avoid recreating them on every plot
+_font_cache = None
+
+
 def setup_fonts():
     """
     Setup and return font properties for plots.
+    Uses caching to avoid recreating fonts on every call.
     
     Returns:
         Tuple of (title_font, axis_font) FontProperties objects
     """
+    global _font_cache
+    
+    # Return cached fonts if available
+    if _font_cache is not None:
+        return _font_cache
+    
     from matplotlib.font_manager import FontProperties
     
     font0 = FontProperties()
@@ -192,7 +203,9 @@ def setup_fonts():
     fonta.set_size(FONT_CONFIG['axis_size'])
     fonta.set_style(FONT_CONFIG['axis_style'])
     
-    return fontt, fonta
+    # Cache the result for future use
+    _font_cache = (fontt, fonta)
+    return _font_cache
 
 
 # ============================================================================
@@ -335,6 +348,9 @@ when applying multiple equation fits to a dataset.
 # ============================================================================
 # SPECIAL VALUES AND CONSTANTS
 # ============================================================================
+
+__version__ = "0.8.0"
+"""Application version. Keep in sync with version in pyproject.toml."""
 
 EXIT_SIGNAL = 'Salir'
 """
