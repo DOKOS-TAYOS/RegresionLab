@@ -11,6 +11,7 @@ Supported languages:
 
     - 'es' or 'español': Spanish (default)
     - 'en' or 'english': English
+    - 'de' or 'german': German
 
 Usage:
     from i18n import t
@@ -36,23 +37,37 @@ _current_language: str = DEFAULT_LANGUAGE
 _translations: Dict[str, Any] = {}
 
 
+def _normalize_language(language: str) -> str:
+    """
+    Normalize language code to standard format.
+    
+    Args:
+        language: Language name or code
+        
+    Returns:
+        Normalized language code ('es', 'en', or 'de')
+    """
+    lang = language.lower()
+    
+    if lang in ('español', 'spanish', 'es', 'esp'):
+        return 'es'
+    elif lang in ('english', 'inglés', 'ingles', 'en', 'eng'):
+        return 'en'
+    elif lang in ('german', 'deutsch', 'de', 'ger'):
+        return 'de'
+    else:
+        return DEFAULT_LANGUAGE
+
 def _get_language_from_env() -> str:
     """
     Get the language from the LANGUAGE environment variable.
     
     Returns:
-        Language code ('es' or 'en')
+        Language code ('es', 'en', or 'de')
     """
     lang = os.getenv('LANGUAGE', DEFAULT_LANGUAGE).lower()
     
-    # Normalize language names
-    if lang in ('español', 'spanish', 'es', 'esp'):
-        return 'es'
-    elif lang in ('english', 'inglés', 'ingles', 'en', 'eng'):
-        return 'en'
-    else:
-        # Default to Spanish if unknown language
-        return DEFAULT_LANGUAGE
+    return _normalize_language(lang)
 
 
 def _load_translations(language: str) -> Dict[str, Any]:
@@ -60,7 +75,7 @@ def _load_translations(language: str) -> Dict[str, Any]:
     Load translation file for the specified language.
     
     Args:
-        language: Language code ('es' or 'en')
+        language: Language code ('es', 'en', or 'de')
         
     Returns:
         Dictionary with translations
@@ -88,20 +103,14 @@ def initialize_i18n(language: Optional[str] = None) -> None:
     If no language is specified, it reads from the LANGUAGE environment variable.
     
     Args:
-        language: Optional language code ('es' or 'en'). If None, reads from env var.
+        language: Optional language code ('es', 'en', or 'de'). If None, reads from env var.
     """
     global _current_language, _translations
     
     if language is None:
         language = _get_language_from_env()
-    
-    # Normalize language (SUPPORTED_LANGUAGES)
-    if language.lower() in ('español', 'spanish', 'es', 'esp'):
-        language = 'es'
-    elif language.lower() in ('english', 'inglés', 'ingles', 'en', 'eng'):
-        language = 'en'
     else:
-        language = DEFAULT_LANGUAGE
+        language = _normalize_language(language)
     
     _current_language = language
     

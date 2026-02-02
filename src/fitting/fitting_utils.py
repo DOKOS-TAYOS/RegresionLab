@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
+from scipy import stats as scipy_stats
 from typing import Callable, List, Tuple, Optional
 from numpy.typing import NDArray
 from decimal import Decimal
@@ -164,7 +165,7 @@ def generic_fit(
     param_names: List[str],
     equation_template: str,
     initial_guess: Optional[List[float]] = None
-) -> Tuple[str, NDArray, str, float]:
+) -> Tuple[str, NDArray, str]:
     """
     Generic fitting function that performs curve fitting with any function.
     
@@ -181,11 +182,10 @@ def generic_fit(
         initial_guess: Optional initial parameter values for fitting (improves convergence)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared):
-            - text: Formatted text with parameters and uncertainties
+        Tuple of (text, y_fitted, equation):
+            - text: Formatted text with parameters, uncertainties, R² and statistics
             - y_fitted: Array with fitted y values
             - equation: Formatted equation with parameter values
-            - r_squared: Coefficient of determination (R²)
             
     Raises:
         FittingError: If fitting fails or data is invalid
@@ -212,14 +212,17 @@ def generic_fit(
                    y_min=f"{y.min():.3f}", 
                    y_max=f"{y.max():.3f}"))
 
+    # curve_fit needs p0 when the function uses *args (e.g. custom functions) so it can
+    # determine the number of parameters; otherwise it raises "Unable to determine
+    # number of fit parameters"
+    if initial_guess is None:
+        initial_guess = [1.0] * len(param_names)
+        logger.debug(t('log.using_initial_guess', guess=str(initial_guess)))
+
     # Perform curve fitting
     try:
         logger.debug(t('log.attempting_curve_fitting'))
-        if initial_guess is not None:
-            logger.debug(t('log.using_initial_guess', guess=str(initial_guess)))
-            final_fit = curve_fit(fit_func, x, y, p0=initial_guess, sigma=uy, absolute_sigma=True)
-        else:
-            final_fit = curve_fit(fit_func, x, y, sigma=uy, absolute_sigma=True)
+        final_fit = curve_fit(fit_func, x, y, p0=initial_guess, sigma=uy, absolute_sigma=True)
         logger.debug(t('log.curve_fitting_successful'))
     except RuntimeError as e:
         # scipy.optimize.curve_fit raises RuntimeError when it can't converge
@@ -279,28 +282,75 @@ def generic_fit(
         logger.error(t('log.error_calculating_fitted_curve', error=str(e)), exc_info=True)
         raise FittingError(t('error.calculating_fitted_curve', error=str(e)))
     
+    # Compute the fit statistics. If you want some news, include them here and add them to the lines
+
+    # Calculate fit statistics
+    n_points = len(y)
+    n_params = len(params)
+    dof = n_points - n_params
+    
+    # Initialize statistics dictionary
+    fit_stats = {}
+    
     # Calculate R² (coefficient of determination)
     try:
-        # Residual sum of squares
         ss_res = np.sum((y - y_fitted) ** 2)
-        # Total sum of squares
         ss_tot = np.sum((y - np.mean(y)) ** 2)
-        # R² = 1 - (SS_res / SS_tot)
-        r_squared = 1.0 - (ss_res / ss_tot) if ss_tot != 0 else 0.0
-        logger.debug(f"R² = {r_squared:.6f}")
+        fit_stats['r_squared'] = 1.0 - (ss_res / ss_tot) if ss_tot != 0 else 0.0
+        logger.debug(f"R² = {fit_stats['r_squared']:.6f}")
     except Exception as e:
         logger.warning(f"Error calculating R²: {str(e)}")
-        r_squared = 0.0
+        fit_stats['r_squared'] = 0.0
     
-    # Add R² to the text output
-    text_lines.append(f"R\u00B2={r_squared:.6f}")
+    # Calculate chi-squared statistics
+    uy_safe = np.where(np.greater(uy, 1e-15), uy, 1e-15)
+    fit_stats['chi_squared'] = float(np.sum(((y - y_fitted) / uy_safe) ** 2))
+    fit_stats['reduced_chi_squared'] = fit_stats['chi_squared'] / dof if dof > 0 else float('nan')
+    fit_stats['dof'] = dof
+    
+    # Calculate 95% confidence intervals for parameters (t-distribution)
+    t_crit = scipy_stats.t.ppf(0.975, dof) if dof > 0 else float('nan')
+    fit_stats['confidence_intervals'] = {}
+    
+    for name, param, uncertainty in zip(param_names, params, uncertainties):
+        if dof > 0 and np.isfinite(uncertainty) and np.isfinite(t_crit):
+            ci_low = param - t_crit * uncertainty
+            ci_high = param + t_crit * uncertainty
+            fit_stats['confidence_intervals'][name] = {
+                'low': ci_low,
+                'high': ci_high,
+                'available': True
+            }
+        else:
+            fit_stats['confidence_intervals'][name] = {
+                'low': None,
+                'high': None,
+                'available': False
+            }
+    
+    # Generate text output using the fit_stats dictionary
+    text_lines.append(f"R\u00B2={fit_stats['r_squared']:.6f}")
+    text_lines.append(t('stats.chi_squared', value=f"{fit_stats['chi_squared']:.4g}"))
+    text_lines.append(t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}"))
+    text_lines.append(t('stats.dof', value=fit_stats['dof']))
+    
+    # Add confidence intervals
+    for name in param_names:
+        ci = fit_stats['confidence_intervals'][name]
+        if ci['available']:
+            text_lines.append(
+                t('stats.param_ci_95', param=name, low=f"{ci['low']:.4g}", high=f"{ci['high']:.4g}")
+            )
+        else:
+            text_lines.append(t('stats.param_ci_95_na', param=name))
+    
     text = '\n'.join(text_lines)
     
     # Format equation with parameter values
     equation_str = equation_template.format(**formatted_params)
     logger.info(t('log.fit_completed_successfully', equation=equation_str))
 
-    return text, y_fitted, equation_str, r_squared
+    return text, y_fitted, equation_str
 
 
 def get_fitting_function(equation_name: str) -> Optional[Callable]:

@@ -235,25 +235,25 @@ inverse_square_function = generate_inverse_function(2)
 # ============================================================================
 
 
-def fit_linear_function_with_n(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_linear_function_with_n(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Linear fit: y = mx + n
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
         fit_func=linear_function_with_n,
-        param_names=['m', 'n'],
+        param_names=['n', 'm'],
         equation_template='y={m}x+{n}'
     )
 
 
-def fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Linear fit through origin: y = mx
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -263,11 +263,11 @@ def fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDAr
     )
 
 
-def fit_quadratic_function_complete(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_quadratic_function_complete(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Quadratic fit: y = ax^2 + bx + c
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -277,11 +277,11 @@ def fit_quadratic_function_complete(data: dict, x_name: str, y_name: str) -> Tup
     )
 
 
-def fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Quadratic fit through origin: y = ax^2
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -291,11 +291,11 @@ def fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, N
     )
 
 
-def fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Quartic fit through origin: y = ax^4
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -305,11 +305,11 @@ def fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
     
-def fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Sine fit: y = a sin(bx)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -325,11 +325,11 @@ def fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
 
-def fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Sine fit with phase: y = a sin(bx + c)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -346,11 +346,11 @@ def fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, 
     )
 
 
-def fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Cosine fit: y = a cos(bx)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -366,11 +366,11 @@ def fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
 
-def fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Cosine fit with phase: y = a cos(bx + c)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -387,11 +387,11 @@ def fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, 
     )
 
 
-def fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hyperbolic sine fit: y = a sinh(bx)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -414,11 +414,11 @@ def fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArra
     )
 
 
-def fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hyperbolic cosine fit: y = a cosh(bx)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     # Estimate initial parameters for better convergence
     x = data[x_name]
@@ -442,11 +442,11 @@ def fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArra
     )
 
 
-def fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Logarithmic fit: y = a ln(x)
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -456,11 +456,11 @@ def fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray,
     )
 
 
-def fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Inverse fit: y = a/x
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,
@@ -470,11 +470,11 @@ def fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDA
     )
 
 
-def fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Inverse quadratic fit: y = a/x^2
     
     Returns:
-        Tuple of (text, y_fitted, equation, r_squared)
+        Tuple of (text, y_fitted, equation)
     """
     return generic_fit(
         data, x_name, y_name,

@@ -259,7 +259,7 @@ def perform_fit(
                 return None
         
         # Perform fitting
-        text, y_fitted, equation, r_squared = fit_function(data, x_name, y_name)
+        text, y_fitted, equation = fit_function(data, x_name, y_name)
         
         # Extract data for plotting
         x = data[x_name]
@@ -285,7 +285,6 @@ def perform_fit(
             'equation_name': display_name,
             'parameters': text,
             'equation': equation,
-            'r_squared': r_squared,
             'plot_path': output_path,
             'plot_name': plot_name
         }
@@ -366,6 +365,11 @@ def show_help_section() -> None:
         
         # Data Location Section
         st.markdown(t('help.data_formats'))
+        
+        # Donations link (if configured in .env)
+        from config import DONATIONS_URL
+        if DONATIONS_URL:
+            st.link_button(t('dialog.donations'), DONATIONS_URL)
 
 def _create_equation_options(equation_types: List[str]) -> Dict[str, str]:
     """
@@ -461,7 +465,7 @@ def show_results(results: List[Dict[str, Any]]) -> None:
             
             # Display equation
             st.markdown(f"**{t('dialog.equation')}** {result['equation']}")
-            
+
             # Display parameters and download button side by side
             if os.path.exists(result['plot_path']):
                 param_col, download_col = st.columns([3, 1])

@@ -41,7 +41,8 @@
     "show_data_title": "Visualización de datos",
     "exit_option": "Salir",
     "exit_instruction": "para salir",
-    "download": "Descargar"
+    "download": "Descargar",
+    "donations": "Si quieres, apoya al canal"
   },
   "workflow": {
     "loop_question": "¿Quiere ajuste en bucle?",
@@ -49,6 +50,13 @@
     "normal_fitting_title": "Ajuste normal",
     "multiple_fitting_title": "Ajuste múltiple",
     "fitting_title": "Ajuste {name}"
+  },
+  "stats": {
+    "chi_squared": "χ²={value}",
+    "reduced_chi_squared": "χ²_red={value}",
+    "dof": "ν (g.l.)={value}",
+    "param_ci_95": "{param} IC 95%: [{low}, {high}]",
+    "param_ci_95_na": "{param} IC 95%: N/A"
   },
   "error": {
     "title": "Error",

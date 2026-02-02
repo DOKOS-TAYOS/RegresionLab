@@ -6,6 +6,7 @@ Contains all Tkinter dialog windows for user interaction.
 """
 
 import re
+import webbrowser
 from typing import Tuple, List
 from tkinter import (
     Tk,
@@ -24,7 +25,7 @@ from tkinter import (
     ttk
 )
 
-from config import UI_STYLE, EXIT_SIGNAL, UI_THEME
+from config import UI_STYLE, EXIT_SIGNAL, UI_THEME, DONATIONS_URL
 from i18n import t
 
 def ask_file_type(parent_window) -> str:
@@ -992,9 +993,26 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
     help_text.insert('1.0', help_content)
     help_text.config(state='disabled')  # Read-only
     
-    # Accept button
+    # Button frame: Donations (if URL set) + Accept
+    button_frame = Frame(main_frame, bg=UI_STYLE['bg'])
+    button_frame.pack(padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    
+    if DONATIONS_URL:
+        donations_button = Button(
+            button_frame,
+            text=t('dialog.donations'),
+            command=lambda: webbrowser.open(DONATIONS_URL),
+            width=UI_STYLE['button_width_wide'],
+            bg=UI_STYLE['bg'],
+            fg=UI_STYLE['button_fg_accept'],
+            activebackground=UI_STYLE['active_bg'],
+            activeforeground=UI_STYLE['active_fg'],
+            font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
+        )
+        donations_button.pack(side='left', padx=(0, UI_STYLE['padding']))
+    
     accept_button = Button(
-        main_frame,
+        button_frame,
         text=t('dialog.accept'),
         command=help_level.destroy,
         width=UI_STYLE['button_width'],
@@ -1004,27 +1022,25 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
         activeforeground=UI_STYLE['active_fg'],
         font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
     )
-    accept_button.pack(padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    accept_button.pack(side='left')
     
     accept_button.focus_set()
     parent_window.wait_window(help_level)
 
 
-def create_result_window(fit_name: str, text: str, equation_str: str, output_path: str, r_squared: float = None) -> Toplevel:
+def create_result_window(fit_name: str, text: str, equation_str: str, output_path: str) -> Toplevel:
     """
     Create a Tkinter window to display the fitting results.
-    
+
     Args:
         fit_name: Name of the fit for window title
         text: Formatted text with parameters and uncertainties
         equation_str: Formatted equation string
         output_path: Path to the plot image file
-        r_squared: Coefficient of determination (R²), optional
-        
+
     Returns:
         The created Toplevel window
     """
-    
     plot_level = Toplevel()
     plot_level.title(fit_name)
     plot_level.configure(background=UI_THEME['background'])

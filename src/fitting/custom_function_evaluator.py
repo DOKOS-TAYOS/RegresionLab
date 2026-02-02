@@ -186,7 +186,7 @@ class CustomFunctionEvaluator:
         
         return 'y=' + template
     
-    def fit(self, data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+    def fit(self, data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
         """
         Perform curve fitting using the custom function.
         
@@ -199,11 +199,10 @@ class CustomFunctionEvaluator:
             y_name: Name of the dependent variable
             
         Returns:
-            Tuple of (text, y_fitted, equation, r_squared):
-                - text: Formatted text with parameters and uncertainties
+            Tuple of (text, y_fitted, equation):
+                - text: Formatted text with parameters and uncertainties (includes R²)
                 - y_fitted: Array with fitted y values
                 - equation: Formatted equation with parameter values
-                - r_squared: Coefficient of determination (R²)
                 
         Raises:
             FittingError: If fitting fails

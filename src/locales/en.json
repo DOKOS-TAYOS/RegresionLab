@@ -41,7 +41,8 @@
     "show_data_title": "Data visualization",
     "exit_option": "Exit",
     "exit_instruction": "to exit",
-    "download": "Download"
+    "download": "Download",
+    "donations": "If you wish, support the project"
   },
   "workflow": {
     "loop_question": "Do you want loop fitting?",
@@ -49,6 +50,13 @@
     "normal_fitting_title": "Normal fitting",
     "multiple_fitting_title": "Multiple fitting",
     "fitting_title": "Fitting {name}"
+  },
+  "stats": {
+    "chi_squared": "χ²={value}",
+    "reduced_chi_squared": "χ²_red={value}",
+    "dof": "ν (d.o.f.)={value}",
+    "param_ci_95": "{param} 95% CI: [{low}, {high}]",
+    "param_ci_95_na": "{param} 95% CI: N/A"
   },
   "error": {
     "title": "Error",

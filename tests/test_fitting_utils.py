@@ -146,7 +146,7 @@ class TestGenericFit(unittest.TestCase):
     
     def test_linear_fit(self) -> None:
         """Test generic fit with linear function."""
-        text, y_fitted, equation, r_squared = generic_fit(
+        text, y_fitted, equation = generic_fit(
             self.data,
             'x',
             'y',
@@ -159,14 +159,12 @@ class TestGenericFit(unittest.TestCase):
         # y_fitted can be ndarray or pandas Series
         self.assertTrue(isinstance(y_fitted, (np.ndarray, pd.Series)))
         self.assertIsInstance(equation, str)
-        self.assertIsInstance(r_squared, float)
         self.assertIn('m=', text)
-        self.assertGreaterEqual(r_squared, 0.0)
-        self.assertLessEqual(r_squared, 1.0)
+        self.assertIn('R²=', text)
     
     def test_fit_with_initial_guess(self) -> None:
         """Test generic fit with initial parameter guess."""
-        text, y_fitted, equation, r_squared = generic_fit(
+        text, y_fitted, equation = generic_fit(
             self.data,
             'x',
             'y',
@@ -177,10 +175,8 @@ class TestGenericFit(unittest.TestCase):
         )
         
         self.assertIsInstance(text, str)
-        self.assertIsInstance(r_squared, float)
         self.assertIn('m=', text)
-        self.assertGreaterEqual(r_squared, 0.0)
-        self.assertLessEqual(r_squared, 1.0)
+        self.assertIn('R²=', text)
     
     def test_invalid_data(self) -> None:
         """Test generic fit with invalid data."""

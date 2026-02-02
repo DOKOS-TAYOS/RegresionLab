@@ -225,6 +225,14 @@ FILE_CONFIG = {
 }
 
 
+# ============================================================================
+# EXTERNAL LINKS
+# ============================================================================
+
+# Donations URL shown in the Help window. If empty, the donations button is hidden.
+DONATIONS_URL = get_env('DONATIONS_URL', '').strip()
+
+
 def get_project_root() -> Path:
     """
     Get the project root directory.
@@ -350,7 +358,7 @@ when applying multiple equation fits to a dataset.
 # SPECIAL VALUES AND CONSTANTS
 # ============================================================================
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
 """Application version. Keep in sync with version in pyproject.toml."""
 
 EXIT_SIGNAL = 'Salir'
