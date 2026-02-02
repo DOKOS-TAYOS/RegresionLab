@@ -11,6 +11,7 @@ This module provides:
 import numpy as np
 from numpy.typing import NDArray
 from typing import Union, Tuple
+from scipy.special import eval_hermite
 
 from fitting.fitting_utils import generic_fit, estimate_trigonometric_parameters, estimate_phase_shift
 
@@ -228,6 +229,64 @@ inverse_function = generate_inverse_function(1)
 
 # Inverse square function: y = a/t^2
 inverse_square_function = generate_inverse_function(2)
+
+
+# ----------------------------------------------------------------------------
+# Gaussian, exponential, binomial (logistic), tangent, square pulse, Hermite
+# ----------------------------------------------------------------------------
+
+
+def gaussian_function(t: Numeric, A: float, mu: float, sigma: float) -> Numeric:
+    """Gaussian (normal) function: y = A * exp(-(t-mu)^2 / (2*sigma^2))"""
+    return A * np.exp(-((t - mu) ** 2) / (2.0 * sigma**2))
+
+
+def exponential_function(t: Numeric, a: float, b: float) -> Numeric:
+    """Exponential function: y = a * exp(b*t)"""
+    return a * np.exp(b * t)
+
+
+def binomial_function(t: Numeric, a: float, b: float, c: float) -> Numeric:
+    """Logistic (S-shaped, binomial-type) function: y = a / (1 + exp(-b*(t-c)))"""
+    return a / (1.0 + np.exp(-b * (t - c)))
+
+
+def tan_function(t: Numeric, a: float, b: float) -> Numeric:
+    """Tangent function: y = a * tan(b*t)"""
+    return a * np.tan(b * t)
+
+
+def tan_function_with_c(t: Numeric, a: float, b: float, c: float) -> Numeric:
+    """Tangent function with phase: y = a * tan(b*t + c)"""
+    return a * np.tan(b * t + c)
+
+
+def square_pulse_function(t: Numeric, A: float, t0: float, w: float) -> Numeric:
+    """
+    Smooth square pulse (approximation): y = A * (f(t - (t0-w/2)) - f(t - (t0+w/2)))/2
+    with f(s) = tanh(k*s), k=50, so the pulse is centered at t0 with width w.
+    """
+    k = 50.0
+    return A * 0.5 * (np.tanh(k * (t - (t0 - w / 2.0))) - np.tanh(k * (t - (t0 + w / 2.0))))
+
+
+def hermite_polynomial_3(t: Numeric, c0: float, c1: float, c2: float, c3: float) -> Numeric:
+    """
+    Sum of physicist's Hermite polynomials up to degree 3:
+    y = c0*H_0(t) + c1*H_1(t) + c2*H_2(t) + c3*H_3(t)
+    """
+    out = c0 * eval_hermite(0, t) + c1 * eval_hermite(1, t)
+    out = out + c2 * eval_hermite(2, t) + c3 * eval_hermite(3, t)
+    return out
+
+
+def hermite_polynomial_4(t: Numeric, c0: float, c1: float, c2: float, c3: float, c4: float) -> Numeric:
+    """
+    Sum of physicist's Hermite polynomials up to degree 4:
+    y = c0*H_0(t) + ... + c4*H_4(t)
+    """
+    out = hermite_polynomial_3(t, c0, c1, c2, c3) + c4 * eval_hermite(4, t)
+    return out
 
 
 # ============================================================================
@@ -481,4 +540,176 @@ def fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[s
         fit_func=inverse_square_function,
         param_names=['a'],
         equation_template='y={a}/x^2'
+    )
+
+
+def fit_gaussian_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Gaussian fit: y = A * exp(-(x-mu)^2 / (2*sigma^2))
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    x = data[x_name]
+    y = data[y_name]
+    idx_max = np.argmax(y)
+    A_0 = float(y[idx_max])
+    mu_0 = float(x[idx_max])
+    x_range = np.max(x) - np.min(x)
+    sigma_0 = x_range / 4.0 if x_range > 0 else 1.0
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=gaussian_function,
+        param_names=['A', 'mu', 'sigma'],
+        equation_template='y={A} exp(-(x-{mu})^2/(2*{sigma}^2))',
+        initial_guess=[A_0, mu_0, sigma_0]
+    )
+
+
+def fit_exponential_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Exponential fit: y = a * exp(b*x)
+    
+    Uses linear regression on log(y) for initial guess when y > 0, and bounds
+    on b to avoid exp(b*x) overflow. Returns (text, y_fitted, equation).
+    """
+    x = np.asarray(data[x_name], dtype=float)
+    y = np.asarray(data[y_name], dtype=float)
+    x_range = float(np.ptp(x))
+    if x_range < 1e-12:
+        x_range = 1.0
+    # Limit |b| so that exp(b * x_range) does not overflow (~exp(700))
+    b_max = 700.0 / x_range
+    bounds = ([-np.inf, -b_max], [np.inf, b_max])
+
+    # Robust initial guess: log(y) = log(a) + b*x => linear regression when y > 0
+    y_min = float(np.min(y))
+    if np.all(y > 1e-15):
+        log_y = np.log(y)
+        # np.polyfit(x, log_y, 1) => [b, log(a)] so a = exp(log(a))
+        slope, intercept = np.polyfit(x, log_y, 1)
+        b_0 = float(slope)
+        a_0 = float(np.exp(intercept))
+        # Clamp b_0 to bounds to avoid bad starting point
+        b_0 = np.clip(b_0, -b_max + 0.01, b_max - 0.01)
+    else:
+        a_0 = float(y[0]) if np.abs(y[0]) > 1e-12 else 1.0
+        b_0 = 0.0 if np.abs(a_0) < 1e-12 else np.clip(
+            np.log(np.abs(y[-1]) / np.abs(y[0]) + 1e-12) / (x[-1] - x[0] + 1e-12),
+            -b_max + 0.01, b_max - 0.01
+        )
+
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=exponential_function,
+        param_names=['a', 'b'],
+        equation_template='y={a} exp({b}x)',
+        initial_guess=[a_0, b_0],
+        bounds=bounds
+    )
+
+
+def fit_binomial_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Logistic (binomial-type) fit: y = a / (1 + exp(-b*(x-c)))
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    x = data[x_name]
+    y = data[y_name]
+    y_min, y_max = float(np.min(y)), float(np.max(y))
+    a_0 = y_max - y_min if (y_max - y_min) > 0 else 1.0
+    c_0 = float(np.median(x))
+    x_range = np.max(x) - np.min(x)
+    b_0 = 4.0 / (x_range + 1e-12) if x_range > 0 else 1.0
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=binomial_function,
+        param_names=['a', 'b', 'c'],
+        equation_template='y={a}/(1+exp(-{b}(x-{c})))',
+        initial_guess=[a_0, b_0, c_0]
+    )
+
+
+def fit_tan_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Tangent fit: y = a * tan(b*x)
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    x = data[x_name]
+    y = data[y_name]
+    amplitude, frequency = estimate_trigonometric_parameters(x, y)
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=tan_function,
+        param_names=['a', 'b'],
+        equation_template='y={a} tan({b}x)',
+        initial_guess=[amplitude, frequency]
+    )
+
+
+def fit_tan_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Tangent fit with phase: y = a * tan(b*x + c)
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    x = data[x_name]
+    y = data[y_name]
+    amplitude, frequency = estimate_trigonometric_parameters(x, y)
+    phase = estimate_phase_shift(x, y, amplitude, frequency)
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=tan_function_with_c,
+        param_names=['a', 'b', 'c'],
+        equation_template='y={a} tan({b}x+{c})',
+        initial_guess=[amplitude, frequency, phase]
+    )
+
+
+def fit_square_pulse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Smooth square pulse fit: amplitude A, center t0, width w.
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    x = data[x_name]
+    y = data[y_name]
+    A_0 = float(np.max(y) - np.min(y)) or 1.0
+    t0_0 = float(x[np.argmax(y)])
+    x_range = np.max(x) - np.min(x)
+    w_0 = x_range / 5.0 if x_range > 0 else 1.0
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=square_pulse_function,
+        param_names=['A', 't0', 'w'],
+        equation_template='y=pulso(A={A}, t0={t0}, w={w})',
+        initial_guess=[A_0, t0_0, w_0]
+    )
+
+
+def fit_hermite_polynomial_3(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Hermite polynomial fit (degree 0..3): y = c0*H_0(x) + c1*H_1(x) + c2*H_2(x) + c3*H_3(x)
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=hermite_polynomial_3,
+        param_names=['c0', 'c1', 'c2', 'c3'],
+        equation_template='y={c0}*H_0(x)+{c1}*H_1(x)+{c2}*H_2(x)+{c3}*H_3(x)'
+    )
+
+
+def fit_hermite_polynomial_4(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    """Hermite polynomial fit (degree 0..4): y = c0*H_0(x) + ... + c4*H_4(x)
+    
+    Returns:
+        Tuple of (text, y_fitted, equation)
+    """
+    return generic_fit(
+        data, x_name, y_name,
+        fit_func=hermite_polynomial_4,
+        param_names=['c0', 'c1', 'c2', 'c3', 'c4'],
+        equation_template='y={c0}*H_0(x)+{c1}*H_1(x)+{c2}*H_2(x)+{c3}*H_3(x)+{c4}*H_4(x)'
     )

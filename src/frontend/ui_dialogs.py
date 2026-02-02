@@ -491,6 +491,14 @@ def ask_equation_type(parent_window) -> str:
         ('ln_function', 'y=a ln(x)'),  # Logarithmic
         ('inverse_function', 'y=a/x'),  # Inverse (1/x)
         ('inverse_square_function', 'y=a/x^2'),  # Inverse square (1/x^2)
+        ('gaussian_function', 'y=A exp(-(x-μ)²/2σ²)'),  # Gaussian
+        ('exponential_function', 'y=a exp(bx)'),  # Exponential
+        ('binomial_function', 'y=a/(1+exp(-b(x-c)))'),  # Logistic/binomial
+        ('tan_function', 'y=a tan(bx)'),  # Tangent
+        ('tan_function_with_c', 'y=a tan(bx+c)'),  # Tangent with phase
+        ('square_pulse_function', 'y=pulso(A,t0,w)'),  # Square pulse
+        ('hermite_polynomial_3', 'y=Σ ck Hk(x) k=0,...,3'),  # Hermite 0-3
+        ('hermite_polynomial_4', 'y=Σ ck Hk(x) k=0,...,4'),  # Hermite 0-4
     ]
     # Button click handlers - these set the selection and close the dialog
     def handle_equation_click(eq_type: str) -> None:
@@ -561,15 +569,29 @@ def ask_equation_type(parent_window) -> str:
     equation_level.cos_function_with_c.grid(column=1, row=4, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     equation_level.cosh_function.grid(column=2, row=4, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     
-    # Row 5: Inverse functions
+    # Row 5: Inverse and Gaussian
     equation_level.inverse_function.grid(column=0, row=5, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     equation_level.inverse_square_function.grid(column=1, row=5, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    equation_level.gaussian_function.grid(column=2, row=5, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     
-    # Row 6: Custom equation button (spans all 3 columns)
-    equation_level.custom.grid(column=0, row=6, columnspan=3, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    # Row 6: Exponential, binomial, tangent
+    equation_level.exponential_function.grid(column=0, row=6, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    equation_level.binomial_function.grid(column=1, row=6, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    equation_level.tan_function.grid(column=2, row=6, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     
-    # Row 7: Exit button (right-aligned in column 2)
-    equation_level.accept_button.grid(column=2, row=7, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    # Row 7: Tangent with phase, square pulse, Hermite 3
+    equation_level.tan_function_with_c.grid(column=0, row=7, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    equation_level.square_pulse_function.grid(column=1, row=7, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    equation_level.hermite_polynomial_3.grid(column=2, row=7, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    
+    # Row 8: Hermite 4
+    equation_level.hermite_polynomial_4.grid(column=0, row=8, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    
+    # Row 9: Custom equation button (spans all 3 columns)
+    equation_level.custom.grid(column=0, row=9, columnspan=3, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    
+    # Row 10: Exit button (right-aligned in column 2)
+    equation_level.accept_button.grid(column=2, row=10, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
 
     equation_level.linear_function_with_n.focus_set()
     parent_window.wait_window(equation_level)

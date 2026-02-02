@@ -2,7 +2,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
 from scipy import stats as scipy_stats
-from typing import Callable, List, Tuple, Optional
+from typing import Callable, List, Tuple, Optional, Sequence
 from numpy.typing import NDArray
 from decimal import Decimal
 
@@ -164,7 +164,8 @@ def generic_fit(
     fit_func: Callable,
     param_names: List[str],
     equation_template: str,
-    initial_guess: Optional[List[float]] = None
+    initial_guess: Optional[List[float]] = None,
+    bounds: Optional[Tuple[Sequence[float], Sequence[float]]] = None
 ) -> Tuple[str, NDArray, str]:
     """
     Generic fitting function that performs curve fitting with any function.
@@ -180,6 +181,7 @@ def generic_fit(
         param_names: List of parameter names (e.g., ['m', 'n'] or ['a', 'b', 'c'])
         equation_template: Template for equation display (e.g., "y={m}x+{n}")
         initial_guess: Optional initial parameter values for fitting (improves convergence)
+        bounds: Optional (lower_bounds, upper_bounds) for parameters; avoids overflow in exponentials
     
     Returns:
         Tuple of (text, y_fitted, equation):
@@ -222,7 +224,13 @@ def generic_fit(
     # Perform curve fitting
     try:
         logger.debug(t('log.attempting_curve_fitting'))
-        final_fit = curve_fit(fit_func, x, y, p0=initial_guess, sigma=uy, absolute_sigma=True)
+        fit_kwargs: dict = dict(
+            f=fit_func, xdata=x, ydata=y, p0=initial_guess,
+            sigma=uy, absolute_sigma=True
+        )
+        if bounds is not None:
+            fit_kwargs['bounds'] = bounds
+        final_fit = curve_fit(**fit_kwargs)
         logger.debug(t('log.curve_fitting_successful'))
     except RuntimeError as e:
         # scipy.optimize.curve_fit raises RuntimeError when it can't converge

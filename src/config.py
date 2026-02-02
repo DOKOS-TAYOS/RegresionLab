@@ -336,7 +336,15 @@ EQUATION_FUNCTION_MAP = {
     'sinh_function': 'fit_sinh_function',
     'cosh_function': 'fit_cosh_function',
     'inverse_function': 'fit_inverse_function',
-    'inverse_square_function': 'fit_inverse_square_function'
+    'inverse_square_function': 'fit_inverse_square_function',
+    'gaussian_function': 'fit_gaussian_function',
+    'exponential_function': 'fit_exponential_function',
+    'binomial_function': 'fit_binomial_function',
+    'tan_function': 'fit_tan_function',
+    'tan_function_with_c': 'fit_tan_function_with_c',
+    'square_pulse_function': 'fit_square_pulse_function',
+    'hermite_polynomial_3': 'fit_hermite_polynomial_3',
+    'hermite_polynomial_4': 'fit_hermite_polynomial_4',
 }
 """
 Mapping from equation type names to their corresponding fitting function names.
