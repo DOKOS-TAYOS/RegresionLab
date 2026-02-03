@@ -290,9 +290,8 @@ cat > "$RUN_SCRIPT" << 'RUNEOF'
 #!/data/data/com.termux/files/usr/bin/bash
 cd "$(dirname "$0")"
 source venv/bin/activate
-echo "Starting RegressionLab (Streamlit)..."
-echo "Open in browser: http://localhost:8501"
-streamlit run src/streamlit_app/app.py --server.headless true
+echo "Starting RegressionLab (Tkinter)..."
+exec python -m src.main_program
 RUNEOF
 chmod +x "$RUN_SCRIPT"
 
@@ -301,12 +300,11 @@ if [ -d "$DOWNLOADS" ]; then
     SHORTCUT="$DOWNLOADS/run_regressionlab.sh"
     cat > "$SHORTCUT" << SHORTCUTEOF
 #!/data/data/com.termux/files/usr/bin/bash
-# RegressionLab launcher - run from Termux: bash run_regressionlab.sh
+# RegressionLab launcher (Tkinter) - run from Termux: bash run_regressionlab.sh
 cd "$INSTALL_DIR" || exit 1
 source venv/bin/activate
-echo "Starting RegressionLab (Streamlit)..."
-echo "Open in browser: http://localhost:8501"
-exec streamlit run src/streamlit_app/app.py --server.headless true
+echo "Starting RegressionLab (Tkinter)..."
+exec python -m src.main_program
 SHORTCUTEOF
     chmod +x "$SHORTCUT"
     echo "Shortcut created: $SHORTCUT"
@@ -329,10 +327,10 @@ echo "===================================="
 echo ""
 echo "Installation directory: $INSTALL_DIR"
 echo ""
-echo "To run RegressionLab:"
+echo "To run RegressionLab (Tkinter):"
 echo "  cd $INSTALL_DIR"
 echo "  source venv/bin/activate"
-echo "  streamlit run src/streamlit_app/app.py"
+echo "  python -m src.main_program"
 echo ""
 if [ -f "$RUN_SCRIPT" ]; then
     echo "Or run: bash $RUN_SCRIPT"
