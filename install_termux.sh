@@ -234,8 +234,10 @@ else
     pip install "openpyxl>=3.1,<4.0" "Pillow>=8.0" "python-dotenv>=1.0,<2.0" "colorama>=0.4,<1.0"
     pip install --no-deps "streamlit>=1.31,<2.0"
     # pyarrow from pkg (avoid slow build); rest via pip
-    pip install "altair>=4.0,<6" "blinker>=1.0,<2" "cachetools>=4.0,<6" "click>=7.0,<9" "importlib-metadata>=1.4,<8" "packaging>=16.8,<24" "protobuf>=3.20,<5" "python-dateutil>=2.7,<3" "requests>=2.27,<3" "rich>=10.14,<14" "tenacity>=8.1,<9" "toml>=0.10,<2" "typing-extensions>=4.3,<5" "tzlocal>=1.1,<6" "validators>=0.2,<1" "watchdog>=2.1" "gitpython>=3.0.7,<4" "tornado>=6.0,<7" 2>/dev/null || true
+    pip install "altair>=4.0,<6" "blinker>=1.0,<2" "cachetools>=4.0,<6" "click>=7.0,<9" "importlib-metadata>=1.4,<8" "packaging>=16.8,<24" "protobuf>=3.20,<5" "python-dateutil>=2.7,<3" "requests>=2.27,<3" "rich>=10.14,<14" "tenacity>=8.1,<9" "toml>=0.10,<2" "typing-extensions>=4.3,<5" "tzlocal>=1.1,<6" "validators>=0.2,<1" "watchdog>=2.1" "gitpython>=3.0.7,<4" "tornado>=6.0,<7" || true
 fi
+# Ensure Streamlit deps (e.g. blinker) are present
+pip install "blinker>=1.0,<2" || true
 echo "Dependencies installed."
 
 # ----------------------------------------------------------------------------
