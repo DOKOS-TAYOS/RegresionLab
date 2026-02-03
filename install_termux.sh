@@ -200,20 +200,21 @@ echo "Activating virtual environment..."
 source venv/bin/activate
 
 # ----------------------------------------------------------------------------
-# 7. Install Python dependencies
+# 7. Install Python dependencies (prefer wheels to avoid long builds on device)
 # ----------------------------------------------------------------------------
 echo ""
 echo "[7/11] Installing dependencies..."
 pip install --upgrade pip
-if [[ "$INSTALL_PKG" =~ ^[Yy]$ ]]; then
-    # numpy/scipy/matplotlib/pandas from pkg; only install the rest via pip
-    pip install "openpyxl>=3.1,<4.0" "Pillow>=10.0,<11.0" "python-dotenv>=1.0,<2.0" "colorama>=0.4,<1.0" "streamlit>=1.31,<2.0"
-    echo "Dependencies installed."
-else
-    echo "Installing full requirements (numpy/scipy may take 15-30 min to build on device)..."
-    pip install -r requirements.txt
-    echo "Dependencies installed."
+export PIP_ONLY_BINARY=:all:
+# Scientific stack first so streamlit does not trigger a pandas build
+if ! pip install "numpy>=2.0,<3.0" "scipy>=1.17,<2.0" "pandas>=2.3,<3.0" "matplotlib>=3.10,<4.0" 2>/dev/null; then
+    unset PIP_ONLY_BINARY 2>/dev/null || true
+    echo "No binary wheels for this platform; building from source (may take 15-30 min)..."
+    pip install "numpy>=2.0,<3.0" "scipy>=1.17,<2.0" "pandas>=2.3,<3.0" "matplotlib>=3.10,<4.0"
 fi
+pip install "openpyxl>=3.1,<4.0" "Pillow>=10.0,<11.0" "python-dotenv>=1.0,<2.0" "colorama>=0.4,<1.0" "streamlit>=1.31,<2.0"
+unset PIP_ONLY_BINARY 2>/dev/null || true
+echo "Dependencies installed."
 
 # ----------------------------------------------------------------------------
 # 8. Copy .env_mobile.example to .env
