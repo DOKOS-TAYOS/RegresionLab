@@ -236,8 +236,15 @@ else
     # pyarrow from pkg (avoid slow build); rest via pip
     pip install "altair>=4.0,<6" "blinker>=1.0,<2" "cachetools>=4.0,<6" "click>=7.0,<9" "importlib-metadata>=1.4,<8" "packaging>=16.8,<24" "protobuf>=3.20,<5" "python-dateutil>=2.7,<3" "requests>=2.27,<3" "rich>=10.14,<14" "tenacity>=8.1,<9" "toml>=0.10,<2" "typing-extensions>=4.3,<5" "tzlocal>=1.1,<6" "validators>=0.2,<1" "watchdog>=2.1" "gitpython>=3.0.7,<4" "tornado>=6.0,<7" || true
 fi
-# Ensure Streamlit deps (e.g. blinker) are present
-pip install "blinker>=1.0,<2" || true
+# Ensure all Streamlit deps + transitive deps (numpy/pandas/pyarrow from pkg when no wheels)
+pip install \
+  "altair>=4.0,<6" "blinker>=1.0,<2" "cachetools>=4.0,<6" "click>=7.0,<9" \
+  "importlib-metadata>=1.4,<8" "packaging>=16.8,<24" "protobuf>=3.20,<5" \
+  "python-dateutil>=2.7,<3" "requests>=2.27,<3" "rich>=10.14,<14" "tenacity>=8.1,<9" \
+  "toml>=0.10,<2" "typing-extensions>=4.3,<5" "tzlocal>=1.1,<6" "validators>=0.2,<1" \
+  "watchdog>=2.1" "gitpython>=3.0.7,<4" "tornado>=6.0,<7" "pydeck>=0.8.0b4,<1" \
+  "urllib3>=1.26" "certifi" "charset-normalizer" "idna>=2.0" "Jinja2>=2.0" \
+  || true
 echo "Dependencies installed."
 
 # ----------------------------------------------------------------------------
