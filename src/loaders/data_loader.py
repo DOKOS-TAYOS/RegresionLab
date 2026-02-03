@@ -18,7 +18,7 @@ All functions are UI-independent and can be used in both GUI and CLI contexts.
 """
 
 # Standard library
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 # Third-party packages
 import pandas as pd
@@ -33,27 +33,28 @@ from utils.validators import validate_file_type
 logger = get_logger(__name__)
 
 
-def prepare_data_path(filename: str, file_type: str, base_dir: str = None) -> str:
+def prepare_data_path(
+    filename: str, file_type: str, base_dir: Optional[str] = None
+) -> str:
     """
     Construct the complete path to a data file.
-    
+
     This function builds an absolute path from the project root to the data file,
     ensuring cross-platform compatibility using pathlib.
-    
+
     Args:
-        filename: File name without extension (e.g., 'Ejemplo', 'Exper1')
-        file_type: File extension ('csv', 'xls', 'xlsx')
+        filename: File name without extension (e.g., 'Ejemplo', 'Exper1').
+        file_type: File extension ('csv', 'xls', 'xlsx').
         base_dir: Base directory where data files are located (relative to project root).
-                  If None, uses FILE_INPUT_DIR from environment variables or default 'input'
-        
+            If None, uses FILE_CONFIG['input_dir'].
+
     Returns:
-        Complete file path (absolute from project root)
-        
+        Complete file path (absolute from project root).
+
     Example:
         >>> prepare_data_path('Ejemplo', 'xlsx')
         'C:/Users/user/project/input/Ejemplo.xlsx'
     """
-    # Get base directory from environment variable if not specified
     if base_dir is None:
         base_dir = FILE_CONFIG['input_dir']
     
@@ -73,11 +74,12 @@ def load_data(file_path: str, file_type: str) -> pd.DataFrame:
         file_type: File type ('csv', 'xls', 'xlsx')
         
     Returns:
-        DataFrame with loaded data
-        
+        DataFrame with loaded data.
+
     Raises:
-        InvalidFileTypeError: If file type is not supported
-        DataLoadError: If file cannot be loaded
+        InvalidFileTypeError: If file type is not supported.
+        DataLoadError: If file cannot be loaded (from underlying readers).
+        Other exceptions from csv_reader/excel_reader may propagate.
     """
     logger.debug(f"Loading data: {file_path} (type: {file_type})")
     
@@ -142,7 +144,12 @@ def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> 
     return filtered if filtered else variable_names
 
 
-def get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> list:
+def get_file_list_by_type(
+    file_type: str,
+    csv: List[str],
+    xls: List[str],
+    xlsx: List[str],
+) -> List[str]:
     """
     Get list of files based on selected type.
     

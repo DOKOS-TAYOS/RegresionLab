@@ -9,7 +9,7 @@ file paths, and parameter values before processing.
 
 # Standard library
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Optional, Union
 
 # Third-party packages
 import numpy as np
@@ -52,16 +52,18 @@ def validate_file_path(file_path: str) -> None:
     logger.debug(t('log.file_path_validated', path=file_path))
 
 
-def validate_file_type(file_type: str, allowed_types: List[str] = None) -> None:
+def validate_file_type(
+    file_type: str, allowed_types: Optional[List[str]] = None
+) -> None:
     """
     Validate that a file type is supported.
-    
+
     Args:
-        file_type: File extension (e.g., 'csv', 'xlsx')
-        allowed_types: List of allowed file types (default: ['csv', 'xls', 'xlsx'])
-        
+        file_type: File extension (e.g., 'csv', 'xlsx').
+        allowed_types: List of allowed file types. Defaults to ['csv', 'xls', 'xlsx'].
+
     Raises:
-        InvalidFileTypeError: If file type is not supported
+        InvalidFileTypeError: If file type is not supported.
     """
     if allowed_types is None:
         allowed_types = ['csv', 'xls', 'xlsx']
@@ -191,27 +193,32 @@ def validate_uncertainty_column(data: pd.DataFrame, var_name: str) -> None:
     logger.debug(t('log.uncertainty_column_validated', column=uncertainty_col))
 
 
-def validate_fitting_data(data: pd.DataFrame, x_name: str, y_name: str) -> None:
+def validate_fitting_data(
+    data: Union[pd.DataFrame, dict], x_name: str, y_name: str
+) -> None:
     """
     Comprehensive validation for fitting data.
-    
+
     Validates:
 
         - DataFrame is not empty
         - Required columns exist
         - Data is numeric
         - Uncertainty columns exist and are valid
-    
+
     Args:
-        data: DataFrame with data to fit
+        data: DataFrame or dict with data to fit (dict is converted to DataFrame).
         x_name: Name of the independent variable column
         y_name: Name of the dependent variable column
-        
+
     Raises:
         DataValidationError: If any validation fails
     """
     logger.info(t('log.validating_fitting_data', x=x_name, y=y_name))
-    
+
+    if isinstance(data, dict):
+        data = pd.DataFrame(data)
+
     # Validate DataFrame
     validate_dataframe(data, min_rows=2)
     

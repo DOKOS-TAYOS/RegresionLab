@@ -237,15 +237,17 @@ def log_function_call(logger: logging.Logger, func_name: str, **kwargs) -> None:
     logger.debug(f"Calling {func_name}({params})")
 
 
-def log_exception(logger: logging.Logger, exception: Exception, context: str = None) -> None:
+def log_exception(
+    logger: logging.Logger, exception: Exception, context: Optional[str] = None
+) -> None:
     """
     Log an exception with context.
-    
+
     Args:
-        logger: Logger instance to use
-        exception: Exception that occurred
-        context: Optional context description
-        
+        logger: Logger instance to use.
+        exception: Exception that occurred.
+        context: Optional context description.
+
     Example:
         >>> try:
         >>>     # some code

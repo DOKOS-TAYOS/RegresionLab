@@ -8,7 +8,7 @@ Contains all Tkinter dialog windows for user interaction.
 # Standard library
 import re
 import webbrowser
-from typing import List, Tuple
+from typing import Any, List, Tuple
 from tkinter import (
     Tk,
     Toplevel, 
@@ -30,7 +30,7 @@ from tkinter import (
 from config import DONATIONS_URL, EXIT_SIGNAL, UI_STYLE, UI_THEME
 from i18n import t
 
-def ask_file_type(parent_window) -> str:
+def ask_file_type(parent_window: Any) -> str:
     """
     Dialog to ask for data file type.
     
@@ -136,7 +136,7 @@ def ask_file_type(parent_window) -> str:
     return selected_value
 
 
-def ask_file_name(parent_window, file_list: list) -> str:
+def ask_file_name(parent_window: Any, file_list: List[str]) -> str:
     """
     Dialog to select a specific file from the list.
     
@@ -207,7 +207,7 @@ def ask_file_name(parent_window, file_list: list) -> str:
     return call_data_level.arch.get()
 
 
-def ask_variables(parent_window, variable_names: list) -> Tuple[str, str, str]:
+def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, str, str]:
     """
     Dialog to select independent (x) and dependent (y) variables and plot name.
     
@@ -384,58 +384,52 @@ def ask_variables(parent_window, variable_names: list) -> Tuple[str, str, str]:
     return call_var_level.x_name.get(), call_var_level.y_name.get(), call_var_level.graf_name.get()
 
 
-def show_data_dialog(parent_window, data) -> None:
+def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
     """
     Dialog to display loaded data.
-    
+
     Args:
-        parent_window: Parent Tkinter window
-        data: Data to display
+        parent_window: Parent Tkinter window.
+        data: DataFrame to display (or string). If DataFrame, converted to string for display.
     """
+    if hasattr(data, 'to_string'):
+        content = data.to_string()
+    else:
+        content = str(data)
+
     watch_data_level = Toplevel()
     watch_data_level.title(t('dialog.show_data_title'))
     watch_data_level.configure(background=UI_STYLE['bg'])
-    
-    # Set minimum window size for better data visibility
     watch_data_level.minsize(800, 600)
-    
-    # Frame para contener el texto y las scrollbars
+
     text_frame = Frame(watch_data_level, bg=UI_STYLE['bg'])
     text_frame.pack(padx=UI_STYLE['padding'], pady=6, fill='both', expand=True)
-    
-    # Scrollbar vertical
+
     scrollbar_y = Scrollbar(text_frame, orient='vertical')
     scrollbar_y.pack(side='right', fill='y')
-    
-    # Scrollbar horizontal
     scrollbar_x = Scrollbar(text_frame, orient='horizontal')
     scrollbar_x.pack(side='bottom', fill='x')
-    
-    # Text widget to display the data
+
     text_widget = Text(
         text_frame,
         bg='gray10',
         fg='lawn green',
-        font=('Consolas', 10),  # Monospaced font for better alignment
-        wrap='none',  # No wrap to view tabular data correctly
+        font=('Consolas', 10),
+        wrap='none',
         yscrollcommand=scrollbar_y.set,
         xscrollcommand=scrollbar_x.set,
         relief='sunken',
         borderwidth=2,
         padx=5,
         pady=5,
-        insertbackground='lawn green',  # Cursor color
-        selectbackground='SeaGreen4',  # Selection color
+        insertbackground='lawn green',
+        selectbackground='SeaGreen4',
         selectforeground='white'
     )
     text_widget.pack(side='left', fill='both', expand=True)
-    
-    # Configure the scrollbars
     scrollbar_y.config(command=text_widget.yview)
     scrollbar_x.config(command=text_widget.xview)
-    
-    # Insert the data into the Text widget
-    text_widget.insert('1.0', data)
+    text_widget.insert('1.0', content)
     text_widget.config(state='disabled')  # Make the text read-only
     
     watch_data_level.accept_button = Button(
@@ -455,7 +449,7 @@ def show_data_dialog(parent_window, data) -> None:
     parent_window.wait_window(watch_data_level)
 
 
-def ask_equation_type(parent_window) -> str:
+def ask_equation_type(parent_window: Any) -> str:
     """
     Dialog to select fitting equation type.
     
@@ -612,7 +606,7 @@ def ask_equation_type(parent_window) -> str:
     return equation_level.selected_equation
 
 
-def ask_num_parameters(parent_window) -> int:
+def ask_num_parameters(parent_window: Any) -> int:
     """
     Dialog to ask for number of parameters in a custom function.
     
@@ -674,7 +668,7 @@ def ask_num_parameters(parent_window) -> int:
     return num_parameter_level.numparam.get()
 
 
-def ask_parameter_names(parent_window, num_params: int) -> List[str]:
+def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
     """
     Dialog to ask for parameter names in a custom function.
     
@@ -758,7 +752,7 @@ def ask_parameter_names(parent_window, num_params: int) -> List[str]:
     return parameter_names_list
 
 
-def ask_custom_formula(parent_window, parameter_names: List[str]) -> str:
+def ask_custom_formula(parent_window: Any, parameter_names: List[str]) -> str:
     """
     Dialog to ask for custom function formula.
     
@@ -845,7 +839,7 @@ def ask_custom_formula(parent_window, parameter_names: List[str]) -> str:
     return formulator_level.formule.get()
 
 
-def ask_num_fits(parent_window, min_val: int = 2, max_val: int = 10) -> int:
+def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> int:
     """
     Dialog to ask for number of multiple fits.
     
@@ -1117,7 +1111,7 @@ def create_result_window(
     num_lines = len(text_lines)
     max_line_length = max(len(line) for line in text_lines) if text_lines else 0
     param_width = max_line_length + 2  # Add small padding
-        # Create a frame to hold parameters and image side by side
+    # Create a frame to hold parameters and image side by side
     plot_level.middle_frame = Frame(plot_level, bg=UI_THEME['background'])
     plot_level.label_parameters = Text(
         plot_level.middle_frame,

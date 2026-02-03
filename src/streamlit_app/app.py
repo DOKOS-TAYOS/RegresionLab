@@ -150,15 +150,15 @@ def toggle_language() -> None:
 # DATA LOADING FUNCTIONS
 # ============================================================================
 
-def load_uploaded_file(uploaded_file):
+def load_uploaded_file(uploaded_file: Any) -> Optional[Any]:
     """
     Load data from uploaded file.
-    
+
     Args:
-        uploaded_file: Streamlit UploadedFile object
-        
+        uploaded_file: Streamlit UploadedFile object (from st.file_uploader).
+
     Returns:
-        DataFrame with loaded data or None if loading fails
+        DataFrame with loaded data, or None if loading fails.
     """
     from loaders.loading_utils import csv_reader, excel_reader
 
@@ -219,28 +219,29 @@ def get_temp_output_dir() -> Path:
 
 
 def perform_fit(
-    data,  # pd.DataFrame - type annotation removed for lazy loading
+    data: Any,
     x_name: str,
     y_name: str,
     equation_name: str,
     plot_name: str,
     custom_formula: Optional[str] = None,
-    parameter_names: Optional[List[str]] = None
+    parameter_names: Optional[List[str]] = None,
 ) -> Optional[Dict[str, Any]]:
     """
     Perform curve fitting and return results.
-    
+
     Args:
-        data: DataFrame with data
-        x_name: X variable name
-        y_name: Y variable name
-        equation_name: Type of equation to fit
-        plot_name: Name for the plot
-        custom_formula: Optional custom formula
-        parameter_names: Optional parameter names for custom formula
-        
+        data: DataFrame or dict-like with x, y and uncertainty columns.
+        x_name: X variable name.
+        y_name: Y variable name.
+        equation_name: Type of equation to fit.
+        plot_name: Name for the plot.
+        custom_formula: Optional custom formula (when equation_name is 'custom_formula').
+        parameter_names: Optional parameter names for custom formula.
+
     Returns:
-        Dictionary with fitting results or None if fitting fails
+        Dictionary with keys equation_name, parameters, equation, plot_path, plot_name,
+        or None if fitting fails.
     """
     from fitting.fitting_utils import get_fitting_function
     from fitting.custom_function_evaluator import CustomFunctionEvaluator

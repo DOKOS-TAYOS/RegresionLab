@@ -11,7 +11,7 @@ All file operations are relative to the project root directory.
 """
 
 # Standard library
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 # Third-party packages
 import pandas as pd
@@ -93,7 +93,9 @@ def excel_reader(file_path: str) -> pd.DataFrame:
         raise DataLoadError(t('error.loading_excel_file', error=str(e)))
 
 
-def get_file_names(directory: str = None) -> Tuple[List[str], List[str], List[str]]:
+def get_file_names(
+    directory: Optional[str] = None,
+) -> Tuple[List[str], List[str], List[str]]:
     """
     Get categorized file names from a directory.
     

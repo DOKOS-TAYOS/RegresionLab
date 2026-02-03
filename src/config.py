@@ -16,7 +16,7 @@ All modules should import configuration from this central file.
 # Standard library
 import os
 from pathlib import Path
-from typing import Any, Type, Union
+from typing import Any, Optional, Type, Union
 
 # Third-party packages
 try:
@@ -38,15 +38,14 @@ def get_env(
 ) -> Union[str, int, float, bool]:
     """
     Get environment variable with type casting and default value.
-    
+
     Args:
-        key: Environment variable name
-        default: Default value if variable not found
-        cast_type: Type to cast the value to (str, int, float, bool)
-        
+        key: Environment variable name.
+        default: Default value if variable not found.
+        cast_type: Type to cast the value to (str, int, float, bool).
+
     Returns:
         The environment variable value cast to the specified type, or default.
-        Type is Union[str, int, float, bool] depending on cast_type.
     """
     value = os.getenv(key)
     if value is None:
@@ -185,35 +184,30 @@ FONT_CONFIG = {
 _font_cache = None
 
 
-def setup_fonts():
+def setup_fonts() -> tuple:
     """
     Setup and return font properties for plots.
     Uses caching to avoid recreating fonts on every call.
-    
+
     Returns:
-        Tuple of (title_font, axis_font) FontProperties objects
+        Tuple of (title_font, axis_font) FontProperties objects.
     """
     global _font_cache
-    
-    # Return cached fonts if available
+
     if _font_cache is not None:
         return _font_cache
-    
+
     from matplotlib.font_manager import FontProperties
-    
+
     font0 = FontProperties()
-    
     fontt = font0.copy()
     fontt.set_family(FONT_CONFIG['family'])
     fontt.set_size(FONT_CONFIG['title_size'])
     fontt.set_weight(FONT_CONFIG['title_weight'])
-    
     fonta = font0.copy()
     fonta.set_family(FONT_CONFIG['family'])
     fonta.set_size(FONT_CONFIG['axis_size'])
     fonta.set_style(FONT_CONFIG['axis_style'])
-    
-    # Cache the result for future use
     _font_cache = (fontt, fonta)
     return _font_cache
 
@@ -252,45 +246,44 @@ def get_project_root() -> Path:
     return Path(__file__).parent.parent
 
 
-def ensure_output_directory(output_dir: str = None) -> str:
+def ensure_output_directory(output_dir: Optional[str] = None) -> str:
     """
     Create output directory if it doesn't exist.
-    
+
     Args:
-        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir']
-        
+        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir'].
+
     Returns:
-        The output directory path (absolute path from project root)
-        
+        The output directory path (absolute path from project root).
+
     Raises:
-        OSError: If directory cannot be created
+        OSError: If directory cannot be created.
     """
     if output_dir is None:
         output_dir = FILE_CONFIG['output_dir']
-    
-    # Make path relative to project root
+
     project_root = get_project_root()
     full_path = project_root / output_dir
-    
+
     try:
         if not full_path.exists():
             full_path.mkdir(parents=True, exist_ok=True)
-    except (OSError, PermissionError) as e:
-        raise OSError(f"No se pudo crear el directorio de salida: {str(e)}")
-    
+    except OSError as e:
+        raise OSError(f"Could not create output directory: {e!s}") from e
+
     return str(full_path)
 
 
-def get_output_path(fit_name: str, output_dir: str = None) -> str:
+def get_output_path(fit_name: str, output_dir: Optional[str] = None) -> str:
     """
     Get the full output path for a plot.
-    
+
     Args:
-        fit_name: Name of the fit/adjustment (used in filename)
-        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir']
-        
+        fit_name: Name of the fit/adjustment (used in filename).
+        output_dir: Optional directory path. If None, uses FILE_CONFIG['output_dir'].
+
     Returns:
-        Full path to the output file
+        Full path to the output file.
     """
     if output_dir is None:
         output_dir = FILE_CONFIG['output_dir']

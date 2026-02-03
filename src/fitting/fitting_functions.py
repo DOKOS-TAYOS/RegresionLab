@@ -13,6 +13,7 @@ from typing import Callable, Tuple, Union
 
 # Third-party packages
 import numpy as np
+import pandas as pd
 from numpy.typing import NDArray
 from scipy.special import eval_hermite
 
@@ -26,6 +27,9 @@ from fitting.fitting_utils import (
 
 # Type alias for numeric inputs that can be scalars or arrays
 Numeric = Union[float, NDArray[np.floating]]
+
+# Type alias for data accepted by fit functions (DataFrame is dict-like for column access)
+DataLike = Union[dict, pd.DataFrame]
 
 
 def generate_polynomial_function(parameters: list[bool]) -> Callable:
@@ -109,7 +113,7 @@ def generate_polynomial_function(parameters: list[bool]) -> Callable:
             return result
     else:
         raise ValueError(f"Unsupported number of parameters: {num_params}")
-    
+
     return polynomial
 
 # Linear function with y-intercept: y = m*t + n
@@ -128,14 +132,16 @@ quadratic_function = generate_polynomial_function([False, False, True])  # only 
 fourth_power = generate_polynomial_function([False, False, False, False, True])  # only t^4
 
 
-def generate_trigonometric_function(func_type: str, with_phase: bool = False):
+def generate_trigonometric_function(
+    func_type: str, with_phase: bool = False
+) -> Callable[..., Numeric]:
     """
     Generate a trigonometric function dynamically based on the function type.
-    
+
     Args:
-        func_type: Type of function ('sin', 'cos', 'sinh', 'cosh')
-        with_phase: Whether to include a phase shift parameter c
-    
+        func_type: Type of function ('sin', 'cos', 'sinh', 'cosh').
+        with_phase: Whether to include a phase shift parameter c.
+
     Returns:
         A function that takes t and parameters (a, b, [c]) as arguments.
     """
@@ -208,13 +214,13 @@ def ln_function(t: Numeric, a: float) -> Numeric:
     """Natural logarithm function: y = a*ln(t)"""
     return a * np.log(t)
 
-def generate_inverse_function(power: int):
+def generate_inverse_function(power: int) -> Callable[..., Numeric]:
     """
     Generate an inverse power function dynamically based on the power.
-    
+
     Args:
-        power: The power of t in the denominator (e.g., 1 for 1/t, 2 for 1/t^2)
-    
+        power: The power of t in the denominator (e.g., 1 for 1/t, 2 for 1/t^2).
+
     Returns:
         A function that takes t and coefficient a as arguments.
     """
@@ -306,7 +312,9 @@ def hermite_polynomial_4(
 # ============================================================================
 
 
-def fit_linear_function_with_n(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_linear_function_with_n(
+    data: DataLike, x_name: str, y_name: str
+) -> Tuple[str, NDArray, str]:
     """Linear fit: y = mx + n
     
     Returns:
@@ -320,7 +328,9 @@ def fit_linear_function_with_n(data: dict, x_name: str, y_name: str) -> Tuple[st
     )
 
 
-def fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_linear_function(
+    data: DataLike, x_name: str, y_name: str
+) -> Tuple[str, NDArray, str]:
     """Linear fit through origin: y = mx
     
     Returns:
@@ -335,7 +345,7 @@ def fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDAr
 
 
 def fit_quadratic_function_complete(
-    data: dict, x_name: str, y_name: str
+    data: DataLike, x_name: str, y_name: str
 ) -> Tuple[str, NDArray, str]:
     """Quadratic fit: y = ax^2 + bx + c
     
@@ -350,7 +360,9 @@ def fit_quadratic_function_complete(
     )
 
 
-def fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_quadratic_function(
+    data: DataLike, x_name: str, y_name: str
+) -> Tuple[str, NDArray, str]:
     """Quadratic fit through origin: y = ax^2
     
     Returns:
@@ -364,7 +376,9 @@ def fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, N
     )
 
 
-def fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_fourth_power(
+    data: DataLike, x_name: str, y_name: str
+) -> Tuple[str, NDArray, str]:
     """Quartic fit through origin: y = ax^4
     
     Returns:
@@ -378,7 +392,7 @@ def fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
     
-def fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_sin_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Sine fit: y = a sin(bx)
     
     Returns:
@@ -398,7 +412,7 @@ def fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
 
-def fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_sin_function_with_c(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Sine fit with phase: y = a sin(bx + c)
     
     Returns:
@@ -419,7 +433,7 @@ def fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, 
     )
 
 
-def fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_cos_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Cosine fit: y = a cos(bx)
     
     Returns:
@@ -439,7 +453,7 @@ def fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
 
-def fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_cos_function_with_c(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Cosine fit with phase: y = a cos(bx + c)
     
     Returns:
@@ -460,7 +474,7 @@ def fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, 
     )
 
 
-def fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_sinh_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hyperbolic sine fit: y = a sinh(bx)
     
     Returns:
@@ -487,7 +501,7 @@ def fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArra
     )
 
 
-def fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_cosh_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hyperbolic cosine fit: y = a cosh(bx)
     
     Returns:
@@ -515,7 +529,7 @@ def fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArra
     )
 
 
-def fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_ln_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Logarithmic fit: y = a ln(x)
     
     Returns:
@@ -529,7 +543,7 @@ def fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray,
     )
 
 
-def fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_inverse_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Inverse fit: y = a/x
     
     Returns:
@@ -543,7 +557,7 @@ def fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDA
     )
 
 
-def fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_inverse_square_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Inverse quadratic fit: y = a/x^2
     
     Returns:
@@ -557,7 +571,7 @@ def fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[s
     )
 
 
-def fit_gaussian_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_gaussian_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Gaussian fit: y = A * exp(-(x-mu)^2 / (2*sigma^2))
     
     Returns:
@@ -579,7 +593,7 @@ def fit_gaussian_function(data: dict, x_name: str, y_name: str) -> Tuple[str, ND
     )
 
 
-def fit_exponential_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_exponential_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Exponential fit: y = a * exp(b*x)
     
     Uses linear regression on log(y) for initial guess when y > 0, and bounds
@@ -621,7 +635,7 @@ def fit_exponential_function(data: dict, x_name: str, y_name: str) -> Tuple[str,
     )
 
 
-def fit_binomial_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_binomial_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Logistic (binomial-type) fit: y = a / (1 + exp(-b*(x-c)))
     
     Returns:
@@ -643,7 +657,7 @@ def fit_binomial_function(data: dict, x_name: str, y_name: str) -> Tuple[str, ND
     )
 
 
-def fit_tan_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_tan_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Tangent fit: y = a * tan(b*x)
     
     Returns:
@@ -661,7 +675,7 @@ def fit_tan_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray
     )
 
 
-def fit_tan_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_tan_function_with_c(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Tangent fit with phase: y = a * tan(b*x + c)
     
     Returns:
@@ -680,7 +694,7 @@ def fit_tan_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, 
     )
 
 
-def fit_square_pulse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_square_pulse_function(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Smooth square pulse fit: amplitude A, center t0, width w.
     
     Returns:
@@ -701,7 +715,7 @@ def fit_square_pulse_function(data: dict, x_name: str, y_name: str) -> Tuple[str
     )
 
 
-def fit_hermite_polynomial_3(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_hermite_polynomial_3(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hermite polynomial fit (degree 0..3): y = c0*H_0(x) + c1*H_1(x) + c2*H_2(x) + c3*H_3(x)
     
     Returns:
@@ -715,7 +729,7 @@ def fit_hermite_polynomial_3(data: dict, x_name: str, y_name: str) -> Tuple[str,
     )
 
 
-def fit_hermite_polynomial_4(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+def fit_hermite_polynomial_4(data: DataLike, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
     """Hermite polynomial fit (degree 0..4): y = c0*H_0(x) + ... + c4*H_4(x)
     
     Returns:

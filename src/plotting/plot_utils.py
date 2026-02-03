@@ -1,6 +1,6 @@
 # Standard library
 from pathlib import Path
-from typing import Union
+from typing import Any, Dict, Optional, Sequence, Union
 
 # Third-party packages
 import matplotlib.pyplot as plt
@@ -13,39 +13,40 @@ logger = get_logger(__name__)
 
 
 def create_plot(
-    x: list[float],
-    y: list[float],
-    ux: list[float],
-    uy: list[float],
-    y_fitted: list[float],
+    x: Sequence[float],
+    y: Sequence[float],
+    ux: Sequence[float],
+    uy: Sequence[float],
+    y_fitted: Sequence[float],
     fit_name: str,
     x_name: str,
     y_name: str,
-    plot_config: dict | None = None,
-    font_config: dict | None = None,
-    output_path: Union[str, Path, None] = None,
+    plot_config: Optional[Dict[str, Any]] = None,
+    font_config: Optional[Dict[str, Any]] = None,
+    output_path: Optional[Union[str, Path]] = None,
 ) -> str:
     """
     Create and save a plot with experimental data and fitted curve.
 
     Args:
-        x: Independent variable data (array-like)
-        y: Dependent variable data (array-like)
-        ux: Uncertainties in x (array-like)
-        uy: Uncertainties in y (array-like)
-        y_fitted: Fitted y values (array-like)
-        fit_name: Name of the fit for plot title
-        x_name: Label for x-axis
-        y_name: Label for y-axis
-        plot_config: Optional plot configuration dict (defaults to PLOT_CONFIG)
-        font_config: Optional font configuration dict (defaults to FONT_CONFIG)
+        x: Independent variable data (array-like).
+        y: Dependent variable data (array-like).
+        ux: Uncertainties in x (array-like).
+        uy: Uncertainties in y (array-like).
+        y_fitted: Fitted y values (array-like).
+        fit_name: Name of the fit for plot title.
+        x_name: Label for x-axis.
+        y_name: Label for y-axis.
+        plot_config: Optional plot configuration dict. Defaults to PLOT_CONFIG.
+        font_config: Optional font configuration dict. Defaults to FONT_CONFIG.
         output_path: Optional full path to save the plot. If None, uses get_output_path(fit_name).
 
     Returns:
-        Path to the saved plot file (as string)
+        Path to the saved plot file (as string).
 
     Raises:
-        Exception: If plot creation or saving fails
+        OSError: If the plot file cannot be written.
+        RuntimeError: If matplotlib fails during plot creation or saving.
     """
     logger.info(f"Creating plot: {fit_name}")
     logger.debug(f"Data points: {len(x)}, x_label: {x_name}, y_label: {y_name}")

@@ -1,20 +1,15 @@
 # Standard library
 from decimal import Decimal
-from typing import Callable, List, Optional, Sequence, Tuple
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
-# Third-party packages
+# Numerical library
 import numpy as np
-from numpy.typing import NDArray
-from scipy import stats as scipy_stats
-from scipy.optimize import curve_fit
-from scipy.signal import find_peaks
 
-# Local imports
+# Local imports (heavy numerical libraries are imported lazily inside functions)
 from config import EQUATION_FUNCTION_MAP, EXIT_SIGNAL
 from i18n import t
 from utils.exceptions import FittingError
 from utils.logger import get_logger
-from utils.validators import validate_fitting_data
 
 logger = get_logger(__name__)
 
@@ -60,7 +55,7 @@ def format_parameter(value: float, sigma: float) -> Tuple[float, str]:
         return round(value, 6), f"{sigma:.1E}"
 
 
-def estimate_trigonometric_parameters(x: NDArray, y: NDArray) -> Tuple[float, float]:
+def estimate_trigonometric_parameters(x: Any, y: Any) -> Tuple[float, float]:
     """
     Estimate initial parameters for trigonometric functions (sin/cos).
     
@@ -76,6 +71,9 @@ def estimate_trigonometric_parameters(x: NDArray, y: NDArray) -> Tuple[float, fl
             - amplitude: Estimated amplitude parameter (a)
             - frequency: Estimated angular frequency parameter (b)
     """
+    # Lazy imports to avoid loading numerical stack until needed
+    from scipy.signal import find_peaks
+
     # Estimate amplitude as half the range of y values
     y_range = np.max(y) - np.min(y)
     amplitude = y_range / 2.0
@@ -127,7 +125,7 @@ def estimate_trigonometric_parameters(x: NDArray, y: NDArray) -> Tuple[float, fl
     return amplitude, frequency
 
 
-def estimate_phase_shift(x: NDArray, y: NDArray, amplitude: float, frequency: float) -> float:
+def estimate_phase_shift(x: Any, y: Any, amplitude: float, frequency: float) -> float:
     """
     Estimate initial phase shift for trigonometric functions with phase.
     
@@ -142,6 +140,7 @@ def estimate_phase_shift(x: NDArray, y: NDArray, amplitude: float, frequency: fl
     Returns:
         Estimated phase shift (c)
     """
+    # Lazy import to avoid loading NumPy at module import time
     try:
         # Find the first maximum or zero crossing
         # For simplicity, estimate where the function should start
@@ -168,15 +167,15 @@ def estimate_phase_shift(x: NDArray, y: NDArray, amplitude: float, frequency: fl
 
 
 def generic_fit(
-    data: dict,
+    data: Any,
     x_name: str,
     y_name: str,
-    fit_func: Callable,
+    fit_func: Callable[..., Any],
     param_names: List[str],
     equation_template: str,
     initial_guess: Optional[List[float]] = None,
     bounds: Optional[Tuple[Sequence[float], Sequence[float]]] = None
-) -> Tuple[str, NDArray, str]:
+) -> Tuple[str, Any, str]:
     """
     Generic fitting function that performs curve fitting with any function.
     
@@ -203,8 +202,13 @@ def generic_fit(
     Raises:
         FittingError: If fitting fails or data is invalid
     """
+    # Lazy imports to avoid loading heavy numerical stack when importing this module
+    from scipy import stats as scipy_stats
+    from scipy.optimize import curve_fit
+    from utils.validators import validate_fitting_data
+
     logger.info(t('log.starting_generic_fit', x=x_name, y=y_name, params=str(param_names)))
-    
+
     # Validate fitting data
     try:
         validate_fitting_data(data, x_name, y_name)
@@ -316,7 +320,7 @@ def generic_fit(
         fit_stats['r_squared'] = 1.0 - (ss_res / ss_tot) if ss_tot != 0 else 0.0
         logger.debug(f"R² = {fit_stats['r_squared']:.6f}")
     except Exception as e:
-        logger.warning(f"Error calculating R²: {str(e)}")
+        logger.warning("Error calculating R²: %s", str(e))
         fit_stats['r_squared'] = 0.0
     
     # Calculate chi-squared statistics

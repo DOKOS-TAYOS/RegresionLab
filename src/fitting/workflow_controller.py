@@ -7,7 +7,7 @@ Contains coordination functions and workflow patterns for the fitting applicatio
 
 # Standard library
 from tkinter import messagebox
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 # Third-party packages
 import pandas as pd
@@ -167,35 +167,31 @@ def multiple_fit_with_loop(
     4. Repeat until no datasets are marked to continue
     
     Args:
-        fitter_function: Fitting function to call (must accept data, x_name, y_name, plot_name)
+        fitter_function: Fitting function to call (must accept data, x_name, y_name, plot_name).
         datasets: List of dictionaries, each containing:
                   - 'data': dataset (pandas DataFrame)
                   - 'x_name': X variable column name
                   - 'y_name': Y variable column name
                   - 'plot_name': plot name for display and filename
-                  - 'file_path': path to data file for reloading
-                  - 'file_type': file type ('csv', 'xls', 'xlsx')
+                  - 'data_file_path': path to data file for reloading
+                  - 'data_file_type': file type ('csv', 'xls', 'xlsx')
     """
-    # Track which datasets should continue in loop mode
-    continue_flags = []
-    
-    # Initial fitting pass for all datasets
+    continue_flags: List[bool] = []
+
     for i, ds in enumerate(datasets):
         fitter_function(ds['data'], ds['x_name'], ds['y_name'], ds['plot_name'])
-        # Ask user if they want to continue with this dataset
         should_continue = messagebox.askyesno(
             message=t('workflow.continue_question'),
             title=f"{t('workflow.fitting_title', name=ds['plot_name'])} ({i+1})"
         )
         continue_flags.append(should_continue)
-    
-    # Loop while at least one dataset is marked to continue
+
     while any(continue_flags):
-        # Reload and refit only datasets marked to continue
         for i, ds in enumerate(datasets):
             if continue_flags[i]:
-                # Reload data from file (allows user to modify between iterations)
-                ds['data'] = reload_data_by_type(ds['file_path'], ds['file_type'])
+                ds['data'] = reload_data_by_type(
+                    ds['data_file_path'], ds['data_file_type']
+                )
                 # Perform fit with reloaded data
                 fitter_function(ds['data'], ds['x_name'], ds['y_name'], ds['plot_name'])
         
@@ -215,7 +211,7 @@ def apply_all_equations(
     data: pd.DataFrame,
     x_name: str,
     y_name: str,
-    plot_name: str = None
+    plot_name: Optional[str] = None,
 ) -> None:
     """
     Apply all available equation types to a dataset.
@@ -259,7 +255,7 @@ def apply_all_equations(
         # Perform fit if fitter was successfully retrieved
         if fitting_function is not None:
             # Create a plot name with the equation type for differentiation
-            fit_plot_name = f"{plot_name}_{eq_type}" if plot_name else None
+            fit_plot_name = f"{plot_name}_{eq_type}" if plot_name is not None else None
             fitting_function(data, x_name, y_name, fit_plot_name)
 
 
@@ -267,29 +263,31 @@ def apply_all_equations(
 # DATA LOADING COORDINATION WORKFLOWS
 # ============================================================================
 
-def coordinate_data_loading(parent_window, 
-                           ask_file_type_func: Callable, 
-                           ask_file_name_func: Callable,
-                           ask_variables_func: Callable) -> Tuple:
+def coordinate_data_loading(
+    parent_window: Any,
+    ask_file_type_func: Callable,
+    ask_file_name_func: Callable,
+    ask_variables_func: Callable,
+) -> Tuple[Union[pd.DataFrame, str], str, str, str, str, str]:
     """
     Coordinate the complete data loading workflow.
-    
+
     This function orchestrates the entire data loading process:
     1. Get available files
     2. Ask user for file type
     3. Ask user for specific file
     4. Load the data
     5. Ask user for variables to use
-    
+
     Args:
-        parent_window: Parent Tkinter window
-        ask_file_type_func: Function to ask for file type
-        ask_file_name_func: Function to ask for file name
-        ask_variables_func: Function to ask for variables
-        
+        parent_window: Parent Tkinter window.
+        ask_file_type_func: Function to ask for file type.
+        ask_file_name_func: Function to ask for file name.
+        ask_variables_func: Function to ask for variables.
+
     Returns:
-        Tuple: (data, x_name, y_name, plot_name, file_path, file_type)
-            Returns empty tuple if user cancels
+        Tuple (data, x_name, y_name, plot_name, file_path, file_type).
+        On user cancel, data is empty string and other fields are empty strings.
     """
     logger.info("Starting data loading workflow")
     empty_result = ('', '', '', '', '', '')
@@ -378,28 +376,37 @@ def coordinate_data_loading(parent_window,
     return data, x_name, y_name, plot_name, file_path, file_type
 
 
-def coordinate_data_viewing(parent_window,
-                            ask_file_type_func: Callable,
-                            ask_file_name_func: Callable,
-                            show_data_func: Callable) -> None:
+def coordinate_data_viewing(
+    parent_window: Any,
+    ask_file_type_func: Callable,
+    ask_file_name_func: Callable,
+    show_data_func: Callable,
+) -> None:
     """
     Coordinate the data viewing workflow.
-    
+
     This function orchestrates the process of selecting and displaying
     data from files without performing any fitting operations.
-    
+
     Args:
-        parent_window: Parent Tkinter window
-        ask_file_type_func: Function to ask for file type
-        ask_file_name_func: Function to ask for file name
-        show_data_func: Function to display data
+        parent_window: Parent Tkinter window.
+        ask_file_type_func: Function to ask for file type.
+        ask_file_name_func: Function to ask for file name.
+        show_data_func: Function to display data.
     """
-    # Get available files
-    csv, xls, xlsx = get_file_names()
-    
+    try:
+        csv, xls, xlsx = get_file_names()
+    except Exception as e:
+        logger.error(f"Failed to get available files: {str(e)}", exc_info=True)
+        messagebox.showerror(
+            t('error.title'),
+            t('error.file_list_error', error=str(e))
+        )
+        return
+
     # Frontend: Ask for file type
     file_type = ask_file_type_func(parent_window)
-    
+
     if file_type != EXIT_SIGNAL and file_type != '':
         # Backend: Get file list for selected type
         file_list = get_file_list_by_type(file_type, csv, xls, xlsx)
@@ -431,12 +438,12 @@ def coordinate_data_viewing(parent_window,
 # ============================================================================
 
 def coordinate_equation_selection(
-    parent_window,
+    parent_window: Any,
     ask_equation_type_func: Callable,
     ask_num_parameters_func: Callable,
     ask_parameter_names_func: Callable,
     ask_custom_formula_func: Callable,
-    get_fitting_function_func: Callable
+    get_fitting_function_func: Callable,
 ) -> Tuple[str, Optional[Callable]]:
     """
     Coordinate the equation selection workflow.
@@ -477,10 +484,10 @@ def coordinate_equation_selection(
 
 
 def coordinate_custom_equation(
-    parent_window,
+    parent_window: Any,
     ask_num_parameters_func: Callable,
     ask_parameter_names_func: Callable,
-    ask_custom_formula_func: Callable
+    ask_custom_formula_func: Callable,
 ) -> Tuple[str, Optional[Callable]]:
     """
     Coordinate the custom equation creation workflow.
