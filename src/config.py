@@ -368,7 +368,7 @@ when applying multiple equation fits to a dataset.
 # SPECIAL VALUES AND CONSTANTS
 # ============================================================================
 
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 """Application version. Keep in sync with version in pyproject.toml."""
 
 EXIT_SIGNAL = 'Salir'

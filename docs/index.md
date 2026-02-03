@@ -102,6 +102,6 @@ If you need assistance:
 
 ---
 
-**Version**: 0.8.1  
+**Version**: 0.8.2  
 **Author**: Alejandro Mata Ali  
 **License**: MIT

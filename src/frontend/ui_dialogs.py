@@ -1107,6 +1107,24 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
 
 {remove_markdown_bold(t('help.output_logs'))}
 
+{remove_markdown_bold(t('help.stats_title'))}
+──────────────────────────────────────────────────
+
+{remove_markdown_bold(t('help.r_squared_desc'))}
+{remove_markdown_bold(t('help.r_squared_formula'))}
+
+{remove_markdown_bold(t('help.chi_squared_desc'))}
+{remove_markdown_bold(t('help.chi_squared_formula'))}
+
+{remove_markdown_bold(t('help.reduced_chi_squared_desc'))}
+{remove_markdown_bold(t('help.reduced_chi_squared_formula'))}
+
+{remove_markdown_bold(t('help.dof_desc'))}
+{remove_markdown_bold(t('help.dof_formula'))}
+
+{remove_markdown_bold(t('help.param_ci_95_desc'))}
+{remove_markdown_bold(t('help.param_ci_95_formula'))}
+
 ═════════════════════════════════════════════════
 """
     # Insert content

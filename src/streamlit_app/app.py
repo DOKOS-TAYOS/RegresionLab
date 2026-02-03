@@ -52,20 +52,28 @@ except Exception as e:
 # ============================================================================
 
 EQUATION_FORMULAS = {
-    'linear_function_with_n': 'y=mx+n',
-    'linear_function': 'y=mx',
-    'quadratic_function_complete': 'y=cx²+bx+a',
-    'quadratic_function': 'y=ax²',
-    'fourth_power': 'y=ax⁴',
-    'sin_function': 'y=a sin(bx)',
-    'sin_function_with_c': 'y=a sin(bx+c)',
-    'cos_function': 'y=a cos(bx)',
-    'cos_function_with_c': 'y=a cos(bx+c)',
-    'sinh_function': 'y=a sinh(bx)',
-    'cosh_function': 'y=a cosh(bx)',
-    'ln_function': 'y=a ln(x)',
-    'inverse_function': 'y=a/x',
-    'inverse_square_function': 'y=a/x²',
+    'linear_function_with_n': 'y = mx + n',
+    'linear_function': 'y = mx',
+    'quadratic_function_complete': 'y = ax² + bx + c',
+    'quadratic_function': 'y = ax²',
+    'fourth_power': 'y = ax⁴',
+    'sin_function': 'y = a·sin(bx)',
+    'sin_function_with_c': 'y = a·sin(bx + c)',
+    'cos_function': 'y = a·cos(bx)',
+    'cos_function_with_c': 'y = a·cos(bx + c)',
+    'sinh_function': 'y = a·sinh(bx)',
+    'cosh_function': 'y = a·cosh(bx)',
+    'ln_function': 'y = a·ln(x)',
+    'inverse_function': 'y = a/x',
+    'inverse_square_function': 'y = a/x²',
+    'gaussian_function': 'y = a·exp(-(x-μ)²/(2σ²))',
+    'exponential_function': 'y = a·exp(bx)',
+    'binomial_function': 'y = L/(1 + exp(-k(x-x₀)))',
+    'tan_function': 'y = a·tan(bx)',
+    'tan_function_with_c': 'y = a·tan(bx + c)',
+    'square_pulse_function': 'y = a si |x-x₀| ≤ w/2, else 0',
+    'hermite_polynomial_3': 'y = Σ cᵢ·Hᵢ(x) (grado 0-3)',
+    'hermite_polynomial_4': 'y = Σ cᵢ·Hᵢ(x) (grado 0-4)',
 }
 
 SIDEBAR_CSS = """
@@ -368,6 +376,19 @@ def show_help_section() -> None:
         
         # Data Location Section
         st.markdown(t('help.data_formats'))
+        
+        # Fitting statistics Section
+        st.subheader(t('help.stats_title').strip())
+        st.markdown(t('help.r_squared_desc'))
+        st.markdown(t('help.r_squared_formula'))
+        st.markdown(t('help.chi_squared_desc'))
+        st.markdown(t('help.chi_squared_formula'))
+        st.markdown(t('help.reduced_chi_squared_desc'))
+        st.markdown(t('help.reduced_chi_squared_formula'))
+        st.markdown(t('help.dof_desc'))
+        st.markdown(t('help.dof_formula'))
+        st.markdown(t('help.param_ci_95_desc'))
+        st.markdown(t('help.param_ci_95_formula'))
         
         # Donations link (if configured in .env)
         from config import DONATIONS_URL

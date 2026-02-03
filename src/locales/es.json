@@ -164,6 +164,17 @@
     "data_formats": "• Formatos soportados: .xlsx, .xls, .csv",
     "output_location": "\n💾 Resultados",
     "output_plots": "• Las gráficas se guardan en la carpeta 'output/'",
-    "output_logs": "• Los logs se guardan en 'regressionlab.log'"
+    "output_logs": "• Los logs se guardan en 'regressionlab.log'",
+    "stats_title": "\n📈 Estadísticos del ajuste",
+    "r_squared_desc": "• **R² (coeficiente de determinación)**: Proporción de la varianza de y explicada por el modelo. Valor entre 0 y 1; cuanto más cercano a 1, mejor el ajuste.",
+    "r_squared_formula": "  Fórmula: R² = 1 − SS_res/SS_tot, con SS_res = Σ(y−ŷ)² y SS_tot = Σ(y−ȳ)² (ŷ = valor ajustado, ȳ = media de y).",
+    "chi_squared_desc": "• **χ² (chi cuadrado)**: Suma de los cuadrados de los residuos ponderados por las incertidumbres. Valores más bajos indican mejor ajuste cuando las incertidumbres están bien estimadas.",
+    "chi_squared_formula": "  Fórmula: χ² = Σ [(y−ŷ)/u_y]², donde u_y es la incertidumbre de cada valor de y.",
+    "reduced_chi_squared_desc": "• **χ²_red (chi cuadrado reducido)**: χ² dividido por los grados de libertad. Un valor próximo a 1 sugiere que las incertidumbres son coherentes con el ajuste.",
+    "reduced_chi_squared_formula": "  Fórmula: χ²_red = χ²/ν.",
+    "dof_desc": "• **ν (grados de libertad)**: Número de puntos menos número de parámetros ajustados. Cuantifica la información restante tras el ajuste.",
+    "dof_formula": "  Fórmula: ν = n − p (n = número de puntos, p = número de parámetros).",
+    "param_ci_95_desc": "• **IC 95% (intervalo de confianza al 95%)**: Para cada parámetro, rango dentro del cual se espera el valor verdadero con un 95% de confianza (distribución t).",
+    "param_ci_95_formula": "  Cálculo: [θ − t·σ_θ, θ + t·σ_θ], donde θ es el parámetro, σ_θ su incertidumbre y t el percentil 97,5% de la t de Student con ν grados de libertad."
   }
 }

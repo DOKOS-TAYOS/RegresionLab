@@ -164,6 +164,17 @@
     "data_formats": "• Unterstützte Formate: .xlsx, .xls, .csv",
     "output_location": "\n💾 Ergebnisse",
     "output_plots": "• Diagramme werden im Ordner 'output/' gespeichert",
-    "output_logs": "• Logs werden in 'regressionlab.log' gespeichert"
+    "output_logs": "• Logs werden in 'regressionlab.log' gespeichert",
+    "stats_title": "\n📈 Anpassungsstatistiken",
+    "r_squared_desc": "• **R² (Bestimmtheitsmaß)**: Anteil der Varianz von y, der durch das Modell erklärt wird. Wert zwischen 0 und 1; je näher an 1, desto besser die Anpassung.",
+    "r_squared_formula": "  Formel: R² = 1 − SS_res/SS_tot, mit SS_res = Σ(y−ŷ)² und SS_tot = Σ(y−ȳ)² (ŷ = angepasster Wert, ȳ = Mittelwert von y).",
+    "chi_squared_desc": "• **χ² (Chi-Quadrat)**: Summe der quadrierten, mit den Unsicherheiten gewichteten Residuen. Niedrigere Werte bedeuten bessere Anpassung bei gut geschätzten Unsicherheiten.",
+    "chi_squared_formula": "  Formel: χ² = Σ [(y−ŷ)/u_y]², wobei u_y die Unsicherheit jedes y-Werts ist.",
+    "reduced_chi_squared_desc": "• **χ²_red (reduziertes Chi-Quadrat)**: χ² geteilt durch die Freiheitsgrade. Ein Wert nahe 1 deutet darauf hin, dass die Unsicherheiten zum Fit passen.",
+    "reduced_chi_squared_formula": "  Formel: χ²_red = χ²/ν.",
+    "dof_desc": "• **ν (Freiheitsgrade)**: Anzahl der Datenpunkte minus Anzahl der angepassten Parameter. Gibt die nach dem Fit verbleibende Information an.",
+    "dof_formula": "  Formel: ν = n − p (n = Anzahl der Punkte, p = Anzahl der Parameter).",
+    "param_ci_95_desc": "• **95%-KI (95%-Konfidenzintervall)**: Für jeden Parameter der Bereich, in dem der wahre Wert mit 95% Konfidenz erwartet wird (t-Verteilung).",
+    "param_ci_95_formula": "  Berechnung: [θ − t·σ_θ, θ + t·σ_θ], wobei θ der Parameter, σ_θ seine Unsicherheit und t das 97,5%-Quantil der t-Verteilung mit ν Freiheitsgraden ist."
   }
 }

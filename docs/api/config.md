@@ -11,7 +11,7 @@ The `config.py` module centralizes all application configuration, constants, and
 ### Application Metadata
 
 ```python
-__version__ = "0.8.1"
+__version__ = "0.8.2"
 __author__ = "Alejandro Mata Ali"
 __email__ = "alejandro.mata.ali@gmail.com"
 ```
