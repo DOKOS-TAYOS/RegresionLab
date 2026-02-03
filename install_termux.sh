@@ -131,14 +131,10 @@ else
 fi
 INSTALL_PKG="${INSTALL_PKG:-y}"
 if [[ "$INSTALL_PKG" =~ ^[Yy]$ ]]; then
-    echo "Installing python-numpy, matplotlib, python-pandas (main repo)..."
-    pkg install -y python-numpy matplotlib python-pandas 2>/dev/null || true
-    if ! pkg show python-scipy &>/dev/null; then
-        echo "Adding TUR repo for python-scipy..."
-        pkg install -y tur-repo 2>/dev/null || true
-    fi
-    echo "Installing python-scipy..."
-    pkg install -y python-scipy 2>/dev/null || true
+    echo "Adding TUR repo (needed for python-scipy and python-pandas)..."
+    pkg install -y tur-repo || true
+    echo "Installing python-numpy, python-scipy, python-pandas, matplotlib..."
+    pkg install -y python-numpy python-scipy python-pandas matplotlib || true
     echo "Scientific packages installed (or already present)."
 else
     echo "Skipped. Pip may compile numpy/scipy later (can take a long time on device)."
