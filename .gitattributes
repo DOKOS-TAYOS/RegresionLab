@@ -1,0 +1,2 @@
+# Force LF for shell scripts (avoids CRLF issues on Termux/Unix)
+*.sh text eol=lf
