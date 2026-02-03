@@ -21,6 +21,13 @@
 #     curl -sL https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/dev/install_termux.sh | sed 's/\r$//' | bash
 #
 # Requires: Termux (recommended from F-Droid).
+#
+# PKG INSTALLS (script runs these; for reference if you need them manually):
+#   pkg install git
+#   pkg install python
+#   pkg install tur-repo
+#   pkg install python-numpy python-scipy python-pandas python-pyarrow matplotlib
+#   pkg install python-tkinter
 # ============================================================================
 
 set -e
@@ -294,10 +301,9 @@ cat > "$RUN_SCRIPT" << 'RUNEOF'
 #!/data/data/com.termux/files/usr/bin/bash
 cd "$(dirname "$0")"
 source venv/bin/activate
-# Tkinter needs a display: open Termux:X11 app first, then run this script
-export DISPLAY="${DISPLAY:-:0}"
-echo "Starting RegressionLab (Tkinter)..."
-exec python -m src.main_program
+echo "Starting RegressionLab (Streamlit)..."
+echo "Open in browser: http://localhost:8501"
+exec streamlit run src/streamlit_app/app.py --server.headless true
 RUNEOF
 chmod +x "$RUN_SCRIPT"
 
@@ -306,12 +312,12 @@ if [ -d "$DOWNLOADS" ]; then
     SHORTCUT="$DOWNLOADS/run_regressionlab.sh"
     cat > "$SHORTCUT" << SHORTCUTEOF
 #!/data/data/com.termux/files/usr/bin/bash
-# RegressionLab launcher (Tkinter). Open Termux:X11 first, then run this.
+# RegressionLab launcher (Streamlit) - run from Termux: bash run_regressionlab.sh
 cd "$INSTALL_DIR" || exit 1
 source venv/bin/activate
-export DISPLAY="\${DISPLAY:-:0}"
-echo "Starting RegressionLab (Tkinter)..."
-exec python -m src.main_program
+echo "Starting RegressionLab (Streamlit)..."
+echo "Open in browser: http://localhost:8501"
+exec streamlit run src/streamlit_app/app.py --server.headless true
 SHORTCUTEOF
     chmod +x "$SHORTCUT"
     echo "Shortcut created: $SHORTCUT"
@@ -334,10 +340,9 @@ echo "===================================="
 echo ""
 echo "Installation directory: $INSTALL_DIR"
 echo ""
-echo "To run RegressionLab (Tkinter):"
-echo "  1. Open the Termux:X11 app (install from F-Droid if needed)"
-echo "  2. In Termux: bash $RUN_SCRIPT"
-echo "  Or: cd $INSTALL_DIR && source venv/bin/activate && export DISPLAY=:0 && python -m src.main_program"
+echo "To run RegressionLab (Streamlit):"
+echo "  bash $RUN_SCRIPT"
+echo "  Or: cd $INSTALL_DIR && source venv/bin/activate && streamlit run src/streamlit_app/app.py"
 echo ""
 if [ -f "$RUN_SCRIPT" ]; then
     echo "Or run: bash $RUN_SCRIPT"
