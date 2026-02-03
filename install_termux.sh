@@ -140,6 +140,10 @@ else
     echo "Skipped. Pip may compile numpy/scipy later (can take a long time on device)."
 fi
 
+# Tkinter is required for the GUI (shortcut runs Tkinter version)
+echo "Installing python-tkinter (required for GUI)..."
+pkg install -y python-tkinter || true
+
 # ----------------------------------------------------------------------------
 # 4. Clone repository
 # ----------------------------------------------------------------------------
