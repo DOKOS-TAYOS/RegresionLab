@@ -22,7 +22,9 @@ from typing import Any, Optional, Type, Union
 try:
     from dotenv import load_dotenv
     env_path = Path(__file__).parent.parent / '.env'
-    load_dotenv(dotenv_path=env_path)
+    # override=True so that after saving config and restarting (execv), the new
+    # .env values override the inherited process environment and are applied
+    load_dotenv(dotenv_path=env_path, override=True)
 except ImportError:
     pass
 
