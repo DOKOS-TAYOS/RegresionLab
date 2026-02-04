@@ -1396,6 +1396,11 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
     parent_window.wait_window(help_level)
 
 
+# Unicode symbols for collapsible section headers (expand/collapse)
+_CONFIG_COLLAPSED = '\u25b6'   # ▶
+_CONFIG_EXPANDED = '\u25bc'    # ▼
+
+
 def _config_section_for_key(key: str) -> str:
     """Return section key for grouping env vars in config dialog."""
     if key == 'LANGUAGE':
@@ -1413,6 +1418,19 @@ def _config_section_for_key(key: str) -> str:
     if key.startswith('LOG_'):
         return 'logging'
     return 'other'
+
+
+def _build_config_sections() -> List[Tuple[str, List[dict]]]:
+    """Group ENV_SCHEMA items by section, preserving order of first occurrence."""
+    order: List[str] = []
+    sections_dict: dict[str, List[dict]] = {}
+    for item in ENV_SCHEMA:
+        section = _config_section_for_key(item['key'])
+        if section not in sections_dict:
+            sections_dict[section] = []
+            order.append(section)
+        sections_dict[section].append(item)
+    return [(sec, sections_dict[sec]) for sec in order]
 
 
 def show_config_dialog(parent_window: Any) -> bool:
@@ -1481,7 +1499,17 @@ def show_config_dialog(parent_window: Any) -> bool:
             canvas.yview_scroll(-1, 'units')
         return 'break'
 
+    def _bind_mousewheel_recursive(widget: Any) -> None:
+        """Bind mouse wheel to widget and all descendants so scroll works over any control."""
+        widget.bind('<MouseWheel>', _on_mousewheel)
+        widget.bind('<Button-4>', _on_mousewheel)
+        widget.bind('<Button-5>', _on_mousewheel)
+        for child in widget.winfo_children():
+            _bind_mousewheel_recursive(child)
+
     canvas.bind('<MouseWheel>', _on_mousewheel)
+    canvas.bind('<Button-4>', _on_mousewheel)
+    canvas.bind('<Button-5>', _on_mousewheel)
     inner.bind('<MouseWheel>', _on_mousewheel)
     inner.bind('<Button-4>', _on_mousewheel)
     inner.bind('<Button-5>', _on_mousewheel)
@@ -1506,68 +1534,128 @@ def show_config_dialog(parent_window: Any) -> bool:
     }
 
     entries: dict[str, Tuple[str, Union[BooleanVar, StringVar]]] = {}
+    config_desc_labels: List[Label] = []
     row_index = 0
-    last_section: Optional[str] = None
+    section_header_style = {
+        'bg': UI_STYLE['bg'],
+        'fg': UI_STYLE['fg'],
+        'font': (UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold'),
+    }
 
-    # All keys in ENV_SCHEMA are shown (language, UI, plot, font, paths including FILE_PLOT_FORMAT, links, logging)
-    for item in ENV_SCHEMA:
-        key = item['key']
-        default = item['default']
-        cast_type = item['cast_type']
-        section = _config_section_for_key(key)
-
-        if section != last_section:
-            section_label = Label(
-                inner,
-                text=t(f'config.section_{section}'),
-                bg=UI_STYLE['bg'],
-                fg=UI_STYLE['fg'],
-                font=(UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold'),
-            )
-            section_label.grid(row=row_index, column=0, columnspan=2, sticky='w', padx=4, pady=(12, 4))
-            row_index += 1
-            last_section = section
-
-        label_text = t(f'config.label_{key}')
-        Label(inner, text=label_text, **lbl_style).grid(row=row_index, column=0, sticky='w', padx=4, pady=2)
-        desc_text = t(f'config.desc_{key}')
-        desc_lbl = Label(inner, text=desc_text, **desc_style, wraplength=400, justify='left')
-        desc_lbl.grid(row=row_index + 1, column=0, columnspan=2, sticky='w', padx=12, pady=(0, 6))
-        row_index += 2
-
-        if cast_type == bool:
-            var = BooleanVar(value=current.get(key, 'false').lower() in ('true', '1', 'yes'))
-            cb = Checkbutton(inner, variable=var, **lbl_style, selectcolor=UI_STYLE['bg'])
-            cb.grid(row=row_index, column=0, columnspan=2, sticky='w', padx=4, pady=2)
-            entries[key] = ('check', var)
-        else:
-            raw_val = current.get(key, str(default))
-            opts = item.get('options')
-            if opts:
-                # Ensure initial value is in the dropdown (e.g. env may have lowercase)
-                opts_list = list(opts)
-                if raw_val in opts_list:
-                    sv = StringVar(value=raw_val)
-                else:
-                    normalized = str(raw_val).upper() if key == 'LOG_LEVEL' else str(raw_val).lower()
-                    sv = StringVar(value=normalized if normalized in opts_list else str(default))
-                combo = ttk.Combobox(
-                    inner,
-                    textvariable=sv,
-                    values=opts_list,
-                    state='readonly',
-                    width=entry_style['width'],
-                )
-                combo.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
-                entries[key] = ('entry', sv)
-            else:
-                sv = StringVar(value=current.get(key, str(default)))
-                ent = Entry(inner, textvariable=sv, **entry_style)
-                ent.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
-                entries[key] = ('entry', sv)
+    for section, section_items in _build_config_sections():
+        # Header: clickable row with arrow + section title
+        header_frame = Frame(inner, bg=UI_STYLE['bg'], cursor='hand2')
+        arrow_var = StringVar(value=_CONFIG_COLLAPSED)
+        arrow_lbl = Label(header_frame, textvariable=arrow_var, **section_header_style)
+        arrow_lbl.pack(side='left', padx=(0, 4))
+        title_lbl = Label(header_frame, text=t(f'config.section_{section}'), **section_header_style)
+        title_lbl.pack(side='left')
+        header_frame.grid(row=row_index, column=0, columnspan=2, sticky='w', padx=4, pady=(12, 4))
         row_index += 1
 
+        # Content frame for this section (can be collapsed); start closed
+        section_frame = Frame(inner, bg=UI_STYLE['bg'])
+        section_frame.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
+        section_frame.grid_remove()
+        row_index += 1
+
+        sub_row = 0
+        for item in section_items:
+            key = item['key']
+            default = item['default']
+            cast_type = item['cast_type']
+
+            label_text = t(f'config.label_{key}')
+            Label(section_frame, text=label_text, **lbl_style).grid(
+                row=sub_row, column=0, sticky='w', padx=4, pady=2
+            )
+            desc_text = t(f'config.desc_{key}')
+            desc_lbl = Label(
+                section_frame, text=desc_text, **desc_style, wraplength=600, justify='left'
+            )
+            desc_lbl.grid(row=sub_row + 1, column=0, columnspan=2, sticky='w', padx=12, pady=(0, 6))
+            config_desc_labels.append(desc_lbl)
+            sub_row += 2
+
+            if cast_type == bool:
+                var = BooleanVar(value=current.get(key, 'false').lower() in ('true', '1', 'yes'))
+                cb = Checkbutton(
+                    section_frame, variable=var, **lbl_style, selectcolor=UI_STYLE['bg']
+                )
+                cb.grid(row=sub_row, column=0, columnspan=2, sticky='w', padx=4, pady=2)
+                entries[key] = ('check', var)
+            else:
+                raw_val = current.get(key, str(default))
+                opts = item.get('options')
+                if opts:
+                    opts_list = list(opts)
+                    if raw_val in opts_list:
+                        sv = StringVar(value=raw_val)
+                    else:
+                        normalized = (
+                            str(raw_val).upper()
+                            if key == 'LOG_LEVEL'
+                            else str(raw_val).lower()
+                        )
+                        sv = StringVar(
+                            value=normalized if normalized in opts_list else str(default)
+                        )
+                    combo = ttk.Combobox(
+                        section_frame,
+                        textvariable=sv,
+                        values=opts_list,
+                        state='readonly',
+                        width=entry_style['width'],
+                        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+                    )
+                    combo.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
+                    entries[key] = ('entry', sv)
+                else:
+                    sv = StringVar(value=current.get(key, str(default)))
+                    ent = Entry(section_frame, textvariable=sv, **entry_style)
+                    ent.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
+                    entries[key] = ('entry', sv)
+            sub_row += 1
+
+        section_frame.columnconfigure(0, weight=1)
+
+        def _make_toggle(
+            content: Frame,
+            arrow: StringVar,
+            header_fr: Frame,
+            arrow_label: Label,
+            title_label: Label,
+        ) -> None:
+            def toggle() -> None:
+                if content.winfo_viewable():
+                    content.grid_remove()
+                    arrow.set(_CONFIG_COLLAPSED)
+                else:
+                    content.grid()
+                    arrow.set(_CONFIG_EXPANDED)
+                config_level.update_idletasks()
+                canvas.configure(scrollregion=canvas.bbox('all'))
+                config_level.after_idle(
+                    lambda: canvas.configure(scrollregion=canvas.bbox('all'))
+                )
+
+            for w in (header_fr, arrow_label, title_label):
+                w.bind('<Button-1>', lambda e: toggle())
+
+        _make_toggle(section_frame, arrow_var, header_frame, arrow_lbl, title_lbl)
+
     inner.columnconfigure(0, weight=1)
+    _bind_mousewheel_recursive(inner)
+
+    def _update_config_wraplength(_e: Any = None) -> None:
+        """Update description labels wraplength to use full dialog width."""
+        w = inner.winfo_width()
+        if w > 80:
+            wrap = max(120, w - 48)
+            for lbl in config_desc_labels:
+                lbl.configure(wraplength=wrap)
+
+    inner.bind('<Configure>', _update_config_wraplength)
 
     def on_accept() -> None:
         values: dict[str, str] = {}
@@ -1645,6 +1733,8 @@ def show_config_dialog(parent_window: Any) -> bool:
     dialog_height = min(800, int(screen_height * 0.85))
     config_level.geometry(f'{dialog_width}x{dialog_height}+{max(0, (screen_width - dialog_width) // 2)}+{max(0, (screen_height - dialog_height) // 2)}')
     config_level.resizable(True, True)
+    config_level.update_idletasks()
+    _update_config_wraplength()
 
     config_level.protocol('WM_DELETE_WINDOW', on_cancel)
     parent_window.wait_window(config_level)
