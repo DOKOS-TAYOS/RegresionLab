@@ -38,7 +38,7 @@ Validate that a file type is supported.
 
 **Parameters:**
 - `file_type`: File extension (e.g., 'csv', 'xlsx')
-- `allowed_types`: List of allowed file types (default: ['csv', 'xls', 'xlsx'])
+- `allowed_types`: List of allowed file types (default: ['csv', 'xlsx', 'txt'])
 
 **Raises:**
 - `InvalidFileTypeError`: If file type is not supported

@@ -156,7 +156,7 @@ class TestConfigConstants(unittest.TestCase):
     def test_file_config_exists(self) -> None:
         """Test file configuration exists."""
         self.assertIsInstance(FILE_CONFIG, dict)
-        required_keys = ['input_dir', 'output_dir', 'filename_template']
+        required_keys = ['input_dir', 'output_dir', 'filename_template', 'plot_format']
         for key in required_keys:
             self.assertIn(key, FILE_CONFIG)
     

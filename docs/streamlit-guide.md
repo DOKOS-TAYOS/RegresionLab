@@ -94,7 +94,7 @@ The Streamlit interface consists of three main areas:
 
 2. **Upload Data**:
    - Click "Browse files" or drag and drop your file
-   - Supported formats: CSV, XLS, XLSX
+   - Supported formats: CSV, XLSX, TXT
    - Wait for the file to upload and process
 
 3. **View Data** (Optional):
@@ -318,7 +318,8 @@ If "Custom Formula" is selected:
 ### Supported Formats
 
 - **CSV** (`.csv`): Comma-separated values
-- **Excel** (`.xls`, `.xlsx`): Microsoft Excel files
+- **Excel** (`.xlsx`): Microsoft Excel files
+- **TXT** (`.txt`): Tab-separated or space-separated text files
 
 ### File Size Limits
 
@@ -461,7 +462,7 @@ If your data has uncertainties:
 **Problem**: File won't upload
 
 **Solutions**:
-- Check file format (CSV, XLS, XLSX only)
+- Check file format (CSV, XLSX, TXT only)
 - Try smaller file
 - Check internet connection (online version)
 - Refresh page and try again

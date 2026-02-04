@@ -57,11 +57,6 @@ class TestPrepareDataPath(unittest.TestCase):
         path = prepare_data_path('test_file', 'xlsx')
         self.assertTrue(path.endswith('.xlsx'))
     
-    def test_xls_path(self) -> None:
-        """Test preparing path for XLS file."""
-        path = prepare_data_path('test_file', 'xls')
-        self.assertTrue(path.endswith('.xls'))
-    
     def test_custom_base_dir(self) -> None:
         """Test preparing path with custom base directory."""
         path = prepare_data_path('test_file', 'csv', base_dir='custom_dir')
@@ -112,38 +107,38 @@ class TestGetFileListByType(unittest.TestCase):
     def setUp(self) -> None:
         """Set up test file lists."""
         self.csv_files = ['file1', 'file2']
-        self.xls_files = ['file3']
         self.xlsx_files = ['file4', 'file5', 'file6']
+        self.txt_files = ['file7']
     
     def test_get_csv_files(self) -> None:
         """Test getting CSV file list."""
         result = get_file_list_by_type(
             'csv',
             self.csv_files,
-            self.xls_files,
-            self.xlsx_files
+            self.xlsx_files,
+            self.txt_files
         )
         self.assertEqual(result, self.csv_files)
-    
-    def test_get_xls_files(self) -> None:
-        """Test getting XLS file list."""
-        result = get_file_list_by_type(
-            'xls',
-            self.csv_files,
-            self.xls_files,
-            self.xlsx_files
-        )
-        self.assertEqual(result, self.xls_files)
     
     def test_get_xlsx_files(self) -> None:
         """Test getting XLSX file list."""
         result = get_file_list_by_type(
             'xlsx',
             self.csv_files,
-            self.xls_files,
-            self.xlsx_files
+            self.xlsx_files,
+            self.txt_files
         )
         self.assertEqual(result, self.xlsx_files)
+    
+    def test_get_txt_files(self) -> None:
+        """Test getting TXT file list."""
+        result = get_file_list_by_type(
+            'txt',
+            self.csv_files,
+            self.xlsx_files,
+            self.txt_files
+        )
+        self.assertEqual(result, self.txt_files)
     
     def test_invalid_file_type(self) -> None:
         """Test invalid file type raises error."""
@@ -151,8 +146,8 @@ class TestGetFileListByType(unittest.TestCase):
             get_file_list_by_type(
                 'pdf',
                 self.csv_files,
-                self.xls_files,
-                self.xlsx_files
+                self.xlsx_files,
+                self.txt_files
             )
     
     def test_empty_lists(self) -> None:

@@ -32,7 +32,7 @@ Single file, single equation fitting.
 **Function:** `mode_normal_fitting(equation_types: List[str]) -> None`
 
 **Features:**
-- File upload (CSV, XLS, XLSX)
+- File upload (CSV, XLSX, TXT)
 - Variable selection
 - Equation selection (including custom)
 - Single fit execution
@@ -332,7 +332,7 @@ Creates a session-specific temporary directory that persists during the session.
 
 ### File Upload
 
-- Supports CSV, XLS, XLSX formats
+- Supports CSV, XLSX, TXT formats
 - Files are temporarily saved for processing
 - Automatic cleanup after processing
 

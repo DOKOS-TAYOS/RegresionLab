@@ -65,10 +65,6 @@ class TestValidateFileType(unittest.TestCase):
         """Test validation passes for csv."""
         validate_file_type('csv')
     
-    def test_valid_xls(self) -> None:
-        """Test validation passes for xls."""
-        validate_file_type('xls')
-    
     def test_valid_xlsx(self) -> None:
         """Test validation passes for xlsx."""
         validate_file_type('xlsx')

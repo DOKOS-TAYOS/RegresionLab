@@ -71,7 +71,7 @@ Exception raised when file type is not supported.
 ```python
 from utils.exceptions import InvalidFileTypeError
 
-if file_type not in ['csv', 'xls', 'xlsx']:
+if file_type not in ['csv', 'xlsx', 'txt']:
     raise InvalidFileTypeError(f"File type {file_type} not supported")
 ```
 

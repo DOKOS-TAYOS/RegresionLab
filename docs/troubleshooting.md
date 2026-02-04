@@ -159,7 +159,7 @@ ModuleNotFoundError: No module named 'numpy'
 1. Check file exists in specified location
 2. Use absolute path if relative path fails
 3. Check file permissions (read access required)
-4. Verify file extension (.csv, .xlsx, .xls)
+4. Verify file extension (.csv, .xlsx, .txt)
 
 #### Problem: CSV File Appears Empty
 
@@ -327,7 +327,7 @@ Reset to default theme:
 
 **Solution**:
 1. Check file size (< 200 MB for online version)
-2. Verify file format (CSV, XLS, XLSX)
+2. Verify file format (CSV, XLSX, TXT)
 3. Clear browser cache and retry
 4. Try different browser
 5. Check browser console for JavaScript errors (F12)

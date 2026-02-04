@@ -12,13 +12,13 @@ The `ui_dialogs.py` module provides all dialog windows used in the Tkinter inter
 
 Dialog to ask for data file type.
 
-Presents radio buttons with file type options (xlsx, xls, csv, Exit/Salir). User can select one option.
+Presents radio buttons with file type options (xlsx, csv, txt, Exit/Salir). User can select one option.
 
 **Parameters:**
 - `parent_window`: Parent Tkinter window
 
 **Returns:**
-- Selected file type ('csv', 'xls', 'xlsx', EXIT_SIGNAL, or '')
+- Selected file type ('csv', 'xlsx', 'txt', EXIT_SIGNAL, or '')
 
 **Example:**
 ```python

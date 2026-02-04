@@ -18,7 +18,7 @@ This function is used in loop mode to reload updated data from the same file. Us
 
 **Parameters:**
 - `file_path`: Path to the data file
-- `file_type`: Type of file ('csv', 'xls', 'xlsx')
+- `file_type`: Type of file ('csv', 'xlsx', 'txt')
 
 **Returns:**
 - Loaded data as DataFrame
@@ -55,7 +55,7 @@ This function performs an initial fit and then optionally loops, reloading data 
 - `y_name`: Y variable column name
 - `plot_name`: Plot name for window titles and filename
 - `data_file_path`: Path to data file for reloading
-- `data_file_type`: File type ('csv', 'xls', 'xlsx')
+- `data_file_type`: File type ('csv', 'xlsx', 'txt')
 
 **Example:**
 ```python
@@ -89,7 +89,7 @@ Performs fitting on multiple datasets sequentially, with the option to reload an
   - `'y_name'`: Y variable column name
   - `'plot_name'`: plot name for display and filename
   - `'file_path'`: path to data file for reloading
-  - `'file_type'`: file type ('csv', 'xls', 'xlsx')
+  - `'file_type'`: file type ('csv', 'xlsx', 'txt')
 
 **Example:**
 ```python
