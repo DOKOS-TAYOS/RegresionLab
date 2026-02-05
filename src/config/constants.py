@@ -97,6 +97,6 @@ MATH_FUNCTION_REPLACEMENTS = {
 # reference this constant instead of hardcoding ['csv', 'xlsx', 'txt'].
 DATA_FILE_TYPES = ('csv', 'xlsx', 'txt')
 
-__version__ = "0.8.2"
+__version__ = "0.8.3"
 
 EXIT_SIGNAL = 'Salir'
