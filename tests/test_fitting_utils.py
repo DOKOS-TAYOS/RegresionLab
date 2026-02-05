@@ -17,10 +17,12 @@ sys.path.insert(0, str(src_path))
 
 from fitting.fitting_utils import (
     format_parameter,
-    estimate_trigonometric_parameters,
-    estimate_phase_shift,
     generic_fit,
-    get_fitting_function
+    get_fitting_function,
+)
+from fitting.estimators import (
+    estimate_phase_shift,
+    estimate_trigonometric_parameters,
 )
 from fitting.fitting_functions import linear_function, sin_function
 from utils.exceptions import FittingError

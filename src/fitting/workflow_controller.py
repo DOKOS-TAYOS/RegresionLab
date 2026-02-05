@@ -5,16 +5,24 @@ Workflow controller for fitting operations.
 Contains coordination functions and workflow patterns for the fitting application.
 """
 
+# Standard library
 from tkinter import messagebox
-from typing import Callable, Any, List, Dict, Tuple, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+
+# Third-party packages
 import pandas as pd
 
-from loaders.loading_utils import csv_reader, excel_reader, get_file_names
-from loaders.data_loader import load_data_workflow, get_variable_names, get_file_list_by_type
+# Local imports
+from config import EXIT_SIGNAL
+from i18n import t
+from loaders.data_loader import (
+    get_file_list_by_type,
+    get_variable_names,
+    load_data_workflow,
+)
+from loaders.loading_utils import csv_reader, excel_reader, get_file_names, txt_reader
 from utils.exceptions import DataLoadError
 from utils.logger import get_logger
-from i18n import t
-from config import EXIT_SIGNAL
 
 logger = get_logger(__name__)
 
@@ -33,7 +41,7 @@ def reload_data_by_type(file_path: str, file_type: str) -> pd.DataFrame:
     
     Args:
         file_path: Path to the data file
-        file_type: Type of file ('csv', 'xls', 'xlsx')
+        file_type: Type of file ('csv', 'xlsx', 'txt')
         
     Returns:
         Loaded data as DataFrame
@@ -46,8 +54,10 @@ def reload_data_by_type(file_path: str, file_type: str) -> pd.DataFrame:
     try:
         if file_type == 'csv':
             data = csv_reader(file_path)
-        elif file_type in ('xls', 'xlsx'):
+        elif file_type == 'xlsx':
             data = excel_reader(file_path)
+        elif file_type == 'txt':
+            data = txt_reader(file_path)
         else:
             logger.error(t('log.unsupported_file_type', file_type=file_type))
             raise DataLoadError(t('error.unsupported_file_type', file_type=file_type))
@@ -94,7 +104,7 @@ def single_fit_with_loop(
         y_name: Y variable column name
         plot_name: Plot name for window titles and filename
         data_file_path: Path to data file for reloading
-        data_file_type: File type ('csv', 'xls', 'xlsx')
+        data_file_type: File type ('csv', 'xlsx', 'txt')
     """
     logger.info(f"Starting single fit with loop: {plot_name}")
     
@@ -125,7 +135,10 @@ def single_fit_with_loop(
             fitter_function(data, x_name, y_name, plot_name)
             logger.debug(f"Loop iteration {iteration} completed successfully")
         except Exception as e:
-            logger.error(t('log.error_in_iteration', iteration=iteration, error=str(e)), exc_info=True)
+            logger.error(
+                t('log.error_in_iteration', iteration=iteration, error=str(e)),
+                exc_info=True
+            )
             # Error is handled by fitter_function wrapper or messagebox
         
         # Ask if user wants another iteration
@@ -156,35 +169,31 @@ def multiple_fit_with_loop(
     4. Repeat until no datasets are marked to continue
     
     Args:
-        fitter_function: Fitting function to call (must accept data, x_name, y_name, plot_name)
+        fitter_function: Fitting function to call (must accept data, x_name, y_name, plot_name).
         datasets: List of dictionaries, each containing:
                   - 'data': dataset (pandas DataFrame)
                   - 'x_name': X variable column name
                   - 'y_name': Y variable column name
                   - 'plot_name': plot name for display and filename
-                  - 'file_path': path to data file for reloading
-                  - 'file_type': file type ('csv', 'xls', 'xlsx')
+                  - 'data_file_path': path to data file for reloading
+                  - 'data_file_type': file type ('csv', 'xlsx', 'txt')
     """
-    # Track which datasets should continue in loop mode
-    continue_flags = []
-    
-    # Initial fitting pass for all datasets
+    continue_flags: List[bool] = []
+
     for i, ds in enumerate(datasets):
         fitter_function(ds['data'], ds['x_name'], ds['y_name'], ds['plot_name'])
-        # Ask user if they want to continue with this dataset
         should_continue = messagebox.askyesno(
             message=t('workflow.continue_question'),
             title=f"{t('workflow.fitting_title', name=ds['plot_name'])} ({i+1})"
         )
         continue_flags.append(should_continue)
-    
-    # Loop while at least one dataset is marked to continue
+
     while any(continue_flags):
-        # Reload and refit only datasets marked to continue
         for i, ds in enumerate(datasets):
             if continue_flags[i]:
-                # Reload data from file (allows user to modify between iterations)
-                ds['data'] = reload_data_by_type(ds['file_path'], ds['file_type'])
+                ds['data'] = reload_data_by_type(
+                    ds['data_file_path'], ds['data_file_type']
+                )
                 # Perform fit with reloaded data
                 fitter_function(ds['data'], ds['x_name'], ds['y_name'], ds['plot_name'])
         
@@ -204,7 +213,7 @@ def apply_all_equations(
     data: pd.DataFrame,
     x_name: str,
     y_name: str,
-    plot_name: str = None
+    plot_name: Optional[str] = None,
 ) -> None:
     """
     Apply all available equation types to a dataset.
@@ -219,7 +228,8 @@ def apply_all_equations(
     Args:
         equation_setter: Function to set the current equation type (e.g., 'linear_function')
         get_fitter: Function to retrieve the fitter for the currently set equation type
-        equation_types: List of equation type identifiers to test (e.g., from config.AVAILABLE_EQUATION_TYPES)
+        equation_types: List of equation type identifiers to test
+            (e.g., from config.AVAILABLE_EQUATION_TYPES)
         data: Dataset to fit (pandas DataFrame)
         x_name: Independent variable column name
         y_name: Dependent variable column name
@@ -247,7 +257,7 @@ def apply_all_equations(
         # Perform fit if fitter was successfully retrieved
         if fitting_function is not None:
             # Create a plot name with the equation type for differentiation
-            fit_plot_name = f"{plot_name}_{eq_type}" if plot_name else None
+            fit_plot_name = f"{plot_name}_{eq_type}" if plot_name is not None else None
             fitting_function(data, x_name, y_name, fit_plot_name)
 
 
@@ -255,37 +265,39 @@ def apply_all_equations(
 # DATA LOADING COORDINATION WORKFLOWS
 # ============================================================================
 
-def coordinate_data_loading(parent_window, 
-                           ask_file_type_func: Callable, 
-                           ask_file_name_func: Callable,
-                           ask_variables_func: Callable) -> Tuple:
+def coordinate_data_loading(
+    parent_window: Any,
+    ask_file_type_func: Callable,
+    ask_file_name_func: Callable,
+    ask_variables_func: Callable,
+) -> Tuple[Union[pd.DataFrame, str], str, str, str, str, str]:
     """
     Coordinate the complete data loading workflow.
-    
+
     This function orchestrates the entire data loading process:
     1. Get available files
     2. Ask user for file type
     3. Ask user for specific file
     4. Load the data
     5. Ask user for variables to use
-    
+
     Args:
-        parent_window: Parent Tkinter window
-        ask_file_type_func: Function to ask for file type
-        ask_file_name_func: Function to ask for file name
-        ask_variables_func: Function to ask for variables
-        
+        parent_window: Parent Tkinter window.
+        ask_file_type_func: Function to ask for file type.
+        ask_file_name_func: Function to ask for file name.
+        ask_variables_func: Function to ask for variables.
+
     Returns:
-        Tuple: (data, x_name, y_name, plot_name, file_path, file_type)
-            Returns empty tuple if user cancels
+        Tuple (data, x_name, y_name, plot_name, file_path, file_type).
+        On user cancel, data is empty string and other fields are empty strings.
     """
     logger.info("Starting data loading workflow")
     empty_result = ('', '', '', '', '', '')
     
     try:
         # Backend: Get available files
-        csv, xls, xlsx = get_file_names()
-        logger.debug(f"Available files - CSV: {len(csv)}, XLS: {len(xls)}, XLSX: {len(xlsx)}")
+        csv, xlsx, txt = get_file_names()
+        logger.debug(f"Available files - CSV: {len(csv)}, XLSX: {len(xlsx)}, TXT: {len(txt)}")
     except Exception as e:
         logger.error(f"Failed to get available files: {str(e)}", exc_info=True)
         messagebox.showerror(
@@ -305,7 +317,7 @@ def coordinate_data_loading(parent_window,
     
     try:
         # Backend: Get file list for selected type
-        file_list = get_file_list_by_type(file_type, csv, xls, xlsx)
+        file_list = get_file_list_by_type(file_type, csv, xlsx, txt)
         
         # Check if files are available
         if not file_list:
@@ -366,31 +378,40 @@ def coordinate_data_loading(parent_window,
     return data, x_name, y_name, plot_name, file_path, file_type
 
 
-def coordinate_data_viewing(parent_window,
-                            ask_file_type_func: Callable,
-                            ask_file_name_func: Callable,
-                            show_data_func: Callable) -> None:
+def coordinate_data_viewing(
+    parent_window: Any,
+    ask_file_type_func: Callable,
+    ask_file_name_func: Callable,
+    show_data_func: Callable,
+) -> None:
     """
     Coordinate the data viewing workflow.
-    
+
     This function orchestrates the process of selecting and displaying
     data from files without performing any fitting operations.
-    
+
     Args:
-        parent_window: Parent Tkinter window
-        ask_file_type_func: Function to ask for file type
-        ask_file_name_func: Function to ask for file name
-        show_data_func: Function to display data
+        parent_window: Parent Tkinter window.
+        ask_file_type_func: Function to ask for file type.
+        ask_file_name_func: Function to ask for file name.
+        show_data_func: Function to display data.
     """
-    # Get available files
-    csv, xls, xlsx = get_file_names()
-    
+    try:
+        csv, xlsx, txt = get_file_names()
+    except Exception as e:
+        logger.error(f"Failed to get available files: {str(e)}", exc_info=True)
+        messagebox.showerror(
+            t('error.title'),
+            t('error.file_list_error', error=str(e))
+        )
+        return
+
     # Frontend: Ask for file type
     file_type = ask_file_type_func(parent_window)
-    
+
     if file_type != EXIT_SIGNAL and file_type != '':
         # Backend: Get file list for selected type
-        file_list = get_file_list_by_type(file_type, csv, xls, xlsx)
+        file_list = get_file_list_by_type(file_type, csv, xlsx, txt)
         
         # Check if files are available
         if not file_list:
@@ -418,12 +439,14 @@ def coordinate_data_viewing(parent_window,
 # EQUATION SELECTION COORDINATION WORKFLOWS
 # ============================================================================
 
-def coordinate_equation_selection(parent_window,
-                                  ask_equation_type_func: Callable,
-                                  ask_num_parameters_func: Callable,
-                                  ask_parameter_names_func: Callable,
-                                  ask_custom_formula_func: Callable,
-                                  get_fitting_function_func: Callable) -> Tuple[str, Optional[Callable]]:
+def coordinate_equation_selection(
+    parent_window: Any,
+    ask_equation_type_func: Callable,
+    ask_num_parameters_func: Callable,
+    ask_parameter_names_func: Callable,
+    ask_custom_formula_func: Callable,
+    get_fitting_function_func: Callable,
+) -> Tuple[str, Optional[Callable]]:
     """
     Coordinate the equation selection workflow.
     
@@ -441,9 +464,15 @@ def coordinate_equation_selection(parent_window,
     Returns:
         Tuple of (equation_name, fitter_function)
     """
-    # Ask user for equation type
-    selected = ask_equation_type_func(parent_window)
-    
+    # Ask user for equation type (may return tuple with optional initial/bounds overrides)
+    result = ask_equation_type_func(parent_window)
+    if isinstance(result, tuple) and len(result) == 3:
+        selected, user_initial_guess, user_bounds = result
+    else:
+        selected = result if isinstance(result, str) else EXIT_SIGNAL
+        user_initial_guess = None
+        user_bounds = None
+
     # Handle custom equation
     if selected == 'custom':
         return coordinate_custom_equation(
@@ -452,20 +481,24 @@ def coordinate_equation_selection(parent_window,
             ask_parameter_names_func,
             ask_custom_formula_func
         )
-    
+
     # Handle predefined equations
     if selected != EXIT_SIGNAL and selected != '':
-        fitter_function = get_fitting_function_func(selected)
+        fitter_function = get_fitting_function_func(
+            selected, user_initial_guess, user_bounds
+        )
         return selected, fitter_function
-    
+
     # User wants to exit
     return EXIT_SIGNAL, None
 
 
-def coordinate_custom_equation(parent_window,
-                               ask_num_parameters_func: Callable,
-                               ask_parameter_names_func: Callable,
-                               ask_custom_formula_func: Callable) -> Tuple[str, Optional[Callable]]:
+def coordinate_custom_equation(
+    parent_window: Any,
+    ask_num_parameters_func: Callable,
+    ask_parameter_names_func: Callable,
+    ask_custom_formula_func: Callable,
+) -> Tuple[str, Optional[Callable]]:
     """
     Coordinate the custom equation creation workflow.
     
@@ -487,13 +520,19 @@ def coordinate_custom_equation(parent_window,
     
     # Frontend: Get number of parameters
     num_param = ask_num_parameters_func(parent_window)
-    
+    if num_param is None:
+        return EXIT_SIGNAL, None
+
     # Frontend: Get parameter names
     parameter_names = ask_parameter_names_func(parent_window, num_param)
     
     # Check if user wants to exit (check both translated and internal values)
     exit_option = t('dialog.exit_option')
-    if EXIT_SIGNAL in parameter_names or 'salir' in parameter_names or exit_option in parameter_names:
+    if (
+        EXIT_SIGNAL in parameter_names
+        or 'salir' in parameter_names
+        or exit_option in parameter_names
+    ):
         return EXIT_SIGNAL, None
     
     # Frontend: Get formula

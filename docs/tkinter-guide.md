@@ -50,7 +50,7 @@ When you launch the application, you see the main menu with buttons for each ope
 
 ```
 ┌─────────────────────────────────────┐
-│       RegressionLab v0.8.1         │
+│       RegressionLab v0.8.2         │
 ├─────────────────────────────────────┤
 │                                     │
 │   [ Normal Fitting ]                │
@@ -119,7 +119,7 @@ Change requires restarting the application.
 
 4. **Select File Type**:
    - Dialog asks for file type
-   - Options: CSV, Excel (XLS/XLSX)
+   - Options: CSV, Excel (XLSX), TXT
    - Click appropriate button
 
 5. **Select Data File**:
@@ -600,7 +600,7 @@ Main menu:
 
 **Solutions**:
 - Navigate to correct directory
-- Check file extensions (CSV, XLS, XLSX)
+- Check file extensions (CSV, XLSX, TXT)
 - Verify files exist in expected location
 - Use absolute path in `.env` for input directory
 

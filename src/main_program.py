@@ -11,41 +11,23 @@ __maintainer__ = "Alejandro Mata Ali"
 __email__ = "alejandro.mata.ali@gmail.com"
 __status__ = "Beta"
 
-# Add src directory to Python path for proper imports
+# Standard library
 import sys
 from pathlib import Path
+from tkinter import messagebox
+from typing import Any, Callable, Optional
+
+# Add src directory to Python path for proper imports
 src_dir = Path(__file__).parent
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
-from tkinter import messagebox
-from typing import Optional, Callable
-
+# Local imports (kept lightweight at startup; heavy modules are loaded lazily)
 from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL, __version__
 from i18n import t, initialize_i18n
 from frontend.ui_main_menu import start_main_menu
-from frontend.ui_dialogs import (
-    ask_file_type, 
-    ask_file_name, 
-    ask_variables,
-    show_data_dialog,
-    ask_equation_type,
-    ask_num_parameters,
-    ask_parameter_names,
-    ask_custom_formula,
-    ask_num_fits,
-    show_help_dialog
-)
 from fitting.fitting_utils import get_fitting_function
 from utils.exceptions import FittingError
-from fitting.workflow_controller import (
-    single_fit_with_loop,
-    multiple_fit_with_loop,
-    apply_all_equations,
-    coordinate_data_loading,
-    coordinate_data_viewing,
-    coordinate_equation_selection
-)
 from utils.logger import setup_logging, get_logger
 
 # Initialize i18n and logging at module level
@@ -118,11 +100,29 @@ app_state = ApplicationState()
 # WORKFLOW FUNCTIONS - Main Menu Callbacks
 # ============================================================================
 
-def _get_menu_window():
+def _get_menu_window() -> Optional[Any]:
     """Get the menu window from __main__ module."""
     import __main__
     return getattr(__main__, 'menu', None)
 
+
+def _set_equation_helper(equation_name: str) -> None:
+    """
+    Set the current equation and create a fitter with visualization.
+    
+    This helper retrieves the backend fitting function for the given equation,
+    wraps it with frontend visualization, and stores both in the application state.
+    
+    Args:
+        equation_name: Internal name of the equation (e.g., 'linear_function')
+    """
+    # Get backend fitting function
+    base_fit = get_fitting_function(equation_name)
+    if base_fit:
+        # Wrap with frontend visualization
+        display_name = equation_name.replace('_', ' ').title()
+        fitter_with_ui = _wrap_with_visualization(base_fit, display_name)
+        app_state.set_equation(equation_name, fitter_with_ui)
 
 def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Callable:
     """
@@ -149,7 +149,12 @@ def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Call
     from plotting.plot_utils import create_plot
     from frontend.ui_dialogs import create_result_window
     
-    def wrapped_function(data, x_name: str, y_name: str, plot_name: str = None) -> None:
+    def wrapped_function(
+        data: Any,
+        x_name: str,
+        y_name: str,
+        plot_name: Optional[str] = None,
+    ) -> None:
         """Execute fitting and display results."""
         try:
             # Backend: Perform the fitting calculation
@@ -208,6 +213,22 @@ def normal_fitting() -> None:
         - Iteratively cleaning outliers
         - Testing sensitivity to data modifications
     """
+    # Lazy imports to avoid loading heavy dependencies at application startup
+    from fitting.workflow_controller import (
+        single_fit_with_loop,
+        coordinate_data_loading,
+        coordinate_equation_selection,
+    )
+    from frontend.ui_dialogs import (
+        ask_file_type,
+        ask_file_name,
+        ask_variables,
+        ask_equation_type,
+        ask_num_parameters,
+        ask_parameter_names,
+        ask_custom_formula,
+    )
+
     logger.info(t('log.normal_fitting_workflow'))
     menu = _get_menu_window()
     
@@ -243,7 +264,9 @@ def normal_fitting() -> None:
     
     # Phase 3: Data Loading
     # Load the dataset and get variable selections
-    data, x_name, y_name, plot_name, data_file_path, data_file_type = coordinate_data_loading(
+    (
+        data, x_name, y_name, plot_name, data_file_path, data_file_type
+    ) = coordinate_data_loading(
         parent_window=menu,
         ask_file_type_func=ask_file_type,
         ask_file_name_func=ask_file_name,
@@ -282,6 +305,23 @@ def single_fit_multiple_datasets() -> None:
     4. Perform fits on all datasets
     5. Optionally reload and refit in loop
     """
+    # Lazy imports to avoid loading heavy dependencies at application startup
+    from fitting.workflow_controller import (
+        multiple_fit_with_loop,
+        coordinate_data_loading,
+        coordinate_equation_selection,
+    )
+    from frontend.ui_dialogs import (
+        ask_file_type,
+        ask_file_name,
+        ask_variables,
+        ask_equation_type,
+        ask_num_parameters,
+        ask_parameter_names,
+        ask_custom_formula,
+        ask_num_fits,
+    )
+
     menu = _get_menu_window()
     
     # Select equation (backend function)
@@ -305,7 +345,9 @@ def single_fit_multiple_datasets() -> None:
     
     # Ask for number of datasets
     num_datasets = ask_num_fits(menu)
-    
+    if num_datasets is None:
+        return
+
     # Ask if user wants loop mode
     loop_mode = messagebox.askyesno(
         message=t('workflow.loop_question'), 
@@ -317,7 +359,9 @@ def single_fit_multiple_datasets() -> None:
     for i in range(num_datasets):
         # Check if user hasn't cancelled any previous load
         if not any(ds.get('file_type') == EXIT_SIGNAL for ds in datasets):
-            data, x_name, y_name, plot_name, data_file_path, data_file_type = coordinate_data_loading(
+            (
+                data, x_name, y_name, plot_name, data_file_path, data_file_type
+            ) = coordinate_data_loading(
                 parent_window=menu,
                 ask_file_type_func=ask_file_type,
                 ask_file_name_func=ask_file_name,
@@ -356,10 +400,24 @@ def multiple_fits_single_dataset() -> None:
     2. Try different equation types on it
     3. Compare results without reloading the data
     """
+    # Lazy imports to avoid loading heavy dependencies at application startup
+    from fitting.workflow_controller import coordinate_data_loading, coordinate_equation_selection
+    from frontend.ui_dialogs import (
+        ask_file_type,
+        ask_file_name,
+        ask_variables,
+        ask_equation_type,
+        ask_num_parameters,
+        ask_parameter_names,
+        ask_custom_formula,
+    )
+
     menu = _get_menu_window()
     
     # Load data once
-    data, x_name, y_name, plot_name, data_file_path, data_file_type = coordinate_data_loading(
+    (
+        data, x_name, y_name, plot_name, data_file_path, data_file_type
+    ) = coordinate_data_loading(
         parent_window=menu,
         ask_file_type_func=ask_file_type,
         ask_file_name_func=ask_file_name,
@@ -405,10 +463,20 @@ def all_fits_single_dataset() -> None:
     This function loads data and sequentially applies all predefined equation types
     to fit the data, generating results for each fitting method.
     """
+    # Lazy imports to avoid loading heavy dependencies at application startup
+    from fitting.workflow_controller import apply_all_equations, coordinate_data_loading
+    from frontend.ui_dialogs import (
+        ask_file_type,
+        ask_file_name,
+        ask_variables,
+    )
+
     menu = _get_menu_window()
     
     # Load data
-    data, x_name, y_name, plot_name, data_file_path, data_file_type = coordinate_data_loading(
+    (
+        data, x_name, y_name, plot_name, data_file_path, data_file_type
+    ) = coordinate_data_loading(
         parent_window=menu,
         ask_file_type_func=ask_file_type,
         ask_file_name_func=ask_file_name,
@@ -418,19 +486,9 @@ def all_fits_single_dataset() -> None:
     if isinstance(data, str):  # Empty result
         return
     
-    # Helper function to set equation and get fitter with visualization
-    def set_equation_helper(equation_name: str) -> None:
-        # Get backend fitting function
-        base_fit = get_fitting_function(equation_name)
-        if base_fit:
-            # Wrap with frontend visualization
-            display_name = equation_name.replace('_', ' ').title()
-            fitter_with_ui = _wrap_with_visualization(base_fit, display_name)
-            app_state.set_equation(equation_name, fitter_with_ui)
-    
     # Apply all equation types
     apply_all_equations(
-        equation_setter=set_equation_helper,
+        equation_setter=_set_equation_helper,
         get_fitter=lambda: app_state.current_fitter,
         equation_types=AVAILABLE_EQUATION_TYPES,
         data=data,
@@ -446,6 +504,14 @@ def watch_data() -> None:
     
     This function allows users to inspect loaded data.
     """
+    # Lazy imports to avoid loading heavy dependencies at application startup
+    from fitting.workflow_controller import coordinate_data_viewing
+    from frontend.ui_dialogs import (
+        ask_file_type,
+        ask_file_name,
+        show_data_dialog,
+    )
+
     menu = _get_menu_window()
     
     coordinate_data_viewing(
@@ -462,6 +528,9 @@ def show_help() -> None:
     
     Shows information about fitting modes, navigation, data locations, and output locations.
     """
+    # Lazy import to avoid loading help dialog module at startup
+    from frontend.ui_dialogs import show_help_dialog
+
     menu = _get_menu_window()
     show_help_dialog(parent_window=menu)
 

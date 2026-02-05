@@ -39,7 +39,7 @@ Both versions share the same core functionality but have different user interfac
 
 2. **Upload Your Data**
    - Click "Browse files" or drag and drop your file
-   - Supported formats: CSV, XLS, XLSX
+   - Supported formats: CSV, XLSX, TXT
 
 3. **Select Variables and Equation**
    - Choose your X (independent) variable
@@ -256,14 +256,17 @@ time,utime,temperature,utemperature
 - They will be displayed as error bars in plots
 
 ### Supported File Formats
-
 - **CSV** (`.csv`): Comma-separated values
   - Can use comma, semicolon, or tab as delimiters
   - UTF-8 encoding recommended
 
-- **Excel** (`.xls`, `.xlsx`): Microsoft Excel files
+- **Excel** (`.xlsx`): Microsoft Excel files
   - Data should be in the first sheet
   - Column headers in the first row
+
+- **TXT** (`.txt`): Tab-separated or space-separated text files
+  - Plain text format
+  - UTF-8 encoding recommended
 
 ## Interpreting Results
 

@@ -18,7 +18,7 @@ This convenience function combines path preparation and data loading into a sing
 
 **Parameters:**
 - `filename`: File name without extension (e.g., 'Ejemplo')
-- `file_type`: File type ('csv', 'xls', 'xlsx')
+- `file_type`: File type ('csv', 'xlsx', 'txt')
 
 **Returns:**
 - Tuple of (data DataFrame, complete file path). The file path is returned so it can be used for reloading in loop mode.
@@ -44,7 +44,7 @@ Loads data from CSV or Excel files based on the specified file type.
 
 **Parameters:**
 - `file_path`: Complete path to the file
-- `file_type`: File type ('csv', 'xls', 'xlsx')
+- `file_type`: File type ('csv', 'xlsx', 'txt')
 
 **Returns:**
 - DataFrame with loaded data
@@ -105,7 +105,7 @@ This function builds an absolute path from the project root to the data file, en
 
 **Parameters:**
 - `filename`: File name without extension (e.g., 'Ejemplo', 'Exper1')
-- `file_type`: File extension ('csv', 'xls', 'xlsx')
+- `file_type`: File extension ('csv', 'xlsx', 'txt')
 - `base_dir`: Base directory where data files are located (relative to project root). If None, uses FILE_INPUT_DIR from environment variables or default 'input'
 
 **Returns:**
@@ -120,17 +120,17 @@ file_path = prepare_data_path('Ejemplo', 'xlsx')
 print(f"Full path: {file_path}")  # e.g., 'C:/Users/user/project/input/Ejemplo.xlsx'
 ```
 
-#### `get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> list`
+#### `get_file_list_by_type(file_type: str, csv: list, xlsx: list, txt: list) -> list`
 
 Get list of files based on selected type.
 
 This function acts as a selector/router that returns the appropriate file list based on the user's file type selection.
 
 **Parameters:**
-- `file_type`: File type ('csv', 'xls', 'xlsx')
+- `file_type`: File type ('csv', 'xlsx', 'txt')
 - `csv`: List of CSV file names (without extension)
-- `xls`: List of XLS file names (without extension)
 - `xlsx`: List of XLSX file names (without extension)
+- `txt`: List of TXT file names (without extension)
 
 **Returns:**
 - List of files of the specified type
@@ -144,10 +144,10 @@ from loaders.data_loader import get_file_list_by_type
 
 csv_files = ['data1', 'data2']
 xlsx_files = ['experiment1', 'experiment2']
-xls_files = ['old_data']
+txt_files = ['notes']
 
 # Get CSV files
-csv_list = get_file_list_by_type('csv', csv_files, xls_files, xlsx_files)
+csv_list = get_file_list_by_type('csv', csv_files, xlsx_files, txt_files)
 print(csv_list)  # ['data1', 'data2']
 ```
 
@@ -173,8 +173,7 @@ time,temperature,utime,utemperature
 
 ### Excel Files
 
-**Supported formats:**
-- `.xls` (Excel 97-2003) - use `file_type='xls'`
+**Supported format:**
 - `.xlsx` (Excel 2007+) - use `file_type='xlsx'`
 
 **Requirements:**

@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+# Standard library
 import os
 import sys
 
@@ -16,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../../src'))
 project = 'RegressionLab'
 copyright = '2026, Alejandro Mata Ali'
 author = 'Alejandro Mata Ali'
-# Try to load .env if available (optional for ReadTheDocs)
+# Third-party packages (optional for ReadTheDocs)
 try:
     from dotenv import load_dotenv
     env_path = os.path.abspath('../../.env')
@@ -25,8 +26,8 @@ try:
 except ImportError:
     pass  # dotenv not required for documentation build
 
-release = '0.8.1'
-version = '0.8.1'
+release = '0.8.2'
+version = '0.8.2'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -40,7 +40,7 @@ print(f"Loaded {len(data)} rows, {len(data.columns)} columns")
 
 #### `excel_reader(file_path: str) -> pd.DataFrame`
 
-Load data from an Excel file (.xls or .xlsx).
+Load data from an Excel file (.xlsx).
 
 **Parameters:**
 - `file_path`: Path to the Excel file
@@ -62,7 +62,7 @@ print(f"Loaded {len(data)} rows, {len(data.columns)} columns")
 ```
 
 **Notes:**
-- Supports both `.xls` and `.xlsx` formats
+- Supports `.xlsx` format
 - Reads the first sheet by default
 - Handles missing values automatically
 
@@ -78,7 +78,7 @@ Scans the specified directory and categorizes files by extension, returning file
 - `directory`: Name of the directory to scan (default: None, relative to project root)
 
 **Returns:**
-- Tuple of three lists: `(csv_files, xls_files, xlsx_files)`
+- Tuple of three lists: `(csv_files, xlsx_files, txt_files)`
 - Each list contains file names without extensions
 
 **Raises:**
@@ -89,14 +89,14 @@ Scans the specified directory and categorizes files by extension, returning file
 from loaders.loading_utils import get_file_names
 
 # Get files from default input directory
-csv, xls, xlsx = get_file_names()
+csv, xlsx, txt = get_file_names()
 
 print(f"CSV files: {csv}")    # ['data1', 'data2']
-print(f"XLS files: {xls}")    # ['experiment1']
-print(f"XLSX files: {xlsx}")  # ['results']
+print(f"XLSX files: {xlsx}")  # ['experiment1']
+print(f"TXT files: {txt}")    # ['notes']
 
 # Get files from specific directory
-csv, xls, xlsx = get_file_names('custom_input')
+csv, xlsx, txt = get_file_names('custom_input')
 ```
 
 **Notes:**
@@ -106,7 +106,7 @@ csv, xls, xlsx = get_file_names('custom_input')
 
 ## File Path Resolution
 
-All file paths are resolved relative to the project root directory. The project root is determined automatically based on the location of the `config.py` file.
+All file paths are resolved relative to the project root directory. The project root is determined automatically (see `config.paths.get_project_root`).
 
 ### Example Path Resolution
 
@@ -206,7 +206,7 @@ excel_data = excel_reader('input/experiment.xlsx')
 from loaders.loading_utils import get_file_names
 
 # Get all available files
-csv_files, xls_files, xlsx_files = get_file_names()
+csv_files, xlsx_files, txt_files = get_file_names()
 
 # Present to user
 print("Available CSV files:")
@@ -225,10 +225,10 @@ from loaders.loading_utils import get_file_names, csv_reader
 from loaders.data_loader import get_file_list_by_type
 
 # 1. Get available files
-csv, xls, xlsx = get_file_names()
+csv, xlsx, txt = get_file_names()
 
 # 2. Get file list for specific type
-file_list = get_file_list_by_type('csv', csv, xls, xlsx)
+file_list = get_file_list_by_type('csv', csv, xlsx, txt)
 
 # 3. User selects file (e.g., 'data1')
 selected_file = 'data1'
@@ -272,8 +272,8 @@ data, file_path = load_data_workflow('data1', 'csv')
 
 3. **File Discovery**: Check if files exist before presenting to user
    ```python
-   csv, xls, xlsx = get_file_names()
-   if not csv and not xls and not xlsx:
+   csv, xlsx, txt = get_file_names()
+   if not csv and not xlsx and not txt:
        print("No data files found")
    ```
 

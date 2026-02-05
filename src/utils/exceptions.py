@@ -23,8 +23,13 @@ class DataValidationError(RegressionLabError):
     pass
 
 
-class FileNotFoundError(DataLoadError):
-    """Exception raised when a requested file is not found."""
+class FileNotFoundError(DataLoadError):  # noqa: A001
+    """
+    Exception raised when a requested file or directory is not found.
+
+    Note: This is a RegressionLab-specific exception (subclass of DataLoadError).
+    It is distinct from builtins.FileNotFoundError but serves the same semantic purpose.
+    """
     pass
 
 

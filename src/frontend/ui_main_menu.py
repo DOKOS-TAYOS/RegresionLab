@@ -5,11 +5,16 @@ Main menu module.
 Contains the main application window and exit confirmation dialog.
 """
 
-from tkinter import Tk, Toplevel, Frame, Label, Button, TOP, LEFT, RIGHT
-from typing import Callable, Optional
-import sys
+# Standard library
 import os
+import sys
+from tkinter import Tk, Toplevel, Frame, Label, Button, TOP, LEFT, RIGHT
+from typing import Callable
+
+# Third-party packages
 from PIL import Image, ImageTk
+
+# Local imports
 from config import UI_STYLE
 from i18n import t
 
@@ -24,7 +29,7 @@ def create_main_menu(
 ) -> Tk:
     """
     Create and display the main application menu window.
-    
+
     Args:
         normal_fitting_callback: Function to call for normal fitting
         single_fit_multiple_datasets_callback: Function to call for single fit on multiple datasets
@@ -32,7 +37,7 @@ def create_main_menu(
         all_fits_single_dataset_callback: Function to call for all fits on single dataset
         watch_data_callback: Function to call for viewing data
         help_callback: Function to display help information
-        
+
     Returns:
         The main Tk window instance
     """
@@ -41,7 +46,9 @@ def create_main_menu(
     menu.attributes('-fullscreen', False)
     menu.configure(background=UI_STYLE['bg'])
     menu.resizable(width=True, height=True)
-    
+    # Closing with X: same as Exit button (show confirmation, then close app)
+    menu.protocol("WM_DELETE_WINDOW", lambda: show_exit_confirmation(menu))
+
     # Create main frame
     main_frame = Frame(
         menu,
@@ -145,6 +152,19 @@ def create_main_menu(
         **btn_config
     )
     
+    # Config button (next to exit)
+    config_button = Button(
+        main_frame,
+        text=t('menu.config'),
+        command=lambda: _handle_config(menu),
+        width=UI_STYLE['button_width'],
+        bg=UI_STYLE['bg'],
+        fg=UI_STYLE['fg'],
+        activebackground=UI_STYLE['active_bg'],
+        activeforeground=UI_STYLE['active_fg'],
+        font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
+    )
+    
     # Exit button with different styling
     exit_button = Button(
         main_frame,
@@ -162,31 +182,38 @@ def create_main_menu(
     main_frame.grid(column=0, row=0)
     
     # Place logo if it was loaded successfully
+    _pad = UI_STYLE['padding']
     current_row = 0
     if logo_label:
-        logo_label.grid(column=0, row=current_row, columnspan=2, padx=UI_STYLE['padding'], pady=6)
+        logo_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
         current_row += 1
-    
-    message.grid(column=0, row=current_row, columnspan=2, padx=UI_STYLE['padding'], pady=6)
+    message.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
     current_row += 1
-    
-    normal_fitting_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    multiple_datasets_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    normal_fitting_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
+    multiple_datasets_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
     current_row += 1
-    
-    multiple_fits_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    all_fits_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    multiple_fits_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
+    all_fits_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
     current_row += 1
-    
-    help_button.grid(column=0, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    view_data_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    help_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
+    view_data_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
     current_row += 1
-    
-    exit_button.grid(column=1, row=current_row, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    config_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
+    exit_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
     
     normal_fitting_button.focus_set()
     
     return menu
+
+
+def _handle_config(menu: Tk) -> None:
+    """
+    Open configuration dialog. If user saves, restart the application.
+    """
+    from frontend.ui_dialogs import show_config_dialog
+    if show_config_dialog(menu):
+        menu.destroy()
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
 def show_exit_confirmation(parent_menu: Tk) -> None:
@@ -242,6 +269,8 @@ def show_exit_confirmation(parent_menu: Tk) -> None:
     
     close_button.focus_set()
     exit_level.transient(master=parent_menu)
+    # Closing with X = cancel exit (same as "No")
+    exit_level.protocol("WM_DELETE_WINDOW", exit_level.destroy)
     parent_menu.wait_window(exit_level)
 
 
@@ -289,6 +318,5 @@ def start_main_menu(
     # Store menu globally for callbacks that need it
     import __main__
     __main__.menu = menu
-    
-    menu.wait_window(menu)
+
     menu.mainloop()

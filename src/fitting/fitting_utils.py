@@ -1,29 +1,42 @@
-import numpy as np
-from scipy.optimize import curve_fit
-from scipy.signal import find_peaks
-from scipy import stats as scipy_stats
-from typing import Callable, List, Tuple, Optional
-from numpy.typing import NDArray
+# Standard library
 from decimal import Decimal
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
-from config import EQUATION_FUNCTION_MAP, EXIT_SIGNAL
-from utils.exceptions import FittingError
-from utils.validators import validate_fitting_data
-from utils.logger import get_logger
+# Numerical library
+import numpy as np
+
+# Local imports (heavy numerical libraries are imported lazily inside functions)
+from config import (
+    EQUATION_FORMULAS,
+    EQUATION_FUNCTION_MAP,
+    EQUATION_PARAM_NAMES,
+    EXIT_SIGNAL,
+)
 from i18n import t
+from utils.exceptions import FittingError
+from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 def format_parameter(value: float, sigma: float) -> Tuple[float, str]:
     """
-    Format a parameter and its uncertainty using scientific notation.
-    
+    Format a parameter value and its uncertainty using scientific notation.
+
+    The function chooses a sensible number of decimals for ``value`` based on
+    the exponent of ``sigma`` and returns both the rounded value and the
+    formatted uncertainty.
+
     Args:
-        value: Parameter value
-        sigma: Uncertainty in the parameter
-        
+        value: Parameter value.
+        sigma: Uncertainty in the parameter.
+
     Returns:
-        Tuple of (rounded_value, formatted_sigma_string)
+        Tuple ``(rounded_value, sigma_str)`` where ``sigma_str`` is in
+        scientific notation (for example ``'1.2E-03'``).
+
+    Example:
+        >>> format_parameter(1.234567, 0.0123)
+        (1.23, '1.2E-02')
     """
     # Check if sigma is infinite or NaN
     if not np.isfinite(sigma):
@@ -56,116 +69,16 @@ def format_parameter(value: float, sigma: float) -> Tuple[float, str]:
         return round(value, 6), f"{sigma:.1E}"
 
 
-def estimate_trigonometric_parameters(x: NDArray, y: NDArray) -> Tuple[float, float]:
-    """
-    Estimate initial parameters for trigonometric functions (sin/cos).
-    
-    This function estimates the amplitude (a) and angular frequency (b) 
-    for functions of the form: y = a * sin(b*x) or y = a * cos(b*x)
-    
-    Args:
-        x: Independent variable array
-        y: Dependent variable array
-        
-    Returns:
-        Tuple of (amplitude, frequency):
-            - amplitude: Estimated amplitude parameter (a)
-            - frequency: Estimated angular frequency parameter (b)
-    """
-    # Estimate amplitude as half the range of y values
-    y_range = np.max(y) - np.min(y)
-    amplitude = y_range / 2.0
-    
-    # Ensure amplitude is not zero
-    if np.abs(amplitude) < 1e-10:
-        amplitude = 1.0
-    
-    # Estimate frequency by finding peaks and calculating average distance
-    try:
-        # Find peaks in the absolute values to handle both sin and cos
-        peaks, _ = find_peaks(np.abs(y - np.mean(y)), distance=max(1, len(x) // 10))
-        
-        if len(peaks) >= 2:
-            # Calculate average distance between peaks
-            peak_distances = np.diff(x[peaks])
-            avg_peak_distance = np.mean(peak_distances)
-            
-            # For sin/cos, period = 2 * peak_distance (peak to peak)
-            # Angular frequency = 2*pi / period
-            estimated_period = 2.0 * avg_peak_distance
-            frequency = 2.0 * np.pi / estimated_period
-        else:
-            # Not enough peaks found, use data range as rough estimate
-            x_range = np.max(x) - np.min(x)
-            # Assume at least one full period in the data
-            estimated_period = x_range
-            frequency = 2.0 * np.pi / estimated_period
-    except Exception as e:
-        logger.warning(t('log.peak_detection_failed', error=str(e)))
-        # Fallback: assume one period spans the entire x range
-        x_range = np.max(x) - np.min(x)
-        if x_range > 0:
-            frequency = 2.0 * np.pi / x_range
-        else:
-            frequency = 1.0
-    
-    # Ensure frequency is positive and reasonable
-    if frequency <= 0 or not np.isfinite(frequency):
-        frequency = 1.0
-    
-    logger.debug(t('log.estimated_trig_parameters', amplitude=f"{amplitude:.3f}", frequency=f"{frequency:.3f}"))
-    return amplitude, frequency
-
-
-def estimate_phase_shift(x: NDArray, y: NDArray, amplitude: float, frequency: float) -> float:
-    """
-    Estimate initial phase shift for trigonometric functions with phase.
-    
-    For functions of the form: y = a * sin(b*x + c) or y = a * cos(b*x + c)
-    
-    Args:
-        x: Independent variable array
-        y: Dependent variable array
-        amplitude: Estimated amplitude parameter
-        frequency: Estimated frequency parameter
-        
-    Returns:
-        Estimated phase shift (c)
-    """
-    try:
-        # Find the first maximum or zero crossing
-        # For simplicity, estimate where the function should start
-        y_normalized = y / (amplitude if amplitude != 0 else 1.0)
-        
-        # Find first point closest to maximum
-        first_max_idx = np.argmax(y_normalized)
-        x_at_max = x[first_max_idx]
-        
-        # For sin: max occurs at b*x + c = pi/2, so c = pi/2 - b*x
-        # For cos: max occurs at b*x + c = 0, so c = -b*x
-        # Use average as rough estimate
-        phase = np.pi / 4.0 - frequency * x_at_max
-        
-        # Wrap phase to [-pi, pi]
-        phase = np.arctan2(np.sin(phase), np.cos(phase))
-        
-    except Exception as e:
-        logger.warning(t('log.phase_estimation_failed', error=str(e)))
-        phase = 0.0
-    
-    logger.debug(t('log.estimated_phase_shift', phase=f"{phase:.3f}"))
-    return phase
-
-
 def generic_fit(
-    data: dict,
+    data: Any,
     x_name: str,
     y_name: str,
-    fit_func: Callable,
+    fit_func: Callable[..., Any],
     param_names: List[str],
     equation_template: str,
-    initial_guess: Optional[List[float]] = None
-) -> Tuple[str, NDArray, str]:
+    initial_guess: Optional[List[float]] = None,
+    bounds: Optional[Tuple[Sequence[float], Sequence[float]]] = None
+) -> Tuple[str, Any, str]:
     """
     Generic fitting function that performs curve fitting with any function.
     
@@ -180,6 +93,8 @@ def generic_fit(
         param_names: List of parameter names (e.g., ['m', 'n'] or ['a', 'b', 'c'])
         equation_template: Template for equation display (e.g., "y={m}x+{n}")
         initial_guess: Optional initial parameter values for fitting (improves convergence)
+        bounds: Optional (lower_bounds, upper_bounds) for parameters;
+            avoids overflow in exponentials
     
     Returns:
         Tuple of (text, y_fitted, equation):
@@ -190,8 +105,13 @@ def generic_fit(
     Raises:
         FittingError: If fitting fails or data is invalid
     """
+    # Lazy imports to avoid loading heavy numerical stack when importing this module
+    from scipy import stats as scipy_stats
+    from scipy.optimize import curve_fit
+    from utils.validators import validate_fitting_data
+
     logger.info(t('log.starting_generic_fit', x=x_name, y=y_name, params=str(param_names)))
-    
+
     # Validate fitting data
     try:
         validate_fitting_data(data, x_name, y_name)
@@ -222,7 +142,13 @@ def generic_fit(
     # Perform curve fitting
     try:
         logger.debug(t('log.attempting_curve_fitting'))
-        final_fit = curve_fit(fit_func, x, y, p0=initial_guess, sigma=uy, absolute_sigma=True)
+        fit_kwargs: dict = dict(
+            f=fit_func, xdata=x, ydata=y, p0=initial_guess,
+            sigma=uy, absolute_sigma=True
+        )
+        if bounds is not None:
+            fit_kwargs['bounds'] = bounds
+        final_fit = curve_fit(**fit_kwargs)
         logger.debug(t('log.curve_fitting_successful'))
     except RuntimeError as e:
         # scipy.optimize.curve_fit raises RuntimeError when it can't converge
@@ -282,8 +208,6 @@ def generic_fit(
         logger.error(t('log.error_calculating_fitted_curve', error=str(e)), exc_info=True)
         raise FittingError(t('error.calculating_fitted_curve', error=str(e)))
     
-    # Compute the fit statistics. If you want some news, include them here and add them to the lines
-
     # Calculate fit statistics
     n_points = len(y)
     n_params = len(params)
@@ -299,7 +223,7 @@ def generic_fit(
         fit_stats['r_squared'] = 1.0 - (ss_res / ss_tot) if ss_tot != 0 else 0.0
         logger.debug(f"R² = {fit_stats['r_squared']:.6f}")
     except Exception as e:
-        logger.warning(f"Error calculating R²: {str(e)}")
+        logger.warning("Error calculating R²: %s", str(e))
         fit_stats['r_squared'] = 0.0
     
     # Calculate chi-squared statistics
@@ -331,7 +255,9 @@ def generic_fit(
     # Generate text output using the fit_stats dictionary
     text_lines.append(f"R\u00B2={fit_stats['r_squared']:.6f}")
     text_lines.append(t('stats.chi_squared', value=f"{fit_stats['chi_squared']:.4g}"))
-    text_lines.append(t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}"))
+    text_lines.append(
+        t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}")
+    )
     text_lines.append(t('stats.dof', value=fit_stats['dof']))
     
     # Add confidence intervals
@@ -339,7 +265,12 @@ def generic_fit(
         ci = fit_stats['confidence_intervals'][name]
         if ci['available']:
             text_lines.append(
-                t('stats.param_ci_95', param=name, low=f"{ci['low']:.4g}", high=f"{ci['high']:.4g}")
+                t(
+                    'stats.param_ci_95',
+                    param=name,
+                    low=f"{ci['low']:.4g}",
+                    high=f"{ci['high']:.4g}"
+                )
             )
         else:
             text_lines.append(t('stats.param_ci_95_na', param=name))
@@ -353,42 +284,164 @@ def generic_fit(
     return text, y_fitted, equation_str
 
 
-def get_fitting_function(equation_name: str) -> Optional[Callable]:
+def get_equation_param_info(
+    equation_name: str,
+) -> Optional[Tuple[List[str], str]]:
+    """
+    Get parameter names and display formula for a given equation type.
+
+    Args:
+        equation_name: Identifier of the equation (for example
+            ``'linear_function_with_n'`` or ``'gaussian_function'``).
+
+    Returns:
+        Tuple ``(param_names, formula_str)`` where ``param_names`` is a list
+        of parameter names in order and ``formula_str`` is a human‑readable
+        equation, or ``None`` if the equation is unknown.
+
+    Example:
+        >>> names, formula = get_equation_param_info("linear_function_with_n")
+        >>> names
+        ['n', 'm']
+        >>> formula
+        'y = mx + n'
+    """
+    if equation_name not in EQUATION_PARAM_NAMES or equation_name not in EQUATION_FORMULAS:
+        return None
+    return (
+        list(EQUATION_PARAM_NAMES[equation_name]),
+        EQUATION_FORMULAS[equation_name],
+    )
+
+
+def merge_initial_guess(
+    computed: List[float],
+    override: Optional[List[Optional[float]]],
+) -> List[float]:
+    """
+    Merge automatically computed initial guesses with user overrides.
+
+    For each index, if the override list has a non-``None`` value it replaces
+    the computed one; otherwise the original computed value is kept.
+
+    Args:
+        computed: List of automatically estimated parameter values.
+        override: Optional list of user‑provided overrides (same length as
+            ``computed``); ``None`` entries mean “keep computed”.
+
+    Returns:
+        New list with the effective initial guess for each parameter.
+    """
+    if override is None or len(override) != len(computed):
+        return list(computed)
+    return [
+        float(override[i]) if override[i] is not None else computed[i]
+        for i in range(len(computed))
+    ]
+
+
+def merge_bounds(
+    computed_bounds: Optional[Tuple[Sequence[float], Sequence[float]]],
+    override_lower: Optional[List[Optional[float]]],
+    override_upper: Optional[List[Optional[float]]],
+    n_params: int,
+) -> Optional[Tuple[Tuple[float, ...], Tuple[float, ...]]]:
+    """
+    Merge automatically computed parameter bounds with user overrides.
+
+    Bounds are given as a pair ``(lower, upper)``. For each parameter index,
+    non‑``None`` values in ``override_lower`` or ``override_upper`` replace
+    the corresponding computed bound. Missing computed bounds default to
+    ``(-inf, +inf)``.
+
+    Args:
+        computed_bounds: Optional pair of sequences with base lower and upper
+            bounds as produced by estimators, or ``None``.
+        override_lower: Optional list of lower bound overrides.
+        override_upper: Optional list of upper bound overrides.
+        n_params: Total number of parameters in the model.
+
+    Returns:
+        Tuple ``(lower_bounds, upper_bounds)`` as tuples of floats, or
+        ``computed_bounds`` unchanged if no overrides are provided.
+    """
+    if override_lower is None and override_upper is None:
+        return computed_bounds
+    inf = float('-inf')
+    pos_inf = float('inf')
+    if computed_bounds is not None:
+        base_lower = list(computed_bounds[0])
+        base_upper = list(computed_bounds[1])
+    else:
+        base_lower = [inf] * n_params
+        base_upper = [pos_inf] * n_params
+    if override_lower is not None:
+        for i, v in enumerate(override_lower):
+            if i < n_params and v is not None:
+                base_lower[i] = float(v)
+    if override_upper is not None:
+        for i, v in enumerate(override_upper):
+            if i < n_params and v is not None:
+                base_upper[i] = float(v)
+    return (tuple(base_lower), tuple(base_upper))
+
+
+def get_fitting_function(
+    equation_name: str,
+    initial_guess_override: Optional[List[Optional[float]]] = None,
+    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+) -> Optional[Callable]:
     """
     Get the fitting function corresponding to the equation name.
-    
-    Returns the base fitting function that only performs calculations
-    (without visualization). The function returns (text, y_fitted, equation).
-    Uses the EQUATION_FUNCTION_MAP from config to resolve equation names
-    to their implementation functions.
-    
+
+    Returns a function (data, x_name, y_name, plot_name) that performs the fit.
+    If initial_guess_override or bounds_override are provided, they are passed
+    to the underlying fit (None in a slot means use estimator value).
+
     Args:
-        equation_name: String identifier for the equation type
-        
+        equation_name: String identifier for the equation type.
+        initial_guess_override: Optional list of initial values (None = use estimator).
+        bounds_override: Optional (lower_list, upper_list) (None in slot = use estimator).
+
     Returns:
-        The corresponding fitting function, or None if not found or error occurs
+        The corresponding fitting function, or None if not found or error occurs.
     """
     logger.debug(t('log.getting_fitting_function', equation=equation_name))
-    
+
     if equation_name == EXIT_SIGNAL:
         logger.debug(t('log.exit_signal_received'))
         return None
-    
-    # Import and return the appropriate fitting function
-    if equation_name in EQUATION_FUNCTION_MAP:
-        function_name = EQUATION_FUNCTION_MAP[equation_name]
-        logger.debug(t('log.equation_maps_to_function', equation=equation_name, function=function_name))
-        
-        try:
-            from fitting import fitting_functions
-            fit_function = getattr(fitting_functions, function_name)
-            logger.info(t('log.successfully_loaded_fitting_function', function=function_name))
-            return fit_function
-        except (ImportError, AttributeError) as e:
-            # Handle import errors gracefully
-            logger.error(t('log.error_importing_fitting_function', function=function_name, error=str(e)), exc_info=True)
-            return None
-    else:
-        # Unknown equation type
+
+    if equation_name not in EQUATION_FUNCTION_MAP:
         logger.warning(t('log.unknown_equation_type', equation=equation_name))
         return None
+
+    function_name = EQUATION_FUNCTION_MAP[equation_name]
+    logger.debug(
+        t('log.equation_maps_to_function', equation=equation_name, function=function_name)
+    )
+
+    try:
+        from fitting import fitting_functions
+        base_fit = getattr(fitting_functions, function_name)
+    except (ImportError, AttributeError) as e:
+        logger.error(
+            t('log.error_importing_fitting_function', function=function_name, error=str(e)),
+            exc_info=True,
+        )
+        return None
+
+    logger.info(t('log.successfully_loaded_fitting_function', function=function_name))
+
+    def fit_with_overrides(
+        data: Any, x_name: str, y_name: str
+    ) -> Tuple[str, Any, str]:
+        return base_fit(
+            data,
+            x_name,
+            y_name,
+            initial_guess_override=initial_guess_override,
+            bounds_override=bounds_override,
+        )
+
+    return fit_with_overrides

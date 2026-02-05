@@ -14,15 +14,20 @@ Key features:
     - No dynamic file generation required
 """
 
-import numpy as np
-from numpy.typing import NDArray
-from typing import Callable, List, Tuple
+# Standard library
 import re
+from typing import Callable, List, Tuple, Union
 
+# Third-party packages
+import numpy as np
+import pandas as pd
+from numpy.typing import NDArray
+
+# Local imports
 from config import MATH_FUNCTION_REPLACEMENTS
 from utils.exceptions import EquationError, ValidationError
-from utils.validators import validate_parameter_names
 from utils.logger import get_logger
+from utils.validators import validate_parameter_names
 
 logger = get_logger(__name__)
 
@@ -186,26 +191,29 @@ class CustomFunctionEvaluator:
         
         return 'y=' + template
     
-    def fit(self, data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str]:
+    def fit(
+        self, data: Union[dict, pd.DataFrame], x_name: str, y_name: str
+    ) -> Tuple[str, NDArray, str]:
         """
         Perform curve fitting using the custom function.
-        
+
         This method uses the generic_fit function from fitting_utils to perform
         the actual curve fitting with error propagation.
-        
+
         Args:
-            data: Data dictionary containing x, y and their uncertainties
-            x_name: Name of the independent variable
-            y_name: Name of the dependent variable
-            
+            data: Data dictionary or DataFrame containing x, y and their uncertainties.
+            x_name: Name of the independent variable.
+            y_name: Name of the dependent variable.
+
         Returns:
             Tuple of (text, y_fitted, equation):
-                - text: Formatted text with parameters and uncertainties (includes R²)
-                - y_fitted: Array with fitted y values
-                - equation: Formatted equation with parameter values
-                
+                - text: Formatted text with parameters and uncertainties (includes R²).
+                - y_fitted: Array with fitted y values.
+                - equation: Formatted equation with parameter values.
+
         Raises:
-            FittingError: If fitting fails
+            FittingError: If fitting fails.
+            EquationError: If equation evaluation fails.
         """
         logger.info(f"Performing custom fit: {self.original_equation_str}")
         
@@ -242,4 +250,7 @@ class CustomFunctionEvaluator:
     
     def __repr__(self) -> str:
         """String representation of the evaluator."""
-        return f"CustomFunctionEvaluator(formula='{self.original_equation_str}', params={self.parameter_names})"
+        return (
+            f"CustomFunctionEvaluator(formula='{self.original_equation_str}', "
+            f"params={self.parameter_names})"
+        )

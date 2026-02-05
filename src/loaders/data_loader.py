@@ -17,38 +17,44 @@ Key features:
 All functions are UI-independent and can be used in both GUI and CLI contexts.
 """
 
-from typing import List, Tuple
+# Standard library
+from typing import List, Optional, Tuple
+
+# Third-party packages
 import pandas as pd
-from loaders.loading_utils import csv_reader, excel_reader
-from utils.exceptions import InvalidFileTypeError
-from utils.validators import validate_file_type
-from utils.logger import get_logger
+
+# Local imports
 from config import FILE_CONFIG, get_project_root
+from loaders.loading_utils import csv_reader, excel_reader, txt_reader
+from utils.exceptions import InvalidFileTypeError
+from utils.logger import get_logger
+from utils.validators import validate_file_type
 
 logger = get_logger(__name__)
 
 
-def prepare_data_path(filename: str, file_type: str, base_dir: str = None) -> str:
+def prepare_data_path(
+    filename: str, file_type: str, base_dir: Optional[str] = None
+) -> str:
     """
     Construct the complete path to a data file.
-    
+
     This function builds an absolute path from the project root to the data file,
     ensuring cross-platform compatibility using pathlib.
-    
+
     Args:
-        filename: File name without extension (e.g., 'Ejemplo', 'Exper1')
-        file_type: File extension ('csv', 'xls', 'xlsx')
+        filename: File name without extension (e.g., 'Ejemplo', 'Exper1').
+        file_type: File extension ('csv', 'xlsx', 'txt').
         base_dir: Base directory where data files are located (relative to project root).
-                  If None, uses FILE_INPUT_DIR from environment variables or default 'input'
-        
+            If None, uses FILE_CONFIG['input_dir'].
+
     Returns:
-        Complete file path (absolute from project root)
-        
+        Complete file path (absolute from project root).
+
     Example:
         >>> prepare_data_path('Ejemplo', 'xlsx')
         'C:/Users/user/project/input/Ejemplo.xlsx'
     """
-    # Get base directory from environment variable if not specified
     if base_dir is None:
         base_dir = FILE_CONFIG['input_dir']
     
@@ -65,14 +71,15 @@ def load_data(file_path: str, file_type: str) -> pd.DataFrame:
     
     Args:
         file_path: Complete path to the file
-        file_type: File type ('csv', 'xls', 'xlsx')
+        file_type: File type ('csv', 'xlsx', 'txt')
         
     Returns:
-        DataFrame with loaded data
-        
+        DataFrame with loaded data.
+
     Raises:
-        InvalidFileTypeError: If file type is not supported
-        DataLoadError: If file cannot be loaded
+        InvalidFileTypeError: If file type is not supported.
+        DataLoadError: If file cannot be loaded (from underlying readers).
+        Other exceptions from csv_reader/excel_reader may propagate.
     """
     logger.debug(f"Loading data: {file_path} (type: {file_type})")
     
@@ -82,8 +89,10 @@ def load_data(file_path: str, file_type: str) -> pd.DataFrame:
     try:
         if file_type == 'csv':
             return csv_reader(file_path)
-        elif file_type in ['xls', 'xlsx']:
+        elif file_type == 'xlsx':
             return excel_reader(file_path)
+        elif file_type == 'txt':
+            return txt_reader(file_path)
         else:
             logger.error(f"Unsupported file type: {file_type}")
             raise InvalidFileTypeError(f"Tipo de archivo no soportado: {file_type}")
@@ -137,7 +146,12 @@ def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> 
     return filtered if filtered else variable_names
 
 
-def get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> list:
+def get_file_list_by_type(
+    file_type: str,
+    csv: List[str],
+    xlsx: List[str],
+    txt: List[str],
+) -> List[str]:
     """
     Get list of files based on selected type.
     
@@ -145,10 +159,10 @@ def get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> l
     file list based on the user's file type selection.
     
     Args:
-        file_type: File type ('csv', 'xls', 'xlsx')
+        file_type: File type ('csv', 'xlsx', 'txt')
         csv: List of CSV file names (without extension)
-        xls: List of XLS file names (without extension)
         xlsx: List of XLSX file names (without extension)
+        txt: List of TXT file names (without extension)
         
     Returns:
         List of files of the specified type
@@ -159,7 +173,7 @@ def get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> l
     Example:
         >>> csv_files = ['data1', 'data2']
         >>> xlsx_files = ['experiment1', 'experiment2']
-        >>> get_file_list_by_type('csv', csv_files, [], xlsx_files)
+        >>> get_file_list_by_type('csv', csv_files, xlsx_files, [])
         ['data1', 'data2']
     """
     logger.debug(f"Getting file list for type: {file_type}")
@@ -170,8 +184,8 @@ def get_file_list_by_type(file_type: str, csv: list, xls: list, xlsx: list) -> l
     # Dictionary mapping file types to their corresponding lists
     file_lists = {
         'csv': csv,
-        'xls': xls,
-        'xlsx': xlsx
+        'xlsx': xlsx,
+        'txt': txt,
     }
     
     # Validate file type again (redundant but safe)
@@ -195,7 +209,7 @@ def load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str
     
     Args:
         filename: File name without extension (e.g., 'Ejemplo')
-        file_type: File type ('csv', 'xls', 'xlsx')
+        file_type: File type ('csv', 'xlsx', 'txt')
         
     Returns:
         Tuple of (data DataFrame, complete file path)
@@ -224,5 +238,8 @@ def load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str
         return data, file_path
         
     except Exception as e:
-        logger.error(f"Data loading workflow failed: {filename}.{file_type} - {str(e)}", exc_info=True)
+        logger.error(
+            f"Data loading workflow failed: {filename}.{file_type} - {str(e)}",
+            exc_info=True
+        )
         raise

@@ -7,11 +7,16 @@ This module provides functions to validate data integrity,
 file paths, and parameter values before processing.
 """
 
+# Standard library
 from pathlib import Path
-from typing import List, Any
-import pandas as pd
-import numpy as np
+from typing import Any, List, Optional, Union
 
+# Third-party packages
+import numpy as np
+import pandas as pd
+
+# Local imports
+from config import DATA_FILE_TYPES
 from utils.exceptions import (
     DataValidationError,
     FileNotFoundError,
@@ -48,26 +53,35 @@ def validate_file_path(file_path: str) -> None:
     logger.debug(t('log.file_path_validated', path=file_path))
 
 
-def validate_file_type(file_type: str, allowed_types: List[str] = None) -> None:
+def validate_file_type(
+    file_type: str, allowed_types: Optional[List[str]] = None
+) -> None:
     """
     Validate that a file type is supported.
-    
+
     Args:
-        file_type: File extension (e.g., 'csv', 'xlsx')
-        allowed_types: List of allowed file types (default: ['csv', 'xls', 'xlsx'])
-        
+        file_type: File extension (e.g., 'csv', 'xlsx').
+        allowed_types: List of allowed file types. If None, uses the
+            central list from :data:`config.DATA_FILE_TYPES`.
+
     Raises:
-        InvalidFileTypeError: If file type is not supported
+        InvalidFileTypeError: If file type is not supported.
     """
-    if allowed_types is None:
-        allowed_types = ['csv', 'xls', 'xlsx']
-    
-    if file_type not in allowed_types:
-        logger.error(t('log.invalid_file_type', file_type=file_type, allowed_types=', '.join(allowed_types)))
+    effective_types = allowed_types if allowed_types is not None else list(
+        DATA_FILE_TYPES
+    )
+
+    if file_type not in effective_types:
+        allowed_str = ', '.join(effective_types)
+        logger.error(
+            t('log.invalid_file_type', file_type=file_type, allowed_types=allowed_str)
+        )
         raise InvalidFileTypeError(
-            t('error.unsupported_file_type_details', 
-              file_type=file_type, 
-              allowed_types=', '.join(allowed_types))
+            t(
+                'error.unsupported_file_type_details',
+                file_type=file_type,
+                allowed_types=allowed_str
+            )
         )
     logger.debug(t('log.file_type_validated', file_type=file_type))
 
@@ -182,27 +196,32 @@ def validate_uncertainty_column(data: pd.DataFrame, var_name: str) -> None:
     logger.debug(t('log.uncertainty_column_validated', column=uncertainty_col))
 
 
-def validate_fitting_data(data: pd.DataFrame, x_name: str, y_name: str) -> None:
+def validate_fitting_data(
+    data: Union[pd.DataFrame, dict], x_name: str, y_name: str
+) -> None:
     """
     Comprehensive validation for fitting data.
-    
+
     Validates:
 
         - DataFrame is not empty
         - Required columns exist
         - Data is numeric
         - Uncertainty columns exist and are valid
-    
+
     Args:
-        data: DataFrame with data to fit
+        data: DataFrame or dict with data to fit (dict is converted to DataFrame).
         x_name: Name of the independent variable column
         y_name: Name of the dependent variable column
-        
+
     Raises:
         DataValidationError: If any validation fails
     """
     logger.info(t('log.validating_fitting_data', x=x_name, y=y_name))
-    
+
+    if isinstance(data, dict):
+        data = pd.DataFrame(data)
+
     # Validate DataFrame
     validate_dataframe(data, min_rows=2)
     
@@ -277,3 +296,23 @@ def validate_positive_integer(value: Any, name: str) -> int:
     
     logger.debug(t('log.positive_integer_validated', name=name, value=int_value))
     return int_value
+
+def parse_optional_float(s: str) -> Optional[float]:
+    """
+    Parse a string to float; empty or invalid input returns None.
+
+    Useful for optional numeric fields in dialogs (e.g. initial guess, bounds).
+
+    Args:
+        s: String to parse (e.g. from an Entry widget).
+
+    Returns:
+        The parsed float, or None if empty or invalid.
+    """
+    s = (s or "").strip()
+    if not s:
+        return None
+    try:
+        return float(s)
+    except ValueError:
+        return None

@@ -51,7 +51,7 @@ This guide covers known issues, common problems, and their solutions. It also in
 
 **Issue**: CSV files with special characters may not load correctly
 
-**Status**: ⚠️ **Partial Fix in 0.8.1**
+**Status**: ⚠️ **Partial Fix in 0.8.2**
 
 **Description**:
 - Files with accents, umlauts, or other non-ASCII characters may fail to load
@@ -159,7 +159,7 @@ ModuleNotFoundError: No module named 'numpy'
 1. Check file exists in specified location
 2. Use absolute path if relative path fails
 3. Check file permissions (read access required)
-4. Verify file extension (.csv, .xlsx, .xls)
+4. Verify file extension (.csv, .xlsx, .txt)
 
 #### Problem: CSV File Appears Empty
 
@@ -327,7 +327,7 @@ Reset to default theme:
 
 **Solution**:
 1. Check file size (< 200 MB for online version)
-2. Verify file format (CSV, XLS, XLSX)
+2. Verify file format (CSV, XLSX, TXT)
 3. Clear browser cache and retry
 4. Try different browser
 5. Check browser console for JavaScript errors (F12)
@@ -393,7 +393,7 @@ pip show numpy
 
 If you can't solve the issue, please report it on GitHub with:
 
-1. **Version**: Check version in main menu or `config.py`
+1. **Version**: Check version in main menu or `config` (e.g. `config/constants.py`)
 2. **Operating System**: Windows, macOS, or Linux (with version)
 3. **Python Version**: Output of `python --version`
 4. **Steps to Reproduce**: Exact steps to trigger the issue

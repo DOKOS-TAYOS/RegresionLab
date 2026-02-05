@@ -8,7 +8,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.8.1-blue.svg?style=for-the-badge)](https://github.com/DOKOS-TAYOS/RegressionLab)
+[![Version](https://img.shields.io/badge/version-0.8.2-blue.svg?style=for-the-badge)](https://github.com/DOKOS-TAYOS/RegressionLab)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://regressionlab.streamlit.app/)
 [![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)](https://scipy.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
@@ -174,6 +174,9 @@ Contributions are welcome! Please read the [Contributing Guidelines](docs/contri
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+For information about third-party libraries and their licenses, see
+`THIRD_PARTY_LICENSES.md`.
+
 ## 👨‍💻 Author
 
 <div align="center">
@@ -203,7 +206,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Version**: 0.8.1 • **Last Updated**: January 2026
+**Version**: 0.8.2 • **Last Updated**: January 2026
 
 Made with ❤️ by [Alejandro Mata Ali](https://github.com/DOKOS-TAYOS)
 
