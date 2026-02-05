@@ -33,6 +33,8 @@ def show_help_section() -> None:
         st.subheader(t('help.stats_title').strip())
         st.markdown(t('help.r_squared_desc'))
         st.markdown(t('help.r_squared_formula'))
+        st.markdown(t('help.rmse_desc'))
+        st.markdown(t('help.rmse_formula'))
         st.markdown(t('help.chi_squared_desc'))
         st.markdown(t('help.chi_squared_formula'))
         st.markdown(t('help.reduced_chi_squared_desc'))

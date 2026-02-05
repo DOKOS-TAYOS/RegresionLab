@@ -316,3 +316,129 @@ def parse_optional_float(s: str) -> Optional[float]:
         return float(s)
     except ValueError:
         return None
+
+
+def validate_column_names(data: pd.DataFrame) -> None:
+    """
+    Validate that column names are valid and not duplicated.
+    
+    Args:
+        data: DataFrame to validate
+        
+    Raises:
+        DataValidationError: If column names are invalid or duplicated
+    """
+    if len(data.columns) == 0:
+        logger.error(t('log.no_columns_found'))
+        raise DataValidationError(t('error.no_columns_in_file'))
+    
+    # Check for duplicate column names
+    if data.columns.duplicated().any():
+        duplicates = data.columns[data.columns.duplicated()].tolist()
+        logger.error(t('log.duplicate_columns', columns=', '.join(duplicates)))
+        raise DataValidationError(
+            t('error.duplicate_column_names', columns=', '.join(duplicates))
+        )
+    
+    # Check for empty column names
+    empty_names = [name for name in data.columns if not str(name).strip()]
+    if empty_names:
+        logger.error(t('log.empty_column_names', count=len(empty_names)))
+        raise DataValidationError(t('error.empty_column_names'))
+    
+    logger.debug(t('log.column_names_validated', count=len(data.columns)))
+
+
+def validate_all_columns_numeric(data: pd.DataFrame) -> None:
+    """
+    Validate that all columns contain numeric data (or can be converted to numeric).
+    
+    This function attempts to convert non-numeric columns to numeric and reports
+    which columns cannot be converted.
+    
+    Args:
+        data: DataFrame to validate
+        
+    Raises:
+        DataValidationError: If any column cannot be converted to numeric
+    """
+    non_numeric_columns: List[str] = []
+    
+    for col in data.columns:
+        # Check if column is already numeric
+        if pd.api.types.is_numeric_dtype(data[col]):
+            continue
+        
+        # Try to convert to numeric
+        try:
+            pd.to_numeric(data[col], errors='raise')
+        except (ValueError, TypeError):
+            non_numeric_columns.append(col)
+    
+    if non_numeric_columns:
+        logger.error(
+            t('log.non_numeric_columns', columns=', '.join(non_numeric_columns))
+        )
+        raise DataValidationError(
+            t('error.columns_must_be_numeric', columns=', '.join(non_numeric_columns))
+        )
+    
+    logger.debug(t('log.all_columns_numeric_validated'))
+
+
+def validate_no_completely_empty_rows(data: pd.DataFrame) -> None:
+    """
+    Validate that there are no completely empty rows in the DataFrame.
+    
+    Args:
+        data: DataFrame to validate
+        
+    Raises:
+        DataValidationError: If completely empty rows are found
+    """
+    # Find rows where all values are NaN or empty
+    empty_rows = data.isna().all(axis=1)
+    
+    if empty_rows.any():
+        empty_row_indices = data.index[empty_rows].tolist()
+        empty_count = len(empty_row_indices)
+        logger.warning(
+            t('log.empty_rows_found', count=empty_count, rows=str(empty_row_indices[:10]))
+        )
+        # Note: We warn but don't raise an error, as pandas handles empty rows
+        # But we log it for user awareness
+    
+    logger.debug(t('log.empty_rows_validated'))
+
+
+def validate_data_format(data: pd.DataFrame) -> None:
+    """
+    Comprehensive validation of data file format.
+    
+    This function validates:
+    - Column names are valid and not duplicated
+    - All columns contain numeric data
+    - No completely empty rows
+    - Minimum requirements (rows and columns)
+    
+    Args:
+        data: DataFrame to validate
+        
+    Raises:
+        DataValidationError: If data format is invalid
+    """
+    logger.info(t('log.validating_data_format'))
+    
+    # Basic DataFrame validation
+    validate_dataframe(data, min_rows=2)
+    
+    # Validate column names
+    validate_column_names(data)
+    
+    # Validate all columns are numeric
+    validate_all_columns_numeric(data)
+    
+    # Check for completely empty rows (warning only)
+    validate_no_completely_empty_rows(data)
+    
+    logger.info(t('log.data_format_validated', rows=len(data), columns=len(data.columns)))

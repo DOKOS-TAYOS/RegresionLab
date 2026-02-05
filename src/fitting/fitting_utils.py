@@ -226,6 +226,14 @@ def generic_fit(
         logger.warning("Error calculating R²: %s", str(e))
         fit_stats['r_squared'] = 0.0
     
+    # Calculate RMSE (Root Mean Square Error)
+    try:
+        fit_stats['rmse'] = float(np.sqrt(np.mean((y - y_fitted) ** 2)))
+        logger.debug(f"RMSE = {fit_stats['rmse']:.6f}")
+    except Exception as e:
+        logger.warning("Error calculating RMSE: %s", str(e))
+        fit_stats['rmse'] = float('nan')
+    
     # Calculate chi-squared statistics
     uy_safe = np.where(np.greater(uy, 1e-15), uy, 1e-15)
     fit_stats['chi_squared'] = float(np.sum(((y - y_fitted) / uy_safe) ** 2))
@@ -254,6 +262,7 @@ def generic_fit(
     
     # Generate text output using the fit_stats dictionary
     text_lines.append(f"R\u00B2={fit_stats['r_squared']:.6f}")
+    text_lines.append(t('stats.rmse', value=f"{fit_stats['rmse']:.4g}"))
     text_lines.append(t('stats.chi_squared', value=f"{fit_stats['chi_squared']:.4g}"))
     text_lines.append(
         t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}")

@@ -21,7 +21,7 @@ from config import FILE_CONFIG, get_project_root
 from i18n import t
 from utils.exceptions import DataLoadError, FileNotFoundError
 from utils.logger import get_logger
-from utils.validators import validate_dataframe, validate_file_path
+from utils.validators import validate_dataframe, validate_data_format, validate_file_path
 
 logger = get_logger(__name__)
 
@@ -48,6 +48,7 @@ def csv_reader(file_path: str) -> pd.DataFrame:
     try:
         data = pd.read_csv(file_path, na_values=['no'])
         validate_dataframe(data)
+        validate_data_format(data)
         logger.info(t('log.successfully_loaded_csv', rows=len(data), columns=len(data.columns)))
         return data
     except pd.errors.EmptyDataError:
@@ -89,6 +90,7 @@ def txt_reader(file_path: str) -> pd.DataFrame:
         # sep=None triggers Python engine's delimiter sniffing (tab, space, etc.)
         data = pd.read_csv(file_path, sep=None, engine='python', na_values=['no'])
         validate_dataframe(data)
+        validate_data_format(data)
         logger.info(t('log.successfully_loaded_txt', rows=len(data), columns=len(data.columns)))
         return data
     except pd.errors.EmptyDataError:
@@ -127,6 +129,7 @@ def excel_reader(file_path: str) -> pd.DataFrame:
     try:
         data = pd.read_excel(file_path)
         validate_dataframe(data)
+        validate_data_format(data)
         logger.info(t('log.successfully_loaded_excel', rows=len(data), columns=len(data.columns)))
         return data
     except Exception as e:
