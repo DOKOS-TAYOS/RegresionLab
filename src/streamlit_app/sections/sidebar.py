@@ -98,7 +98,7 @@ def setup_sidebar(version: str) -> str:
             </div>
         """, unsafe_allow_html=True)
 
-        next_lang = "English 🇬🇧" if st.session_state.language == 'es' else "Español 🇪🇸"
+        next_lang = t('menu.language_english') if st.session_state.language == 'es' else t('menu.language_spanish')
         if st.button(next_lang, key="lang_toggle", width='stretch'):
             toggle_language()
             st.rerun()

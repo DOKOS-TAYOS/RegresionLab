@@ -25,6 +25,7 @@ from numpy.typing import NDArray
 
 # Local imports
 from config import MATH_FUNCTION_REPLACEMENTS
+from i18n import t
 from utils.exceptions import EquationError, ValidationError
 from utils.logger import get_logger
 from utils.validators import validate_parameter_names
@@ -42,7 +43,7 @@ class CustomFunctionEvaluator:
     
     Example:
         >>> evaluator = CustomFunctionEvaluator("a*x**2 + b*x + c", ["a", "b", "c"])
-        >>> texto, y_ajus, ecuacion = evaluator.fit(datos, "x", "y")
+        >>> text, y_fitted, equation = evaluator.fit(data, "x", "y")
     """
     
     def __init__(self, equation_str: str, parameter_names: List[str]):
@@ -63,7 +64,7 @@ class CustomFunctionEvaluator:
         # Validate inputs
         if not equation_str or not equation_str.strip():
             logger.error("Empty equation string provided")
-            raise ValidationError("La ecuación no puede estar vacía")
+            raise ValidationError(t('error.equation_empty'))
         
         validate_parameter_names(parameter_names)
         
@@ -77,7 +78,7 @@ class CustomFunctionEvaluator:
             logger.info("Custom function evaluator created successfully")
         except Exception as e:
             logger.error(f"Failed to create custom function: {str(e)}", exc_info=True)
-            raise EquationError(f"Error al crear la función personalizada: {str(e)}")
+            raise EquationError(t('error.equation_create_error', error=str(e)))
     
     def _prepare_formula(self, equation_str: str) -> str:
         """
@@ -107,7 +108,7 @@ class CustomFunctionEvaluator:
             return prepared
         except Exception as e:
             logger.error(f"Error preparing formula: {str(e)}", exc_info=True)
-            raise EquationError(f"Error al preparar la fórmula: {str(e)}")
+            raise EquationError(t('error.equation_prepare_error', error=str(e)))
     
     def _create_function(self) -> Callable:
         """
@@ -130,7 +131,7 @@ class CustomFunctionEvaluator:
             logger.debug("Formula syntax validation passed")
         except SyntaxError as e:
             logger.error(f"Formula has syntax error: {str(e)}")
-            raise EquationError(f"Error de sintaxis en la fórmula: {str(e)}")
+            raise EquationError(t('error.equation_syntax_error', error=str(e)))
         
         def custom_func(x: NDArray, *params: float) -> NDArray:
             """
@@ -166,13 +167,13 @@ class CustomFunctionEvaluator:
                 return result
             except ZeroDivisionError as e:
                 logger.error(f"Division by zero in formula: {str(e)}")
-                raise EquationError(f"División por cero en la fórmula: {str(e)}")
+                raise EquationError(t('error.equation_division_by_zero', error=str(e)))
             except OverflowError as e:
                 logger.error(f"Overflow in formula evaluation: {str(e)}")
-                raise EquationError(f"Desbordamiento en la evaluación: {str(e)}")
+                raise EquationError(t('error.equation_overflow_error', error=str(e)))
             except Exception as e:
                 logger.error(f"Error evaluating formula: {str(e)}", exc_info=True)
-                raise EquationError(f"Error al evaluar la fórmula '{self.equation_str}': {str(e)}")
+                raise EquationError(t('error.evaluation_error', error=str(e)))
         
         return custom_func
     

@@ -1,38 +1,37 @@
 ### Third-Party Licenses for RegressionLab
 
-RegressionLab (`regressionlab`) se distribuye bajo licencia **MIT** (ver `LICENSE` en la raíz del proyecto).
+RegressionLab (`regressionlab`) is distributed under the **MIT** license (see `LICENSE` in the project root).
 
-Este documento lista las bibliotecas de terceros utilizadas y sus licencias, para facilitar el cumplimiento
-de sus términos cuando redistribuyas RegressionLab (como código fuente, paquete instalable, binario o instalador).
+This document lists the third-party libraries used and their licenses, to facilitate compliance with their terms when redistributing RegressionLab (as source code, installable package, binary, or installer).
 
-> Nota: Esta lista se basa en las dependencias declaradas en `pyproject.toml`, `requirements.txt`
-> y `requirements-dev.txt`. Si añades o eliminas dependencias, recuerda actualizar este archivo.
+> Note: This list is based on the dependencies declared in `pyproject.toml`, `requirements.txt`
+> and `requirements-dev.txt`. If you add or remove dependencies, remember to update this file.
 
 ---
 
-### 1. Dependencias de ejecución (runtime)
+### 1. Runtime Dependencies
 
-Estas bibliotecas se usan en tiempo de ejecución de la aplicación.
+These libraries are used at application runtime.
 
-| Biblioteca       | Rango de versión           | Tipo de licencia                             |
+| Library       | Version Range           | License Type                             |
 |------------------|----------------------------|----------------------------------------------|
 | **numpy**        | `>=2.0,<3.0`               | BSD-3-Clause                                 |
-| **matplotlib**   | `>=3.10,<4.0`              | Licencia Matplotlib (BSD-style + PSF)        |
+| **matplotlib**   | `>=3.10,<4.0`              | Matplotlib License (BSD-style + PSF)        |
 | **scipy**        | `>=1.17,<2.0`              | BSD-3-Clause                                 |
 | **pandas**       | `>=2.3,<3.0`               | BSD-3-Clause                                 |
 | **openpyxl**     | `>=3.1,<4.0`               | MIT                                          |
 | **python-dotenv**| `>=1.0,<2.0`               | BSD-3-Clause                                 |
 | **colorama**     | `>=0.4,<1.0`               | BSD-3-Clause                                 |
-| **Pillow**       | `>=10.0,<11.0`             | PIL License / HPND (permisiva, tipo MIT)     |
+| **Pillow**       | `>=10.0,<11.0`             | PIL License / HPND (permissive, MIT-like)     |
 | **streamlit**    | `>=1.31,<2.0`              | Apache License 2.0                           |
 
 ---
 
-### 2. Dependencias de documentación
+### 2. Documentation Dependencies
 
-Estas bibliotecas se usan para generar documentación (`docs`, `sphinx-docs`, etc.).
+These libraries are used to generate documentation (`docs`, `sphinx-docs`, etc.).
 
-| Biblioteca                 | Rango de versión           | Tipo de licencia  |
+| Library                 | Version Range           | License Type  |
 |---------------------------|----------------------------|-------------------|
 | **sphinx**                | `>=9.0.0`                  | BSD-2-Clause      |
 | **sphinx-rtd-theme**      | `>=3.0.0`                  | MIT               |
@@ -42,12 +41,12 @@ Estas bibliotecas se usan para generar documentación (`docs`, `sphinx-docs`, et
 
 ---
 
-### 3. Dependencias de desarrollo y tooling
+### 3. Development and Tooling Dependencies
 
-Estas bibliotecas se usan sólo para desarrollo (tests, formateo, linting, hooks, etc.) y normalmente
-no se distribuyen en binarios finales, aunque sí pueden estar presentes si publicas tu código fuente.
+These libraries are used only for development (tests, formatting, linting, hooks, etc.) and normally
+are not distributed in final binaries, although they may be present if you publish your source code.
 
-| Biblioteca       | Rango de versión           | Tipo de licencia  |
+| Library       | Version Range           | License Type  |
 |------------------|----------------------------|-------------------|
 | **pytest**       | `>=7.0` / `>=7.0,<8.0`     | MIT               |
 | **pytest-cov**   | `>=4.0` / `>=4.0,<5.0`     | MIT               |
@@ -59,24 +58,23 @@ no se distribuyen en binarios finales, aunque sí pueden estar presentes si publ
 
 ---
 
-### 4. Notas de cumplimiento de licencias
+### 4. License Compliance Notes
 
 - **MIT / BSD / PIL (HPND)**  
-  - Permiten uso comercial, modificación, integración y redistribución, incluido en software propietario.  
-  - Obligación principal: conservar el aviso de copyright y el texto
-    de la licencia en copias sustanciales del software.
+  - Allow commercial use, modification, integration, and redistribution, including in proprietary software.  
+  - Main requirement: preserve the copyright notice and license text
+    in substantial copies of the software.
 
 - **Apache License 2.0 (Streamlit)**  
-  - Permite igualmente uso comercial, modificación, integración y redistribución.  
-  - Añade una concesión explícita de patentes y requisitos adicionales de atribución.  
-  - Al redistribuir RegressionLab, es recomendable:
-    - Incluir el texto completo de la Apache License 2.0 (por ejemplo, en un fichero de licencias agregado).  
-    - Incluir el fichero `NOTICE` de Streamlit si se requiere, sin modificar su contenido.
+  - Also allows commercial use, modification, integration, and redistribution.  
+  - Adds an explicit patent grant and additional attribution requirements.  
+  - When redistributing RegressionLab, it is recommended to:
+    - Include the full text of the Apache License 2.0 (for example, in an aggregated licenses file).  
+    - Include Streamlit's `NOTICE` file if required, without modifying its content.
 
-- **Buenas prácticas recomendadas en tus distribuciones**  
-  - Mantener tu fichero `LICENSE` (MIT) en todos los paquetes / instaladores.  
-  - Incluir este `THIRD_PARTY_LICENSES.md` o equivalente junto con tus binarios o código fuente.  
-  - Si copias o modificas directamente código fuente de alguna de estas bibliotecas y lo redistribuyes,
-    conservar sus cabeceras de licencia y añadir, si procede, una nota del tipo
-    “Modificado por RegressionLab”.
-
+- **Recommended Best Practices for Your Distributions**  
+  - Keep your `LICENSE` (MIT) file in all packages / installers.  
+  - Include this `THIRD_PARTY_LICENSES.md` or equivalent along with your binaries or source code.  
+  - If you copy or directly modify source code from any of these libraries and redistribute it,
+    preserve their license headers and add, if applicable, a note such as
+    "Modified by RegressionLab".

@@ -22,7 +22,7 @@ Dialogs cover file selection, variable selection, equation selection, and result
 
 Dialog to ask for data file type.
 
-Presents radio buttons with file type options (xlsx, csv, txt, Exit/Salir). User can select one option.
+Presents radio buttons with file type options (xlsx, csv, txt, Exit). User can select one option. The "Exit" option text is internationalized based on the current language setting.
 
 **Parameters:**
 - `parent_window`: Parent Tkinter window

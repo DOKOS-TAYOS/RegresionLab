@@ -142,10 +142,10 @@ def t(key: str, **kwargs) -> str:
         
     Examples:
         >>> t('menu.welcome')
-        'Bienvenido, científico. ¿Qué deseas hacer?'
+        'Welcome, scientist. What would you like to do?'
         
         >>> t('error.fitting_failed_details', error='Invalid data')
-        'RegressionLab no ha sido capaz de ajustar los datos.\n\nDetalles: Invalid data'
+        'The fitter was unable to fit the data.\n\nDetails: Invalid data\n\nPlease try another equation or verify the data.'
     """
     # Ensure translations are loaded
     if not _translations:

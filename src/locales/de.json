@@ -13,7 +13,9 @@
     "exit_title": "Beenden...",
     "exit_confirm": "Möchten Sie beenden?",
     "yes": "Ja",
-    "no": "Nein"
+    "no": "Nein",
+    "language_english": "English 🇬🇧",
+    "language_spanish": "Español 🇪🇸"
   },
   "dialog": {
     "data": "Daten",
@@ -88,6 +90,12 @@
     "no_valid_data": "Keine gültigen Daten zum Darstellen nach dem Filtern ungültiger Werte.",
     "invalid_formula": "Ungültige Formel: {error}",
     "evaluation_error": "Fehler bei der Auswertung der benutzerdefinierten Formel: {error}",
+    "equation_empty": "Die Gleichung darf nicht leer sein",
+    "equation_create_error": "Fehler beim Erstellen der benutzerdefinierten Funktion: {error}",
+    "equation_prepare_error": "Fehler beim Vorbereiten der Formel: {error}",
+    "equation_syntax_error": "Syntaxfehler in der Formel: {error}",
+    "equation_division_by_zero": "Division durch Null in der Formel: {error}",
+    "equation_overflow_error": "Überlauf bei der Formelauswertung: {error}",
     "unsupported_file_type": "Nicht unterstützter Dateityp: {file_type}"
   },
   "warning": {

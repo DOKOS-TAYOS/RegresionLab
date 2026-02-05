@@ -178,7 +178,7 @@ Add translations for your equation name in both language files:
 ```json
 {
   "equations": {
-    "exponential_function": "Función Exponencial"
+    "exponential_function": "Función Exponencial"  // Example: Spanish translation
   }
 }
 ```
