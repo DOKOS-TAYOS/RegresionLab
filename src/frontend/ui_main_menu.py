@@ -13,7 +13,7 @@ from typing import Callable
 from PIL import Image, ImageTk
 
 # Local imports
-from config import UI_STYLE
+from config import UI_STYLE, __version__
 from i18n import t
 
 
@@ -40,7 +40,7 @@ def create_main_menu(
         The main Tk window instance
     """
     menu = Tk()
-    menu.title(t('menu.title'))
+    menu.title(f"{t('menu.title')} — v{__version__}")
     menu.attributes('-fullscreen', False)
     menu.configure(background=UI_STYLE['bg'])
     menu.resizable(width=True, height=True)
@@ -95,6 +95,13 @@ def create_main_menu(
         bg=UI_STYLE['bg'],
         fg=UI_STYLE['fg'],
         font=(UI_STYLE['font_family'], UI_STYLE['font_size_large'], 'bold')
+    )
+    version_label = Label(
+        main_frame,
+        text=f"v{__version__}",
+        bg=UI_STYLE['bg'],
+        fg=UI_STYLE['fg'],
+        font=(UI_STYLE['font_family'], max(8, UI_STYLE['font_size'] - 2))
     )
     
     # Button configuration
@@ -186,6 +193,8 @@ def create_main_menu(
         logo_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
         current_row += 1
     message.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
+    current_row += 1
+    version_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=(0, 6))
     current_row += 1
     normal_fitting_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
     multiple_datasets_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)

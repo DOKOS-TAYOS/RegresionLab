@@ -5,6 +5,9 @@ REM ============================================================================
 REM This script sets up the development environment for RegressionLab
 REM ============================================================================
 
+REM Change to project root directory (where this script lives)
+cd /d "%~dp0"
+
 echo.
 echo ====================================
 echo    RegressionLab Setup (Windows)
