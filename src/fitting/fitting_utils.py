@@ -6,12 +6,7 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 import numpy as np
 
 # Local imports (heavy numerical libraries are imported lazily inside functions)
-from config import (
-    EQUATION_FORMULAS,
-    EQUATION_FUNCTION_MAP,
-    EQUATION_PARAM_NAMES,
-    EXIT_SIGNAL,
-)
+from config import EQUATIONS, EXIT_SIGNAL
 from i18n import t
 from utils import FittingError, get_logger
 
@@ -314,12 +309,10 @@ def get_equation_param_info(
         >>> formula
         'y = mx + n'
     """
-    if equation_name not in EQUATION_PARAM_NAMES or equation_name not in EQUATION_FORMULAS:
+    meta = EQUATIONS.get(equation_name)
+    if meta is None:
         return None
-    return (
-        list(EQUATION_PARAM_NAMES[equation_name]),
-        EQUATION_FORMULAS[equation_name],
-    )
+    return (list(meta["param_names"]), meta["formula"])
 
 
 def merge_initial_guess(
@@ -420,11 +413,11 @@ def get_fitting_function(
         logger.debug(t('log.exit_signal_received'))
         return None
 
-    if equation_name not in EQUATION_FUNCTION_MAP:
+    if equation_name not in EQUATIONS:
         logger.warning(t('log.unknown_equation_type', equation=equation_name))
         return None
 
-    function_name = EQUATION_FUNCTION_MAP[equation_name]
+    function_name = EQUATIONS[equation_name]["function"]
     logger.debug(
         t('log.equation_maps_to_function', equation=equation_name, function=function_name)
     )

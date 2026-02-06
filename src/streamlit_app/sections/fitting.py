@@ -163,7 +163,7 @@ def show_equation_selector(
         ``custom_formula`` and ``parameter_names`` are only populated
         when the custom‑formula option is selected.
     """
-    from config import EQUATION_FORMULAS
+    from config import EQUATIONS
 
     equation_options = _create_equation_options(equation_types)
 
@@ -176,7 +176,7 @@ def show_equation_selector(
     selected_equation = equation_options[selected_label]
     if selected_equation != 'custom_formula':
         desc = t(f'equations_descriptions.{selected_equation}')
-        formula = EQUATION_FORMULAS.get(selected_equation, '')
+        formula = EQUATIONS.get(selected_equation, {}).get("formula", "")
         st.caption(f"**{desc}** — {formula}")
     custom_formula = None
     parameter_names = None

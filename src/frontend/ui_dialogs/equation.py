@@ -17,7 +17,7 @@ from tkinter import (
     Text,
 )
 
-from config import EQUATION_FORMULAS, EXIT_SIGNAL, UI_STYLE
+from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE
 from i18n import t
 from utils import parse_optional_float
 
@@ -245,7 +245,7 @@ def ask_equation_type(
     for attr_name in equation_keys:
         btn_text = t(f'equations.{attr_name}')
         desc = t(f'equations_descriptions.{attr_name}')
-        formula = EQUATION_FORMULAS.get(attr_name, '')
+        formula = EQUATIONS.get(attr_name, {}).get("formula", "")
         tooltip_text = f"{desc}\n{t('dialog.equation')} {formula}" if formula else desc
         btn = Button(
             equation_level.frame_custom,
