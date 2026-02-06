@@ -59,8 +59,8 @@ from .special import (
 )
 
 __all__ = [
-    'Numeric',
     'DataLike',
+    'Numeric',
     'generate_polynomial_function',
     'linear_function_with_n',
     'linear_function',

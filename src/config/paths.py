@@ -34,7 +34,7 @@ _PLOT_FORMATS = ('png', 'jpg', 'jpeg', 'pdf')
 FILE_CONFIG = {
     'input_dir': get_env('FILE_INPUT_DIR', 'input'),
     'output_dir': get_env('FILE_OUTPUT_DIR', 'output'),
-    'filename_template': get_env('FILE_FILENAME_TEMPLATE', 'fit_{}.png'),
+    'filename_template': get_env('FILE_FILENAME_TEMPLATE', 'fit_{}'),
     'plot_format': _normalize_plot_format(get_env('FILE_PLOT_FORMAT', 'png')),
 }
 

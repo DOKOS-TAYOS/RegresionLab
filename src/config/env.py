@@ -4,6 +4,12 @@ import os
 from pathlib import Path
 from typing import Any, Type, Union
 
+from config.constants import (
+    LANGUAGE_ALIASES,
+    SUPPORTED_LANGUAGE_CODES,
+    VALID_LANGUAGE_INPUTS,
+)
+
 try:
     from dotenv import load_dotenv
     # Project root: __file__ is src/config/env.py -> parent=config, parent.parent=src, parent.parent.parent=project root
@@ -41,18 +47,11 @@ def _validate_env_value(
     if key == 'LANGUAGE' and cast_type == str:
         str_value = str(value).strip()
         lang_lower = str_value.lower()
-        valid_languages = ('es', 'en', 'de', 'español', 'esp', 'english', 'ingles', 'inglés', 'eng')
-        if lang_lower not in valid_languages:
+        if lang_lower not in VALID_LANGUAGE_INPUTS:
             return False, default
-        # Normalize to standard codes
-        if lang_lower in ('español', 'esp'):
-            return True, 'es'
-        elif lang_lower in ('english', 'ingles', 'inglés', 'eng'):
-            return True, 'en'
-        elif lang_lower == 'de':
-            return True, 'de'
-        # Already in standard format
-        return True, lang_lower
+        # Normalize to canonical code
+        normalized = LANGUAGE_ALIASES.get(lang_lower, lang_lower)
+        return True, normalized
 
     # Special validation for LOG_LEVEL (must be done before options check)
     if key == 'LOG_LEVEL' and cast_type == str:
@@ -116,6 +115,56 @@ def _validate_env_value(
     return True, value
 
 
+ENV_SCHEMA: list[dict[str, Any]] = [
+    {'key': 'LANGUAGE', 'default': 'es', 'cast_type': str, 'options': SUPPORTED_LANGUAGE_CODES},
+    {'key': 'UI_BACKGROUND', 'default': 'midnight blue', 'cast_type': str},
+    {'key': 'UI_FOREGROUND', 'default': 'snow', 'cast_type': str},
+    {'key': 'UI_BUTTON_FG', 'default': 'lime green', 'cast_type': str},
+    {'key': 'UI_BUTTON_FG_CANCEL', 'default': 'red2', 'cast_type': str},
+    {'key': 'UI_BUTTON_FG_CYAN', 'default': 'cyan2', 'cast_type': str},
+    {'key': 'UI_ACTIVE_BG', 'default': 'navy', 'cast_type': str},
+    {'key': 'UI_ACTIVE_FG', 'default': 'snow', 'cast_type': str},
+    {'key': 'UI_BORDER_WIDTH', 'default': 8, 'cast_type': int},
+    {'key': 'UI_RELIEF', 'default': 'ridge', 'cast_type': str, 'options': ('flat', 'raised', 'sunken', 'groove', 'ridge')},
+    {'key': 'UI_PADDING_X', 'default': 8, 'cast_type': int},
+    {'key': 'UI_PADDING_Y', 'default': 8, 'cast_type': int},
+    {'key': 'UI_BUTTON_WIDTH', 'default': 12, 'cast_type': int},
+    {'key': 'UI_BUTTON_WIDTH_WIDE', 'default': 28, 'cast_type': int},
+    {'key': 'UI_FONT_SIZE', 'default': 16, 'cast_type': int},
+    {'key': 'UI_FONT_SIZE_LARGE', 'default': 20, 'cast_type': int},
+    {'key': 'UI_FONT_FAMILY', 'default': 'Menlo', 'cast_type': str},
+    {'key': 'UI_SPINBOX_WIDTH', 'default': 10, 'cast_type': int},
+    {'key': 'UI_ENTRY_WIDTH', 'default': 25, 'cast_type': int},
+    {'key': 'PLOT_FIGSIZE_WIDTH', 'default': 12, 'cast_type': int},
+    {'key': 'PLOT_FIGSIZE_HEIGHT', 'default': 6, 'cast_type': int},
+    {'key': 'DPI', 'default': 100, 'cast_type': int},
+    {'key': 'PLOT_SHOW_TITLE', 'default': False, 'cast_type': bool},
+    {'key': 'PLOT_LINE_COLOR', 'default': 'black', 'cast_type': str},
+    {'key': 'PLOT_LINE_WIDTH', 'default': 1.0, 'cast_type': float},
+    {'key': 'PLOT_LINE_STYLE', 'default': '-', 'cast_type': str, 'options': ('-', '--', '-.', ':')},
+    {'key': 'PLOT_MARKER_FORMAT', 'default': 'o', 'cast_type': str, 'options': ('o', 's', '^', 'd', '*')},
+    {'key': 'PLOT_MARKER_SIZE', 'default': 5, 'cast_type': int},
+    {'key': 'PLOT_ERROR_COLOR', 'default': 'crimson', 'cast_type': str},
+    {'key': 'PLOT_MARKER_FACE_COLOR', 'default': 'crimson', 'cast_type': str},
+    {'key': 'PLOT_MARKER_EDGE_COLOR', 'default': 'crimson', 'cast_type': str},
+    {'key': 'FONT_FAMILY', 'default': 'serif', 'cast_type': str, 'options': ('serif', 'sans-serif', 'monospace', 'cursive', 'fantasy')},
+    {'key': 'FONT_TITLE_SIZE', 'default': 'xx-large', 'cast_type': str, 'options': ('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')},
+    {'key': 'FONT_TITLE_WEIGHT', 'default': 'semibold', 'cast_type': str, 'options': ('normal', 'bold', 'light', 'semibold', 'heavy')},
+    {'key': 'FONT_AXIS_SIZE', 'default': 30, 'cast_type': int},
+    {'key': 'FONT_AXIS_STYLE', 'default': 'italic', 'cast_type': str, 'options': ('normal', 'italic', 'oblique')},
+    {'key': 'FONT_TICK_SIZE', 'default': 16, 'cast_type': int},
+    {'key': 'FONT_PARAM_FAMILY', 'default': 'Courier', 'cast_type': str},
+    {'key': 'FONT_PARAM_SIZE', 'default': 10, 'cast_type': int},
+    {'key': 'FILE_INPUT_DIR', 'default': 'input', 'cast_type': str},
+    {'key': 'FILE_OUTPUT_DIR', 'default': 'output', 'cast_type': str},
+    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}.png', 'cast_type': str},
+    {'key': 'FILE_PLOT_FORMAT', 'default': 'png', 'cast_type': str, 'options': ('png', 'jpg', 'pdf')},
+    {'key': 'DONATIONS_URL', 'default': '', 'cast_type': str},
+    {'key': 'LOG_LEVEL', 'default': 'INFO', 'cast_type': str, 'options': ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')},
+    {'key': 'LOG_FILE', 'default': 'regressionlab.log', 'cast_type': str},
+    {'key': 'LOG_CONSOLE', 'default': False, 'cast_type': bool},
+]
+
 def get_env(
     key: str,
     default: Any,
@@ -169,56 +218,6 @@ def get_env(
     is_valid, corrected_value = _validate_env_value(key, casted_value, schema_item)
     return corrected_value
 
-
-ENV_SCHEMA: list[dict[str, Any]] = [
-    {'key': 'LANGUAGE', 'default': 'es', 'cast_type': str, 'options': ('es', 'en', 'de')},
-    {'key': 'UI_BACKGROUND', 'default': 'midnight blue', 'cast_type': str},
-    {'key': 'UI_FOREGROUND', 'default': 'snow', 'cast_type': str},
-    {'key': 'UI_BUTTON_FG', 'default': 'lime green', 'cast_type': str},
-    {'key': 'UI_BUTTON_FG_CANCEL', 'default': 'red2', 'cast_type': str},
-    {'key': 'UI_BUTTON_FG_CYAN', 'default': 'cyan2', 'cast_type': str},
-    {'key': 'UI_ACTIVE_BG', 'default': 'navy', 'cast_type': str},
-    {'key': 'UI_ACTIVE_FG', 'default': 'snow', 'cast_type': str},
-    {'key': 'UI_BORDER_WIDTH', 'default': 8, 'cast_type': int},
-    {'key': 'UI_RELIEF', 'default': 'ridge', 'cast_type': str, 'options': ('flat', 'raised', 'sunken', 'groove', 'ridge')},
-    {'key': 'UI_PADDING_X', 'default': 8, 'cast_type': int},
-    {'key': 'UI_PADDING_Y', 'default': 8, 'cast_type': int},
-    {'key': 'UI_BUTTON_WIDTH', 'default': 12, 'cast_type': int},
-    {'key': 'UI_BUTTON_WIDTH_WIDE', 'default': 28, 'cast_type': int},
-    {'key': 'UI_FONT_SIZE', 'default': 16, 'cast_type': int},
-    {'key': 'UI_FONT_SIZE_LARGE', 'default': 20, 'cast_type': int},
-    {'key': 'UI_FONT_FAMILY', 'default': 'Menlo', 'cast_type': str},
-    {'key': 'UI_SPINBOX_WIDTH', 'default': 10, 'cast_type': int},
-    {'key': 'UI_ENTRY_WIDTH', 'default': 25, 'cast_type': int},
-    {'key': 'PLOT_FIGSIZE_WIDTH', 'default': 12, 'cast_type': int},
-    {'key': 'PLOT_FIGSIZE_HEIGHT', 'default': 6, 'cast_type': int},
-    {'key': 'DPI', 'default': 100, 'cast_type': int},
-    {'key': 'PLOT_SHOW_TITLE', 'default': False, 'cast_type': bool},
-    {'key': 'PLOT_LINE_COLOR', 'default': 'black', 'cast_type': str},
-    {'key': 'PLOT_LINE_WIDTH', 'default': 1.0, 'cast_type': float},
-    {'key': 'PLOT_LINE_STYLE', 'default': '-', 'cast_type': str, 'options': ('-', '--', '-.', ':')},
-    {'key': 'PLOT_MARKER_FORMAT', 'default': 'o', 'cast_type': str, 'options': ('o', 's', '^', 'd', '*')},
-    {'key': 'PLOT_MARKER_SIZE', 'default': 5, 'cast_type': int},
-    {'key': 'PLOT_ERROR_COLOR', 'default': 'crimson', 'cast_type': str},
-    {'key': 'PLOT_MARKER_FACE_COLOR', 'default': 'crimson', 'cast_type': str},
-    {'key': 'PLOT_MARKER_EDGE_COLOR', 'default': 'crimson', 'cast_type': str},
-    {'key': 'FONT_FAMILY', 'default': 'serif', 'cast_type': str, 'options': ('serif', 'sans-serif', 'monospace', 'cursive', 'fantasy')},
-    {'key': 'FONT_TITLE_SIZE', 'default': 'xx-large', 'cast_type': str, 'options': ('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')},
-    {'key': 'FONT_TITLE_WEIGHT', 'default': 'semibold', 'cast_type': str, 'options': ('normal', 'bold', 'light', 'semibold', 'heavy')},
-    {'key': 'FONT_AXIS_SIZE', 'default': 30, 'cast_type': int},
-    {'key': 'FONT_AXIS_STYLE', 'default': 'italic', 'cast_type': str, 'options': ('normal', 'italic', 'oblique')},
-    {'key': 'FONT_TICK_SIZE', 'default': 16, 'cast_type': int},
-    {'key': 'FONT_PARAM_FAMILY', 'default': 'Courier', 'cast_type': str},
-    {'key': 'FONT_PARAM_SIZE', 'default': 10, 'cast_type': int},
-    {'key': 'FILE_INPUT_DIR', 'default': 'input', 'cast_type': str},
-    {'key': 'FILE_OUTPUT_DIR', 'default': 'output', 'cast_type': str},
-    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}.png', 'cast_type': str},
-    {'key': 'FILE_PLOT_FORMAT', 'default': 'png', 'cast_type': str, 'options': ('png', 'jpg', 'pdf')},
-    {'key': 'DONATIONS_URL', 'default': '', 'cast_type': str},
-    {'key': 'LOG_LEVEL', 'default': 'INFO', 'cast_type': str, 'options': ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')},
-    {'key': 'LOG_FILE', 'default': 'regressionlab.log', 'cast_type': str},
-    {'key': 'LOG_CONSOLE', 'default': False, 'cast_type': bool},
-]
 
 
 def validate_all_env_values() -> dict[str, tuple[Any, bool]]:

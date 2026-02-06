@@ -29,9 +29,14 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from config import (
+    _DEFAULT_LANG,
+    LANGUAGE_ALIASES,
+    SUPPORTED_LANGUAGE_CODES,
+)
 
-# Default language if not specified
-DEFAULT_LANGUAGE = 'es'
+# Default language if not specified (re-export from constants for backwards compatibility)
+DEFAULT_LANGUAGE: str = _DEFAULT_LANG
 
 # Current loaded language
 _current_language: str = DEFAULT_LANGUAGE
@@ -41,23 +46,17 @@ _translations: Dict[str, Any] = {}
 def _normalize_language(language: str) -> str:
     """
     Normalize language code to standard format.
-    
+
     Args:
         language: Language name or code
-        
+
     Returns:
-        Normalized language code ('es', 'en', or 'de')
+        Normalized language code (one of SUPPORTED_LANGUAGE_CODES).
     """
     lang = language.lower()
-    
-    if lang in ('español', 'spanish', 'es', 'esp'):
-        return 'es'
-    elif lang in ('english', 'inglés', 'ingles', 'en', 'eng'):
-        return 'en'
-    elif lang in ('german', 'deutsch', 'de', 'ger'):
-        return 'de'
-    else:
-        return DEFAULT_LANGUAGE
+    if lang in SUPPORTED_LANGUAGE_CODES:
+        return lang
+    return LANGUAGE_ALIASES.get(lang, DEFAULT_LANGUAGE)
 
 
 def _get_language_from_env() -> str:

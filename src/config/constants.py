@@ -97,6 +97,33 @@ MATH_FUNCTION_REPLACEMENTS: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
+# Language (i18n) constants
+# ---------------------------------------------------------------------------
+# Canonical language codes supported by the app. Add new codes here when
+# adding a language; then add aliases to LANGUAGE_ALIASES and translation
+# files under locales/.
+SUPPORTED_LANGUAGE_CODES: tuple[str, ...] = ('es', 'en', 'de')
+DEFAULT_LANGUAGE: str = 'es'
+
+# Aliases accepted in .env LANGUAGE (lowercase). Map alias -> canonical code.
+# Canonical codes (es, en, de) are valid by themselves and need not be here.
+LANGUAGE_ALIASES: dict[str, str] = {
+    'español': 'es',
+    'spanish': 'es',
+    'esp': 'es',
+    'english': 'en',
+    'ingles': 'en',
+    'inglés': 'en',
+    'eng': 'en',
+    'german': 'de',
+    'deutsch': 'de',
+    'ger': 'de',
+}
+
+# All accepted values for LANGUAGE (canonical codes + aliases), for validation.
+VALID_LANGUAGE_INPUTS: frozenset[str] = frozenset(SUPPORTED_LANGUAGE_CODES) | frozenset(LANGUAGE_ALIASES.keys())
+
+# ---------------------------------------------------------------------------
 # File type and UI constants
 # ---------------------------------------------------------------------------
 # Supported data file extensions (without leading dot)
