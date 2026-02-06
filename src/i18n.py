@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Internationalization (i18n) module for the RegressionLab application.
 
@@ -29,9 +27,14 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from config import (
+    _DEFAULT_LANG,
+    LANGUAGE_ALIASES,
+    SUPPORTED_LANGUAGE_CODES,
+)
 
-# Default language if not specified
-DEFAULT_LANGUAGE = 'es'
+# Default language if not specified (re-export from constants for backwards compatibility)
+DEFAULT_LANGUAGE: str = _DEFAULT_LANG
 
 # Current loaded language
 _current_language: str = DEFAULT_LANGUAGE
@@ -41,23 +44,17 @@ _translations: Dict[str, Any] = {}
 def _normalize_language(language: str) -> str:
     """
     Normalize language code to standard format.
-    
+
     Args:
         language: Language name or code
-        
+
     Returns:
-        Normalized language code ('es', 'en', or 'de')
+        Normalized language code (one of SUPPORTED_LANGUAGE_CODES).
     """
     lang = language.lower()
-    
-    if lang in ('español', 'spanish', 'es', 'esp'):
-        return 'es'
-    elif lang in ('english', 'inglés', 'ingles', 'en', 'eng'):
-        return 'en'
-    elif lang in ('german', 'deutsch', 'de', 'ger'):
-        return 'de'
-    else:
-        return DEFAULT_LANGUAGE
+    if lang in SUPPORTED_LANGUAGE_CODES:
+        return lang
+    return LANGUAGE_ALIASES.get(lang, DEFAULT_LANGUAGE)
 
 
 def _get_language_from_env() -> str:
@@ -142,10 +139,10 @@ def t(key: str, **kwargs) -> str:
         
     Examples:
         >>> t('menu.welcome')
-        'Bienvenido, científico. ¿Qué deseas hacer?'
+        'Welcome, scientist. What would you like to do?'
         
         >>> t('error.fitting_failed_details', error='Invalid data')
-        'RegressionLab no ha sido capaz de ajustar los datos.\n\nDetalles: Invalid data'
+        'The fitter was unable to fit the data.\n\nDetails: Invalid data\n\nPlease try another equation or verify the data.'
     """
     # Ensure translations are loaded
     if not _translations:
@@ -175,8 +172,3 @@ def t(key: str, **kwargs) -> str:
             return str(value)
     
     return str(value)
-
-# Initialize on module import - COMMENTED OUT for performance optimization
-# Apps should call initialize_i18n() explicitly when needed
-# This reduces startup time by deferring translation loading
-# initialize_i18n()

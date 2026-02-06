@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Help dialog and text utilities for Tkinter display."""
 
 import re
@@ -136,6 +134,9 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
 
 {remove_markdown_bold(t('help.r_squared_desc'))}
 {remove_markdown_bold(t('help.r_squared_formula'))}
+
+{remove_markdown_bold(t('help.rmse_desc'))}
+{remove_markdown_bold(t('help.rmse_formula'))}
 
 {remove_markdown_bold(t('help.chi_squared_desc'))}
 {remove_markdown_bold(t('help.chi_squared_formula'))}

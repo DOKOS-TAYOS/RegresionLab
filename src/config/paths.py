@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from .env import get_env
+from config.env import get_env
 
 
 def _normalize_plot_format(value: str) -> str:
@@ -20,21 +20,32 @@ def _normalize_plot_format(value: str) -> str:
 
     Returns:
         Normalized extension without leading dot.
+
+    Example:
+        >>> _normalize_plot_format('PNG')
+        'png'
+        >>> _normalize_plot_format('jpeg')
+        'jpg'
+        >>> _normalize_plot_format('unknown')
+        'png'
     """
-    v = (value or 'png').strip().lower()
-    if v in ('jpg', 'jpeg'):
-        return 'jpg'
-    if v in ('png', 'pdf'):
-        return v
-    return 'png'
+    normalized = (value or 'png').strip().lower()
+    
+    # Map common variants to canonical formats
+    format_mapping = {
+        'jpg': 'jpg',
+        'jpeg': 'jpg',
+        'png': 'png',
+        'pdf': 'pdf',
+    }
+    
+    return format_mapping.get(normalized, 'png')
 
-
-PLOT_FORMATS = ('png', 'jpg', 'jpeg', 'pdf')
 
 FILE_CONFIG = {
     'input_dir': get_env('FILE_INPUT_DIR', 'input'),
     'output_dir': get_env('FILE_OUTPUT_DIR', 'output'),
-    'filename_template': get_env('FILE_FILENAME_TEMPLATE', 'fit_{}.png'),
+    'filename_template': get_env('FILE_FILENAME_TEMPLATE', 'fit_{}'),
     'plot_format': _normalize_plot_format(get_env('FILE_PLOT_FORMAT', 'png')),
 }
 

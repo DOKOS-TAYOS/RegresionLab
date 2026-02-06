@@ -1,102 +1,133 @@
 """Application constants, equation mappings, and version."""
 
-EQUATION_FUNCTION_MAP = {
-    'linear_function_with_n': 'fit_linear_function_with_n',
-    'linear_function': 'fit_linear_function',
-    'quadratic_function_complete': 'fit_quadratic_function_complete',
-    'quadratic_function': 'fit_quadratic_function',
-    'fourth_power': 'fit_fourth_power',
-    'ln_function': 'fit_ln_function',
-    'inverse_function': 'fit_inverse_function',
-    'inverse_square_function': 'fit_inverse_square_function',
-    'sin_function': 'fit_sin_function',
-    'sin_function_with_c': 'fit_sin_function_with_c',
-    'cos_function': 'fit_cos_function',
-    'cos_function_with_c': 'fit_cos_function_with_c',
-    'tan_function': 'fit_tan_function',
-    'tan_function_with_c': 'fit_tan_function_with_c',
-    'sinh_function': 'fit_sinh_function',
-    'cosh_function': 'fit_cosh_function',
-    'exponential_function': 'fit_exponential_function',
-    'binomial_function': 'fit_binomial_function',
-    'gaussian_function': 'fit_gaussian_function',
-    'square_pulse_function': 'fit_square_pulse_function',
-    'hermite_polynomial_3': 'fit_hermite_polynomial_3',
-    'hermite_polynomial_4': 'fit_hermite_polynomial_4',
-}
+from pathlib import Path
+from typing import Any
 
-AVAILABLE_EQUATION_TYPES = list(EQUATION_FUNCTION_MAP.keys())
+import yaml
 
-EQUATION_FORMULAS = {
-    'linear_function_with_n': 'y = mx + n',
-    'linear_function': 'y = mx',
-    'quadratic_function_complete': 'y = ax² + bx + c',
-    'quadratic_function': 'y = ax²',
-    'fourth_power': 'y = ax⁴',
-    'sin_function': 'y = a·sin(bx)',
-    'sin_function_with_c': 'y = a·sin(bx + c)',
-    'cos_function': 'y = a·cos(bx)',
-    'cos_function_with_c': 'y = a·cos(bx + c)',
-    'sinh_function': 'y = a·sinh(bx)',
-    'cosh_function': 'y = a·cosh(bx)',
-    'ln_function': 'y = a·ln(x)',
-    'inverse_function': 'y = a/x',
-    'inverse_square_function': 'y = a/x²',
-    'gaussian_function': 'y = a·exp(-(x-μ)²/(2σ²))',
-    'exponential_function': 'y = a·exp(bx)',
-    'binomial_function': 'y = L/(1 + exp(-k(x-x₀)))',
-    'tan_function': 'y = a·tan(bx)',
-    'tan_function_with_c': 'y = a·tan(bx + c)',
-    'square_pulse_function': 'y = a si |x-x₀| ≤ w/2, else 0',
-    'hermite_polynomial_3': 'y = Σ cᵢ·Hᵢ(x) (grado 0-3)',
-    'hermite_polynomial_4': 'y = Σ cᵢ·Hᵢ(x) (grado 0-4)',
-}
+# Application version number
+__version__ = "0.8.3"
 
-EQUATION_PARAM_NAMES = {
-    'linear_function_with_n': ['n', 'm'],
-    'linear_function': ['m'],
-    'quadratic_function_complete': ['a', 'b', 'c'],
-    'quadratic_function': ['a'],
-    'fourth_power': ['a'],
-    'sin_function': ['a', 'b'],
-    'sin_function_with_c': ['a', 'b', 'c'],
-    'cos_function': ['a', 'b'],
-    'cos_function_with_c': ['a', 'b', 'c'],
-    'sinh_function': ['a', 'b'],
-    'cosh_function': ['a', 'b'],
-    'ln_function': ['a'],
-    'inverse_function': ['a'],
-    'inverse_square_function': ['a'],
-    'gaussian_function': ['A', 'mu', 'sigma'],
-    'exponential_function': ['a', 'b'],
-    'binomial_function': ['a', 'b', 'c'],
-    'tan_function': ['a', 'b'],
-    'tan_function_with_c': ['a', 'b', 'c'],
-    'square_pulse_function': ['A', 't0', 'w'],
-    'hermite_polynomial_3': ['c0', 'c1', 'c2', 'c3'],
-    'hermite_polynomial_4': ['c0', 'c1', 'c2', 'c3', 'c4'],
-}
+# ---------------------------------------------------------------------------
+# Equations configuration
+# ---------------------------------------------------------------------------
+# Single source of truth loaded from equations.yaml.
+# Each entry contains:
+#   - function: name of the fitting function to call
+#   - formula: LaTeX or display string for the equation
+#   - param_names: list of parameter names used in the fit
 
-MATH_FUNCTION_REPLACEMENTS = {
+_EQUATIONS_PATH = Path(__file__).resolve().parent / "equations.yaml"
+
+with open(_EQUATIONS_PATH, encoding="utf-8") as _f:
+    _raw_equations: dict[str, Any] = yaml.safe_load(_f)
+
+# Main equations dictionary: eq_id -> { function, formula, param_names }
+EQUATIONS: dict[str, dict[str, Any]] = _raw_equations
+AVAILABLE_EQUATION_TYPES: list[str] = list(EQUATIONS.keys())
+
+# ---------------------------------------------------------------------------
+# Mathematical function replacements
+# ---------------------------------------------------------------------------
+# Regex patterns for converting user-friendly math notation to NumPy equivalents
+# when parsing custom formulas (e.g., 'ln(x)' becomes 'np.log(x)').
+# The (?<!np\.) lookbehind prevents re-matching names already inside "np.xxx".
+MATH_FUNCTION_REPLACEMENTS: dict[str, str] = {
+    # Logarithmic functions
     r'\bln\b': 'np.log',
-    r'\bsin\b': 'np.sin',
-    r'\bcos\b': 'np.cos',
-    r'\btan\b': 'np.tan',
-    r'\bsinh\b': 'np.sinh',
-    r'\bcosh\b': 'np.cosh',
-    r'\btanh\b': 'np.tanh',
-    r'\bexp\b': 'np.exp',
-    r'\bsqrt\b': 'np.sqrt',
-    r'\babs\b': 'np.abs',
-    r'\bpi\b': 'np.pi',
-    r'\be\b': 'np.e',
+    r'(?<!np\.)\blog\b': 'np.log10',
+    r'(?<!np\.)\blog10\b': 'np.log10',
+    r'(?<!np\.)\blog2\b': 'np.log2',
+    
+    # Trigonometric functions
+    r'(?<!np\.)\bsin\b': 'np.sin',
+    r'(?<!np\.)\bcos\b': 'np.cos',
+    r'(?<!np\.)\btan\b': 'np.tan',
+    r'(?<!np\.)\basin\b': 'np.arcsin',
+    r'(?<!np\.)\bacos\b': 'np.arccos',
+    r'(?<!np\.)\batan\b': 'np.arctan',
+    r'(?<!np\.)\barcsin\b': 'np.arcsin',
+    r'(?<!np\.)\barccos\b': 'np.arccos',
+    r'(?<!np\.)\barctan\b': 'np.arctan',
+    
+    # Trigonometric functions (Spanish variants)
+    r'(?<!np\.)\bsen\b': 'np.sin',  # Spanish: seno
+    r'(?<!np\.)\btg\b': 'np.tan',  # Spanish: tangente
+    r'(?<!np\.)\barcsen\b': 'np.arcsin',  # Spanish: arcoseno
+    r'(?<!np\.)\barctg\b': 'np.arctan',  # Spanish: arcotangente
+    
+    # Hyperbolic functions
+    r'(?<!np\.)\bsinh\b': 'np.sinh',
+    r'(?<!np\.)\bcosh\b': 'np.cosh',
+    r'(?<!np\.)\btanh\b': 'np.tanh',
+    r'(?<!np\.)\basinh\b': 'np.arcsinh',
+    r'(?<!np\.)\bacosh\b': 'np.arccosh',
+    r'(?<!np\.)\batanh\b': 'np.arctanh',
+    r'(?<!np\.)\barcsinh\b': 'np.arcsinh',
+    r'(?<!np\.)\barccosh\b': 'np.arccosh',
+    r'(?<!np\.)\barctanh\b': 'np.arctanh',
+    
+    # Hyperbolic functions (Spanish variants)
+    r'(?<!np\.)\bsenh\b': 'np.sinh',  # Spanish: seno hiperbólico
+    r'(?<!np\.)\btgh\b': 'np.tanh',  # Spanish: tangente hiperbólica
+    r'(?<!np\.)\barcsenh\b': 'np.arcsinh',  # Spanish: arcoseno hiperbólico
+    r'(?<!np\.)\barctgh\b': 'np.arctanh',  # Spanish: arcotangente hiperbólica
+    
+    # Exponential and power functions
+    r'(?<!np\.)\bexp\b': 'np.exp',
+    r'(?<!np\.)\bsqrt\b': 'np.sqrt',
+    r'(?<!np\.)\bcbrt\b': 'np.cbrt',
+    r'(?<!np\.)\bpower\b': 'np.power',
+    
+    # Rounding and absolute value
+    r'(?<!np\.)\babs\b': 'np.abs',
+    r'(?<!np\.)\bfloor\b': 'np.floor',
+    r'(?<!np\.)\bceil\b': 'np.ceil',
+    r'(?<!np\.)\bround\b': 'np.round',
+    
+    # Statistical functions
+    r'(?<!np\.)\bmax\b': 'np.max',
+    r'(?<!np\.)\bmin\b': 'np.min',
+    r'(?<!np\.)\bmean\b': 'np.mean',
+    r'(?<!np\.)\bsum\b': 'np.sum',
+    
+    # Constants
+    r'(?<!np\.)\bpi\b': 'np.pi',
+    r'(?<!np\.)\be\b': 'np.e',
 }
 
-# Central list of supported data file types (extensions without dot).
-# All parts of the application (validators, loaders, frontends) should
-# reference this constant instead of hardcoding ['csv', 'xlsx', 'txt'].
-DATA_FILE_TYPES = ('csv', 'xlsx', 'txt')
+# ---------------------------------------------------------------------------
+# Language (i18n) constants
+# ---------------------------------------------------------------------------
+# Canonical language codes supported by the app. Add new codes here when
+# adding a language; then add aliases to LANGUAGE_ALIASES and translation
+# files under locales/.
+SUPPORTED_LANGUAGE_CODES: tuple[str, ...] = ('es', 'en', 'de')
+DEFAULT_LANGUAGE: str = 'es'
 
-__version__ = "0.8.2"
+# Aliases accepted in .env LANGUAGE (lowercase). Map alias -> canonical code.
+# Canonical codes (es, en, de) are valid by themselves and need not be here.
+LANGUAGE_ALIASES: dict[str, str] = {
+    'español': 'es',
+    'spanish': 'es',
+    'esp': 'es',
+    'english': 'en',
+    'ingles': 'en',
+    'inglés': 'en',
+    'eng': 'en',
+    'german': 'de',
+    'deutsch': 'de',
+    'ger': 'de',
+}
 
-EXIT_SIGNAL = 'Salir'
+# All accepted values for LANGUAGE (canonical codes + aliases), for validation.
+VALID_LANGUAGE_INPUTS: frozenset[str] = frozenset(SUPPORTED_LANGUAGE_CODES) | frozenset(LANGUAGE_ALIASES.keys())
+
+# ---------------------------------------------------------------------------
+# File type and UI constants
+# ---------------------------------------------------------------------------
+# Supported data file extensions (without leading dot)
+DATA_FILE_TYPES: tuple[str, ...] = ('csv', 'xlsx', 'txt')
+
+# Signal value indicating user exit intent
+EXIT_SIGNAL: str = 'Exit'

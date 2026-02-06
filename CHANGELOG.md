@@ -5,6 +5,28 @@ All notable changes to RegressionLab are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.3] - 2026-02-06
+
+### Fixed
+
+- **Languages**: Minor language fixes in translations and UI messages.
+
+### Added
+
+- **.env validations**: New validations for `.env` values to ensure correct configuration.
+- **RMSE**: Added RMSE (Root Mean Square Error) to fit results and statistics.
+
+### Changed
+
+- **Tests**: Tests updated to reflect recent changes and new validations.
+- **Documentation**: Docs submodules updated.
+- **Imports**: Improved relative imports across the project.
+- **Fitting functions**: Reference to existing functions moved to a `.yaml` file for better maintainability.
+- **Environment variables**: When invalid values are set in the environment variables, the system now detects them and applies the default values at the conflicting points.
+- **Style and architecture**: Minor style and architecture changes.
+
+---
+
 ## [0.8.2] - 2026-02-04
 
 ### Fixed
@@ -14,9 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Parameter estimates and bounds**: In Tkinter, you can configure initial parameter values and bounds before fitting via "Configurar parámetros iniciales". Dialog columns: initial value, range start, range end per parameter; empty fields use the automatic estimator. All built-in fitting functions support `initial_guess_override` and `bounds_override` (with `merge_initial_guess` and `merge_bounds` utilities).
+- **Parameter estimates and bounds**: In Tkinter, you can configure initial parameter values and bounds before fitting via the "Configure initial parameters" dialog. Dialog columns: initial value, range start, range end per parameter; empty fields use the automatic estimator. All built-in fitting functions support `initial_guess_override` and `bounds_override` (with `merge_initial_guess` and `merge_bounds` utilities).
 - **Extra information in results**: Fit results can include additional statistical and fit information (e.g. χ², R², confidence intervals) in the result text and display.
-- **Data visualization modes**: Table view and pair plots (scatter matrix) for datasets. In Streamlit: expander "Visualización de datos" with dataframe and optional "Visualizar pares de variables"; in Tkinter: data preview with optional pair-plot button that opens a scaled image window.
+- **Data visualization modes**: Table view and pair plots (scatter matrix) for datasets. In Streamlit: expander "Data visualization" with dataframe and optional "Visualize variable pairs"; in Tkinter: data preview with optional pair-plot button that opens a scaled image window.
 - **Configuration**: Configuration dialog (Tkinter) with grouped sections: language, UI appearance, plots, fonts, paths, links, logging. All `ENV_SCHEMA` options are editable from the application and persisted to `.env`; closing the dialog with X cancels without saving.
 - **Termux / mobile installer**: First trial installer for Android via Termux (`install_termux.sh`). Installs Git and Python if needed; uses TUR repo and `pkg` for numpy, scipy, pandas, matplotlib and python-tkinter to avoid long pip builds. Clones the repo into `~/python_materials/RegressionLab`, creates a venv (with `--system-site-packages` when using pkg packages), installs Streamlit and remaining dependencies, configures `.env` from `.env_mobile.example`, prompts for input/output paths, and creates a run script that starts the Streamlit app in headless mode (`http://localhost:8501`). Optional shortcut in `~/storage/downloads/run_regressionlab.sh` when storage is set up. Recommended Termux from F-Droid.
 - **TXT data files**: Support for loading data from `.txt` files (tab or comma-separated; delimiter auto-detected). File type selector in Tkinter and Streamlit includes CSV, XLSX and TXT.
@@ -59,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial 0.8.x release. See repository history and documentation for features and changes prior to 0.8.1.
 
+[0.8.3]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/DOKOS-TAYOS/RegressionLab/releases/tag/v0.8.0

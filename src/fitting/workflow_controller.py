@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Workflow controller for fitting operations.
 Contains coordination functions and workflow patterns for the fitting application.
@@ -15,14 +13,17 @@ import pandas as pd
 # Local imports
 from config import EXIT_SIGNAL
 from i18n import t
-from loaders.data_loader import (
+from loaders import (
     get_file_list_by_type,
     get_variable_names,
     load_data_workflow,
-)
-from loaders.loading_utils import csv_reader, excel_reader, get_file_names, txt_reader
-from utils.exceptions import DataLoadError
-from utils.logger import get_logger
+    csv_reader,
+    excel_reader,
+    get_file_names,
+    txt_reader
+    )
+
+from utils import DataLoadError, get_logger
 
 logger = get_logger(__name__)
 
@@ -530,7 +531,7 @@ def coordinate_custom_equation(
     exit_option = t('dialog.exit_option')
     if (
         EXIT_SIGNAL in parameter_names
-        or 'salir' in parameter_names
+        or 'exit' in parameter_names
         or exit_option in parameter_names
     ):
         return EXIT_SIGNAL, None
@@ -539,7 +540,7 @@ def coordinate_custom_equation(
     custom_formula = ask_custom_formula_func(parent_window, parameter_names)
     
     # Check if user wants to exit (check both translated and internal values)
-    if custom_formula in (EXIT_SIGNAL, 'salir', 's', exit_option):
+    if custom_formula in (EXIT_SIGNAL, 'exit', 'e', exit_option):
         return EXIT_SIGNAL, None
     
     # Backend: Create custom evaluator

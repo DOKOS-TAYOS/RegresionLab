@@ -63,9 +63,12 @@ RegressionLab uses several open-source libraries, each with their own licenses:
 | **Pillow** | HPND | Image processing |
 | **python-dotenv** | BSD-3-Clause | Environment variable management |
 | **colorama** | BSD-3-Clause | Colored terminal output |
+| **PyYAML** | MIT | YAML config (equations, etc.) |
 | **Streamlit** | Apache 2.0 | Web application framework |
 
 All of these licenses are permissive and compatible with the MIT License.
+
+For version ranges, full license texts of selected dependencies (including PyYAML), and compliance notes, see **[THIRD_PARTY_LICENSES.md](../THIRD_PARTY_LICENSES.md)** in the project root.
 
 ### License Compatibility
 
@@ -200,7 +203,7 @@ The complete MIT License text is also available in the `LICENSE` file in the roo
 
 ## Version History
 
-- **v0.8.2** (February 2026): Current license (MIT)
+- **v0.8.3** (February 2026): Current license (MIT)
 - License has remained MIT since project inception
 
 ---

@@ -7,7 +7,7 @@ import streamlit as st
 
 from i18n import initialize_i18n, t
 
-SIDEBAR_CSS = """
+_SIDEBAR_CSS = """
     <style>
     .sidebar-brand {
         text-align: center;
@@ -90,7 +90,7 @@ def setup_sidebar(version: str) -> str:
         Selected operation mode
     """
     with st.sidebar:
-        st.markdown(SIDEBAR_CSS, unsafe_allow_html=True)
+        st.markdown(_SIDEBAR_CSS, unsafe_allow_html=True)
         st.markdown(f"""
             <div class="sidebar-brand">
                 <h2>📊 RegressionLab</h2>
@@ -98,7 +98,7 @@ def setup_sidebar(version: str) -> str:
             </div>
         """, unsafe_allow_html=True)
 
-        next_lang = "English 🇬🇧" if st.session_state.language == 'es' else "Español 🇪🇸"
+        next_lang = t('menu.language_english') if st.session_state.language == 'es' else t('menu.language_spanish')
         if st.button(next_lang, key="lang_toggle", width='stretch'):
             toggle_language()
             st.rerun()

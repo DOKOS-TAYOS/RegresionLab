@@ -1,3 +1,10 @@
+"""
+Fitting utilities for RegressionLab.
+
+This module provides parameter formatting, equation resolution, and integration
+with the fitting_functions package (initial guesses, bounds, fit execution).
+"""
+
 # Standard library
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Sequence, Tuple
@@ -6,15 +13,9 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 import numpy as np
 
 # Local imports (heavy numerical libraries are imported lazily inside functions)
-from config import (
-    EQUATION_FORMULAS,
-    EQUATION_FUNCTION_MAP,
-    EQUATION_PARAM_NAMES,
-    EXIT_SIGNAL,
-)
+from config import EQUATIONS, EXIT_SIGNAL
 from i18n import t
-from utils.exceptions import FittingError
-from utils.logger import get_logger
+from utils import FittingError, get_logger
 
 logger = get_logger(__name__)
 
@@ -108,7 +109,7 @@ def generic_fit(
     # Lazy imports to avoid loading heavy numerical stack when importing this module
     from scipy import stats as scipy_stats
     from scipy.optimize import curve_fit
-    from utils.validators import validate_fitting_data
+    from utils import validate_fitting_data
 
     logger.info(t('log.starting_generic_fit', x=x_name, y=y_name, params=str(param_names)))
 
@@ -226,6 +227,14 @@ def generic_fit(
         logger.warning("Error calculating R²: %s", str(e))
         fit_stats['r_squared'] = 0.0
     
+    # Calculate RMSE (Root Mean Square Error)
+    try:
+        fit_stats['rmse'] = float(np.sqrt(np.mean((y - y_fitted) ** 2)))
+        logger.debug(f"RMSE = {fit_stats['rmse']:.6f}")
+    except Exception as e:
+        logger.warning("Error calculating RMSE: %s", str(e))
+        fit_stats['rmse'] = float('nan')
+    
     # Calculate chi-squared statistics
     uy_safe = np.where(np.greater(uy, 1e-15), uy, 1e-15)
     fit_stats['chi_squared'] = float(np.sum(((y - y_fitted) / uy_safe) ** 2))
@@ -254,6 +263,7 @@ def generic_fit(
     
     # Generate text output using the fit_stats dictionary
     text_lines.append(f"R\u00B2={fit_stats['r_squared']:.6f}")
+    text_lines.append(t('stats.rmse', value=f"{fit_stats['rmse']:.4g}"))
     text_lines.append(t('stats.chi_squared', value=f"{fit_stats['chi_squared']:.4g}"))
     text_lines.append(
         t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}")
@@ -306,12 +316,10 @@ def get_equation_param_info(
         >>> formula
         'y = mx + n'
     """
-    if equation_name not in EQUATION_PARAM_NAMES or equation_name not in EQUATION_FORMULAS:
+    meta = EQUATIONS.get(equation_name)
+    if meta is None:
         return None
-    return (
-        list(EQUATION_PARAM_NAMES[equation_name]),
-        EQUATION_FORMULAS[equation_name],
-    )
+    return (list(meta["param_names"]), meta["formula"])
 
 
 def merge_initial_guess(
@@ -412,11 +420,11 @@ def get_fitting_function(
         logger.debug(t('log.exit_signal_received'))
         return None
 
-    if equation_name not in EQUATION_FUNCTION_MAP:
+    if equation_name not in EQUATIONS:
         logger.warning(t('log.unknown_equation_type', equation=equation_name))
         return None
 
-    function_name = EQUATION_FUNCTION_MAP[equation_name]
+    function_name = EQUATIONS[equation_name]["function"]
     logger.debug(
         t('log.equation_maps_to_function', equation=equation_name, function=function_name)
     )

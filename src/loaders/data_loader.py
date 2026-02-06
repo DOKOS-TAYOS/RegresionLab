@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Data loading logic module.
 
@@ -26,14 +24,12 @@ import pandas as pd
 # Local imports
 from config import FILE_CONFIG, get_project_root
 from loaders.loading_utils import csv_reader, excel_reader, txt_reader
-from utils.exceptions import InvalidFileTypeError
-from utils.logger import get_logger
-from utils.validators import validate_file_type
+from utils import InvalidFileTypeError, get_logger, validate_file_type
 
 logger = get_logger(__name__)
 
 
-def prepare_data_path(
+def _prepare_data_path(
     filename: str, file_type: str, base_dir: Optional[str] = None
 ) -> str:
     """
@@ -43,7 +39,7 @@ def prepare_data_path(
     ensuring cross-platform compatibility using pathlib.
 
     Args:
-        filename: File name without extension (e.g., 'Ejemplo', 'Exper1').
+        filename: File name without extension (e.g., 'Example', 'Experiment1').
         file_type: File extension ('csv', 'xlsx', 'txt').
         base_dir: Base directory where data files are located (relative to project root).
             If None, uses FILE_CONFIG['input_dir'].
@@ -52,8 +48,8 @@ def prepare_data_path(
         Complete file path (absolute from project root).
 
     Example:
-        >>> prepare_data_path('Ejemplo', 'xlsx')
-        'C:/Users/user/project/input/Ejemplo.xlsx'
+        >>> _prepare_data_path('Example', 'xlsx')
+        'C:/Users/user/project/input/Example.xlsx'
     """
     if base_dir is None:
         base_dir = FILE_CONFIG['input_dir']
@@ -95,7 +91,7 @@ def load_data(file_path: str, file_type: str) -> pd.DataFrame:
             return txt_reader(file_path)
         else:
             logger.error(f"Unsupported file type: {file_type}")
-            raise InvalidFileTypeError(f"Tipo de archivo no soportado: {file_type}")
+            raise InvalidFileTypeError(f"Unsupported file type: {file_type}")
     except Exception as e:
         logger.error(f"Failed to load data from {file_path}: {str(e)}", exc_info=True)
         raise
@@ -191,7 +187,7 @@ def get_file_list_by_type(
     # Validate file type again (redundant but safe)
     if file_type not in file_lists:
         logger.error(f"Invalid file type: {file_type}")
-        raise InvalidFileTypeError(f"Tipo de archivo no válido: {file_type}")
+        raise InvalidFileTypeError(f"Invalid file type: {file_type}")
     
     # Return the appropriate list
     file_list = file_lists[file_type]
@@ -208,7 +204,7 @@ def load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str
     files in the application.
     
     Args:
-        filename: File name without extension (e.g., 'Ejemplo')
+        filename: File name without extension (e.g., 'Example')
         file_type: File type ('csv', 'xlsx', 'txt')
         
     Returns:
@@ -219,7 +215,7 @@ def load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str
         DataLoadError: If data cannot be loaded
         
     Example:
-        >>> data, path = load_data_workflow('Ejemplo', 'xlsx')
+        >>> data, path = load_data_workflow('Example', 'xlsx')
         >>> print(data.head())
         >>> print(f"Loaded from: {path}")
     """
@@ -227,7 +223,7 @@ def load_data_workflow(filename: str, file_type: str) -> Tuple[pd.DataFrame, str
     
     try:
         # Step 1: Construct the complete file path
-        file_path = prepare_data_path(filename, file_type)
+        file_path = _prepare_data_path(filename, file_type)
         logger.debug(f"Prepared file path: {file_path}")
         
         # Step 2: Load the data from the file

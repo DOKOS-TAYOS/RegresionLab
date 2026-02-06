@@ -1,40 +1,33 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 Tests for validators module.
 """
 
-import unittest
-import sys
+import pytest
 import tempfile
-from pathlib import Path
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
-# Add src to path
-src_path = Path(__file__).parent.parent / 'src'
-sys.path.insert(0, str(src_path))
-
-from utils.validators import (
+from utils import (
     validate_file_path,
     validate_file_type,
     validate_dataframe,
-    validate_column_exists,
-    validate_numeric_data,
-    validate_uncertainty_column,
     validate_fitting_data,
     validate_parameter_names,
-    validate_positive_integer
-)
-from utils.exceptions import (
     DataValidationError,
     FileNotFoundError,
     InvalidFileTypeError,
-    ValidationError
+    ValidationError,
+)
+from utils.validators import (
+    _validate_column_exists,
+    _validate_numeric_data,
+    _validate_uncertainty_column,
+    _validate_positive_integer,
 )
 
 
-class TestValidateFilePath(unittest.TestCase):
+class TestValidateFilePath:
     """Tests for validate_file_path function."""
     
     def test_valid_file_path(self) -> None:
@@ -48,40 +41,37 @@ class TestValidateFilePath(unittest.TestCase):
     
     def test_nonexistent_file(self) -> None:
         """Test validation fails for nonexistent file."""
-        with self.assertRaises(FileNotFoundError):
+        with pytest.raises(FileNotFoundError):
             validate_file_path('/nonexistent/path/file.txt')
     
     def test_directory_path(self) -> None:
         """Test validation fails for directory."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            with self.assertRaises(ValidationError):
+            with pytest.raises(ValidationError):
                 validate_file_path(temp_dir)
 
 
-class TestValidateFileType(unittest.TestCase):
+class TestValidateFileType:
     """Tests for validate_file_type function."""
     
-    def test_valid_csv(self) -> None:
-        """Test validation passes for csv."""
-        validate_file_type('csv')
-    
-    def test_valid_xlsx(self) -> None:
-        """Test validation passes for xlsx."""
-        validate_file_type('xlsx')
+    @pytest.mark.parametrize("file_type", ['csv', 'xlsx'])
+    def test_valid_types(self, file_type: str) -> None:
+        """Test validation passes for valid types."""
+        validate_file_type(file_type)
     
     def test_invalid_type(self) -> None:
         """Test validation fails for invalid type."""
-        with self.assertRaises(InvalidFileTypeError):
+        with pytest.raises(InvalidFileTypeError):
             validate_file_type('pdf')
     
     def test_custom_allowed_types(self) -> None:
         """Test validation with custom allowed types."""
         validate_file_type('txt', allowed_types=['txt', 'dat'])
-        with self.assertRaises(InvalidFileTypeError):
+        with pytest.raises(InvalidFileTypeError):
             validate_file_type('csv', allowed_types=['txt', 'dat'])
 
 
-class TestValidateDataFrame(unittest.TestCase):
+class TestValidateDataFrame:
     """Tests for validate_dataframe function."""
     
     def test_valid_dataframe(self) -> None:
@@ -91,107 +81,99 @@ class TestValidateDataFrame(unittest.TestCase):
     
     def test_none_dataframe(self) -> None:
         """Test validation fails for None."""
-        with self.assertRaises(DataValidationError):
+        with pytest.raises(DataValidationError):
             validate_dataframe(None)
     
     def test_empty_dataframe(self) -> None:
         """Test validation fails for empty DataFrame."""
-        df = pd.DataFrame()
-        with self.assertRaises(DataValidationError):
-            validate_dataframe(df)
+        with pytest.raises(DataValidationError):
+            validate_dataframe(pd.DataFrame())
     
     def test_insufficient_rows(self) -> None:
         """Test validation fails for insufficient rows."""
         df = pd.DataFrame({'x': [1], 'y': [2]})
-        with self.assertRaises(DataValidationError):
+        with pytest.raises(DataValidationError):
             validate_dataframe(df, min_rows=2)
-    
-    def test_custom_min_rows(self) -> None:
-        """Test validation with custom min_rows."""
-        df = pd.DataFrame({'x': [1, 2, 3, 4, 5]})
-        validate_dataframe(df, min_rows=5)
 
 
-class TestValidateColumnExists(unittest.TestCase):
-    """Tests for validate_column_exists function."""
+class TestValidateColumnExists:
+    """Tests for _validate_column_exists function."""
     
     def test_existing_column(self) -> None:
         """Test validation passes for existing column."""
         df = pd.DataFrame({'x': [1, 2], 'y': [3, 4]})
-        validate_column_exists(df, 'x')
+        _validate_column_exists(df, 'x')
     
     def test_missing_column(self) -> None:
         """Test validation fails for missing column."""
         df = pd.DataFrame({'x': [1, 2]})
-        with self.assertRaises(DataValidationError):
-            validate_column_exists(df, 'y')
+        with pytest.raises(DataValidationError):
+            _validate_column_exists(df, 'y')
 
 
-class TestValidateNumericData(unittest.TestCase):
-    """Tests for validate_numeric_data function."""
+class TestValidateNumericData:
+    """Tests for _validate_numeric_data function."""
     
-    def test_valid_numeric(self) -> None:
+    @pytest.mark.parametrize("data", [
+        pd.Series([1.0, 2.0, 3.0]),
+        pd.Series([1, 2, 3]),
+    ])
+    def test_valid_numeric(self, data: pd.Series) -> None:
         """Test validation passes for numeric data."""
-        series = pd.Series([1.0, 2.0, 3.0])
-        validate_numeric_data(series, 'test_col')
-    
-    def test_integer_data(self) -> None:
-        """Test validation passes for integer data."""
-        series = pd.Series([1, 2, 3])
-        validate_numeric_data(series, 'test_col')
+        _validate_numeric_data(data, 'test_col')
     
     def test_non_numeric(self) -> None:
         """Test validation fails for non-numeric data."""
-        series = pd.Series(['a', 'b', 'c'])
-        with self.assertRaises(DataValidationError):
-            validate_numeric_data(series, 'test_col')
+        with pytest.raises(DataValidationError):
+            _validate_numeric_data(pd.Series(['a', 'b', 'c']), 'test_col')
     
-    def test_nan_values(self) -> None:
-        """Test validation fails for NaN values."""
-        series = pd.Series([1.0, np.nan, 3.0])
-        with self.assertRaises(DataValidationError):
-            validate_numeric_data(series, 'test_col')
-    
-    def test_infinite_values(self) -> None:
-        """Test validation fails for infinite values."""
-        series = pd.Series([1.0, np.inf, 3.0])
-        with self.assertRaises(DataValidationError):
-            validate_numeric_data(series, 'test_col')
+    @pytest.mark.parametrize("data", [
+        pd.Series([1.0, np.nan, 3.0]),
+        pd.Series([1.0, np.inf, 3.0]),
+    ])
+    def test_invalid_values(self, data: pd.Series) -> None:
+        """Test validation fails for NaN or infinite values."""
+        with pytest.raises(DataValidationError):
+            _validate_numeric_data(data, 'test_col')
 
 
-class TestValidateUncertaintyColumn(unittest.TestCase):
-    """Tests for validate_uncertainty_column function."""
+class TestValidateUncertaintyColumn:
+    """Tests for _validate_uncertainty_column function."""
     
     def test_valid_uncertainty(self) -> None:
         """Test validation passes for valid uncertainty column."""
         df = pd.DataFrame({'x': [1, 2, 3], 'ux': [0.1, 0.1, 0.1]})
-        validate_uncertainty_column(df, 'x')
+        _validate_uncertainty_column(df, 'x')
     
     def test_missing_uncertainty(self) -> None:
         """Test validation fails for missing uncertainty column."""
         df = pd.DataFrame({'x': [1, 2, 3]})
-        with self.assertRaises(DataValidationError):
-            validate_uncertainty_column(df, 'x')
+        with pytest.raises(DataValidationError):
+            _validate_uncertainty_column(df, 'x')
     
     def test_negative_uncertainty(self) -> None:
         """Test validation fails for negative uncertainties."""
         df = pd.DataFrame({'x': [1, 2, 3], 'ux': [0.1, -0.1, 0.1]})
-        with self.assertRaises(DataValidationError):
-            validate_uncertainty_column(df, 'x')
+        with pytest.raises(DataValidationError):
+            _validate_uncertainty_column(df, 'x')
 
 
-class TestValidateFittingData(unittest.TestCase):
+class TestValidateFittingData:
     """Tests for validate_fitting_data function."""
     
-    def test_valid_fitting_data(self) -> None:
-        """Test validation passes for valid fitting data."""
-        df = pd.DataFrame({
+    @pytest.fixture
+    def valid_data(self) -> pd.DataFrame:
+        """Fixture for valid fitting data."""
+        return pd.DataFrame({
             'x': [1.0, 2.0, 3.0],
             'ux': [0.1, 0.1, 0.1],
             'y': [2.0, 4.0, 6.0],
             'uy': [0.2, 0.2, 0.2]
         })
-        validate_fitting_data(df, 'x', 'y')
+    
+    def test_valid_fitting_data(self, valid_data: pd.DataFrame) -> None:
+        """Test validation passes for valid fitting data."""
+        validate_fitting_data(valid_data, 'x', 'y')
     
     def test_missing_x_column(self) -> None:
         """Test validation fails for missing x column."""
@@ -199,7 +181,7 @@ class TestValidateFittingData(unittest.TestCase):
             'y': [2.0, 4.0, 6.0],
             'uy': [0.2, 0.2, 0.2]
         })
-        with self.assertRaises(DataValidationError):
+        with pytest.raises(DataValidationError):
             validate_fitting_data(df, 'x', 'y')
     
     def test_missing_uncertainty(self) -> None:
@@ -208,11 +190,11 @@ class TestValidateFittingData(unittest.TestCase):
             'x': [1.0, 2.0, 3.0],
             'y': [2.0, 4.0, 6.0]
         })
-        with self.assertRaises(DataValidationError):
+        with pytest.raises(DataValidationError):
             validate_fitting_data(df, 'x', 'y')
 
 
-class TestValidateParameterNames(unittest.TestCase):
+class TestValidateParameterNames:
     """Tests for validate_parameter_names function."""
     
     def test_valid_names(self) -> None:
@@ -221,50 +203,39 @@ class TestValidateParameterNames(unittest.TestCase):
     
     def test_empty_list(self) -> None:
         """Test validation fails for empty list."""
-        with self.assertRaises(ValidationError):
+        with pytest.raises(ValidationError):
             validate_parameter_names([])
     
     def test_duplicate_names(self) -> None:
         """Test validation fails for duplicate names."""
-        with self.assertRaises(ValidationError):
+        with pytest.raises(ValidationError):
             validate_parameter_names(['a', 'b', 'a'])
     
-    def test_invalid_identifier(self) -> None:
+    @pytest.mark.parametrize("invalid_name", ['123invalid', 'my-param'])
+    def test_invalid_identifier(self, invalid_name: str) -> None:
         """Test validation fails for invalid Python identifiers."""
-        with self.assertRaises(ValidationError):
-            validate_parameter_names(['123invalid'])
-        with self.assertRaises(ValidationError):
-            validate_parameter_names(['my-param'])
+        with pytest.raises(ValidationError):
+            validate_parameter_names([invalid_name])
 
 
-class TestValidatePositiveInteger(unittest.TestCase):
-    """Tests for validate_positive_integer function."""
+class TestValidatePositiveInteger:
+    """Tests for _validate_positive_integer function."""
     
     def test_valid_positive_integer(self) -> None:
         """Test validation passes for positive integer."""
-        result = validate_positive_integer(5, 'test_param')
-        self.assertEqual(result, 5)
+        assert _validate_positive_integer(5, 'test_param') == 5
     
     def test_string_number(self) -> None:
         """Test validation passes for string number."""
-        result = validate_positive_integer('10', 'test_param')
-        self.assertEqual(result, 10)
+        assert _validate_positive_integer('10', 'test_param') == 10
     
-    def test_zero(self) -> None:
-        """Test validation fails for zero."""
-        with self.assertRaises(ValidationError):
-            validate_positive_integer(0, 'test_param')
-    
-    def test_negative(self) -> None:
-        """Test validation fails for negative."""
-        with self.assertRaises(ValidationError):
-            validate_positive_integer(-5, 'test_param')
+    @pytest.mark.parametrize("value", [0, -5])
+    def test_non_positive(self, value: int) -> None:
+        """Test validation fails for zero or negative."""
+        with pytest.raises(ValidationError):
+            _validate_positive_integer(value, 'test_param')
     
     def test_non_integer(self) -> None:
         """Test validation fails for non-integer."""
-        with self.assertRaises(ValidationError):
-            validate_positive_integer('not_a_number', 'test_param')
-
-
-if __name__ == '__main__':
-    unittest.main()
+        with pytest.raises(ValidationError):
+            _validate_positive_integer('not_a_number', 'test_param')

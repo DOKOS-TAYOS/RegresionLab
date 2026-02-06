@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """Equation and parameter dialogs for fitting."""
 
 from typing import Any, Dict, List, Optional, Tuple
@@ -17,11 +15,11 @@ from tkinter import (
     Text,
 )
 
-from config import EQUATION_FORMULAS, EXIT_SIGNAL, UI_STYLE
+from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE
 from i18n import t
-from utils.validators import parse_optional_float
+from utils import parse_optional_float
 
-from .tooltip import _bind_tooltip
+from frontend.ui_dialogs.tooltip import _bind_tooltip
 
 
 UNICODE_PARAM_MAP: Dict[str, str] = {
@@ -83,7 +81,7 @@ def ask_equation_type(
         Tuple of (equation_type, user_initial_guess, user_bounds).
         user_initial_guess and user_bounds are None when not configured.
     """
-    from fitting.fitting_utils import get_equation_param_info
+    from fitting import get_equation_param_info
 
     equation_level = Toplevel()
     equation_level.title(t('dialog.equation_type'))
@@ -245,7 +243,7 @@ def ask_equation_type(
     for attr_name in equation_keys:
         btn_text = t(f'equations.{attr_name}')
         desc = t(f'equations_descriptions.{attr_name}')
-        formula = EQUATION_FORMULAS.get(attr_name, '')
+        formula = EQUATIONS.get(attr_name, {}).get("formula", "")
         tooltip_text = f"{desc}\n{t('dialog.equation')} {formula}" if formula else desc
         btn = Button(
             equation_level.frame_custom,

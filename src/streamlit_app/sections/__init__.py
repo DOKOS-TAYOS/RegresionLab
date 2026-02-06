@@ -19,9 +19,9 @@ from .fitting import (
 from .results import show_results
 from .help_section import show_help_section
 from .modes import (
+    mode_normal_fitting,
     mode_checker_fitting,
     mode_multiple_datasets,
-    mode_normal_fitting,
     mode_total_fitting,
 )
 
@@ -39,7 +39,7 @@ __all__ = [
     'show_results',
     'show_help_section',
     'mode_normal_fitting',
-    'mode_multiple_datasets',
     'mode_checker_fitting',
+    'mode_multiple_datasets',
     'mode_total_fitting',
 ]

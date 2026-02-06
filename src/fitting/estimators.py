@@ -14,7 +14,7 @@ import numpy as np
 
 # Local imports
 from i18n import t
-from utils.logger import get_logger
+from utils import get_logger
 
 logger = get_logger(__name__)
 

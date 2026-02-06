@@ -1,13 +1,21 @@
+"""
+Plotting utilities for RegressionLab.
+
+This module provides functions to create pair plots (scatter matrices) and
+save fitted data plots with error bars, using configuration from config (fonts, style).
+"""
+
 # Standard library
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Union
 
 # Third-party packages
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Local imports
 from config import FONT_CONFIG, PLOT_CONFIG, get_output_path, setup_fonts
-from utils.logger import get_logger
+from utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -34,8 +42,6 @@ def create_pair_plots(
         If output_path is set: path to the saved image (str).
         Otherwise: matplotlib Figure instance.
     """
-    import pandas as pd
-
     # Restrict to columns that exist and are numeric
     cols = [c for c in variable_names if c in data.columns]
     if hasattr(data, 'select_dtypes'):
@@ -205,22 +211,48 @@ def create_plot(
         fig, ax = plt.subplots(figsize=plot_config['figsize'])
         logger.debug(f"Figure created with size: {plot_config['figsize']}")
 
-        ax.plot(
-            x, y_fitted,
-            color=plot_config['line_color'],
-            lw=plot_config['line_width'],
-            ls=plot_config['line_style'],
-        )
-        ax.errorbar(
-            x, y,
-            fmt=plot_config['marker_format'],
-            markersize=plot_config['marker_size'],
-            yerr=uy,
-            xerr=ux,
-            ecolor=plot_config['error_color'],
-            markerfacecolor=plot_config['marker_face_color'],
-            markeredgecolor=plot_config['marker_edge_color'],
-        )
+        # Plot fitted line with error handling for invalid parameters
+        try:
+            ax.plot(
+                x, y_fitted,
+                color=plot_config['line_color'],
+                lw=plot_config['line_width'],
+                ls=plot_config['line_style'],
+            )
+        except (ValueError, KeyError) as e:
+            logger.warning(f"Invalid line plot parameters: {e}. Using defaults.")
+            ax.plot(
+                x, y_fitted,
+                color='black',
+                lw=1,
+                ls='-',
+            )
+        
+        # Plot error bars with error handling for invalid parameters
+        try:
+            ax.errorbar(
+                x, y,
+                fmt=plot_config['marker_format'],
+                markersize=plot_config['marker_size'],
+                yerr=uy,
+                xerr=ux,
+                ecolor=plot_config['error_color'],
+                markerfacecolor=plot_config['marker_face_color'],
+                markeredgecolor=plot_config['marker_edge_color'],
+            )
+        except (ValueError, KeyError) as e:
+            logger.warning(f"Invalid errorbar parameters: {e}. Using defaults.")
+            ax.errorbar(
+                x, y,
+                fmt='o',
+                markersize=5,
+                yerr=uy,
+                xerr=ux,
+                ecolor='crimson',
+                markerfacecolor='crimson',
+                markeredgecolor='crimson',
+            )
+        
         logger.debug("Data plotted")
 
         ax.set_xlabel(x_name, fontproperties=fonta)
