@@ -17,9 +17,14 @@ from .exceptions import (
     ValidationError,
 )
 from .logger import (
+    ColoredFormatter,
+    get_log_level_from_env,
+    get_log_file_from_env,
+    should_log_to_console,
     setup_logging,
     get_logger,
-    ColoredFormatter,
+    log_function_call,
+    log_exception,
 )
 from .validators import (
     validate_dataframe,
@@ -29,6 +34,10 @@ from .validators import (
     validate_parameter_names,
     parse_optional_float,
     validate_fitting_data,
+    validate_column_exists,
+    validate_numeric_data,
+    validate_uncertainty_column,
+    validate_positive_integer,
 )
 
 __all__ = [
@@ -43,9 +52,14 @@ __all__ = [
     'ConfigurationError',
     'ValidationError',
     # Logger
+    'ColoredFormatter',
+    'get_log_level_from_env',
+    'get_log_file_from_env',
+    'should_log_to_console',
     'setup_logging',
     'get_logger',
-    'ColoredFormatter',
+    'log_function_call',
+    'log_exception',
     # Validators
     'validate_dataframe',
     'validate_data_format',
@@ -54,4 +68,8 @@ __all__ = [
     'validate_parameter_names',
     'parse_optional_float',
     'validate_fitting_data',
+    'validate_column_exists',
+    'validate_numeric_data',
+    'validate_uncertainty_column',
+    'validate_positive_integer',
 ]

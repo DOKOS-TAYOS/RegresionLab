@@ -40,7 +40,7 @@ logger = get_logger(__name__)
 # APPLICATION STATE
 # ============================================================================
 
-class ApplicationState:
+class _ApplicationState:
     """
     Encapsulates application state instead of using global variables.
     
@@ -93,7 +93,7 @@ class ApplicationState:
 
 # Global application state instance
 # This is the single source of truth for application state
-app_state = ApplicationState()
+_app_state = _ApplicationState()
 
 
 # ============================================================================
@@ -122,7 +122,7 @@ def _set_equation_helper(equation_name: str) -> None:
         # Wrap with frontend visualization
         display_name = equation_name.replace('_', ' ').title()
         fitter_with_ui = _wrap_with_visualization(base_fit, display_name)
-        app_state.set_equation(equation_name, fitter_with_ui)
+        _app_state.set_equation(equation_name, fitter_with_ui)
 
 def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Callable:
     """
@@ -253,7 +253,7 @@ def normal_fitting() -> None:
     fitter_with_ui = _wrap_with_visualization(base_fit_function, display_name)
     
     # Store current equation in app state
-    app_state.set_equation(equation_name, fitter_with_ui)
+    _app_state.set_equation(equation_name, fitter_with_ui)
     
     # Phase 2: Loop Mode Selection
     # Ask if user wants to enable loop mode (allows reloading and refitting)
@@ -341,7 +341,7 @@ def single_fit_multiple_datasets() -> None:
     display_name = equation_name.replace('_', ' ').title()
     fitter_with_ui = _wrap_with_visualization(base_fit_function, display_name)
     
-    app_state.set_equation(equation_name, fitter_with_ui)
+    _app_state.set_equation(equation_name, fitter_with_ui)
     
     # Ask for number of datasets
     num_datasets = ask_num_fits(menu)
@@ -446,7 +446,7 @@ def multiple_fits_single_dataset() -> None:
             display_name = equation_name.replace('_', ' ').title()
             fitter_with_ui = _wrap_with_visualization(base_fit_function, display_name)
             
-            app_state.set_equation(equation_name, fitter_with_ui)
+            _app_state.set_equation(equation_name, fitter_with_ui)
             fitter_with_ui(data, x_name, y_name, plot_name)
         
         # Ask if user wants to try another equation
@@ -489,7 +489,7 @@ def all_fits_single_dataset() -> None:
     # Apply all equation types
     apply_all_equations(
         equation_setter=_set_equation_helper,
-        get_fitter=lambda: app_state.current_fitter,
+        get_fitter=lambda: _app_state.current_fitter,
         equation_types=AVAILABLE_EQUATION_TYPES,
         data=data,
         x_name=x_name,

@@ -114,7 +114,7 @@ def validate_dataframe(data: pd.DataFrame, min_rows: int = 2) -> None:
     logger.debug(t('log.dataframe_validated', rows=len(data), columns=len(data.columns)))
 
 
-def validate_column_exists(data: pd.DataFrame, column_name: str) -> None:
+def _validate_column_exists(data: pd.DataFrame, column_name: str) -> None:
     """
     Validate that a column exists in a DataFrame.
     
@@ -135,7 +135,7 @@ def validate_column_exists(data: pd.DataFrame, column_name: str) -> None:
     logger.debug(t('log.column_validated', column=column_name))
 
 
-def validate_numeric_data(data: pd.Series, column_name: str) -> None:
+def _validate_numeric_data(data: pd.Series, column_name: str) -> None:
     """
     Validate that data in a column is numeric and has no NaN values.
     
@@ -170,7 +170,7 @@ def validate_numeric_data(data: pd.Series, column_name: str) -> None:
     logger.debug(t('log.numeric_data_validated', column=column_name))
 
 
-def validate_uncertainty_column(data: pd.DataFrame, var_name: str) -> None:
+def _validate_uncertainty_column(data: pd.DataFrame, var_name: str) -> None:
     """
     Validate that uncertainty column exists and is valid for a variable.
     
@@ -182,8 +182,8 @@ def validate_uncertainty_column(data: pd.DataFrame, var_name: str) -> None:
         DataValidationError: If uncertainty column is missing or invalid
     """
     uncertainty_col = f'u{var_name}'
-    validate_column_exists(data, uncertainty_col)
-    validate_numeric_data(data[uncertainty_col], uncertainty_col)
+    _validate_column_exists(data, uncertainty_col)
+    _validate_numeric_data(data[uncertainty_col], uncertainty_col)
     
     # Check that uncertainties are non-negative
     if (data[uncertainty_col] < 0).any():
@@ -226,16 +226,16 @@ def validate_fitting_data(
     validate_dataframe(data, min_rows=2)
     
     # Validate variable columns exist
-    validate_column_exists(data, x_name)
-    validate_column_exists(data, y_name)
+    _validate_column_exists(data, x_name)
+    _validate_column_exists(data, y_name)
     
     # Validate data is numeric
-    validate_numeric_data(data[x_name], x_name)
-    validate_numeric_data(data[y_name], y_name)
+    _validate_numeric_data(data[x_name], x_name)
+    _validate_numeric_data(data[y_name], y_name)
     
     # Validate uncertainty columns
-    validate_uncertainty_column(data, x_name)
-    validate_uncertainty_column(data, y_name)
+    _validate_uncertainty_column(data, x_name)
+    _validate_uncertainty_column(data, y_name)
     
     logger.info(t('log.fitting_data_validation_successful', points=len(data)))
 
@@ -270,7 +270,7 @@ def validate_parameter_names(param_names: List[str]) -> None:
     logger.debug(t('log.parameter_names_validated', params=str(param_names)))
 
 
-def validate_positive_integer(value: Any, name: str) -> int:
+def _validate_positive_integer(value: Any, name: str) -> int:
     """
     Validate that a value is a positive integer.
     
@@ -297,6 +297,14 @@ def validate_positive_integer(value: Any, name: str) -> int:
     logger.debug(t('log.positive_integer_validated', name=name, value=int_value))
     return int_value
 
+
+# Public aliases for use by callers and tests
+validate_column_exists = _validate_column_exists
+validate_numeric_data = _validate_numeric_data
+validate_uncertainty_column = _validate_uncertainty_column
+validate_positive_integer = _validate_positive_integer
+
+
 def parse_optional_float(s: str) -> Optional[float]:
     """
     Parse a string to float; empty or invalid input returns None.
@@ -318,7 +326,7 @@ def parse_optional_float(s: str) -> Optional[float]:
         return None
 
 
-def validate_column_names(data: pd.DataFrame) -> None:
+def _validate_column_names(data: pd.DataFrame) -> None:
     """
     Validate that column names are valid and not duplicated.
     
@@ -349,7 +357,7 @@ def validate_column_names(data: pd.DataFrame) -> None:
     logger.debug(t('log.column_names_validated', count=len(data.columns)))
 
 
-def validate_all_columns_numeric(data: pd.DataFrame) -> None:
+def _validate_all_columns_numeric(data: pd.DataFrame) -> None:
     """
     Validate that all columns contain numeric data (or can be converted to numeric).
     
@@ -386,7 +394,7 @@ def validate_all_columns_numeric(data: pd.DataFrame) -> None:
     logger.debug(t('log.all_columns_numeric_validated'))
 
 
-def validate_no_completely_empty_rows(data: pd.DataFrame) -> None:
+def _validate_no_completely_empty_rows(data: pd.DataFrame) -> None:
     """
     Validate that there are no completely empty rows in the DataFrame.
     
@@ -433,12 +441,12 @@ def validate_data_format(data: pd.DataFrame) -> None:
     validate_dataframe(data, min_rows=2)
     
     # Validate column names
-    validate_column_names(data)
+    _validate_column_names(data)
     
     # Validate all columns are numeric
-    validate_all_columns_numeric(data)
+    _validate_all_columns_numeric(data)
     
     # Check for completely empty rows (warning only)
-    validate_no_completely_empty_rows(data)
+    _validate_no_completely_empty_rows(data)
     
     logger.info(t('log.data_format_validated', rows=len(data), columns=len(data.columns)))

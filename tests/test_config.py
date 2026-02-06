@@ -21,7 +21,7 @@ from config import (
     FONT_CONFIG,
     FILE_CONFIG,
     MATH_FUNCTION_REPLACEMENTS,
-    EQUATION_FUNCTION_MAP,
+    EQUATIONS,
     AVAILABLE_EQUATION_TYPES,
     EXIT_SIGNAL
 )
@@ -139,14 +139,19 @@ class TestConfigConstants:
     def test_math_function_replacements(self) -> None:
         """Test math function replacements exist."""
         assert isinstance(MATH_FUNCTION_REPLACEMENTS, dict)
-        assert r'\bln\b' in MATH_FUNCTION_REPLACEMENTS
-        assert r'\bsin\b' in MATH_FUNCTION_REPLACEMENTS
+        # Keys use lookbehind pattern; check that expected targets exist
+        values = set(MATH_FUNCTION_REPLACEMENTS.values())
+        assert 'np.log' in values
+        assert 'np.sin' in values
     
-    def test_equation_function_map(self) -> None:
-        """Test equation function map exists."""
-        assert isinstance(EQUATION_FUNCTION_MAP, dict)
-        assert 'linear_function' in EQUATION_FUNCTION_MAP
-        assert 'quadratic_function' in EQUATION_FUNCTION_MAP
+    def test_equations_config(self) -> None:
+        """Test equations config (from equations.yaml) exists."""
+        assert isinstance(EQUATIONS, dict)
+        assert 'linear_function' in EQUATIONS
+        assert 'quadratic_function' in EQUATIONS
+        for eq_id, entry in EQUATIONS.items():
+            assert 'function' in entry
+            assert 'param_names' in entry
     
     def test_available_equation_types(self) -> None:
         """Test available equation types list."""

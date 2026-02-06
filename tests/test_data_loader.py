@@ -8,13 +8,13 @@ import pytest
 import pandas as pd
 from pathlib import Path
 
-from loaders.data_loader import (
-    get_project_root,
+from config import get_project_root
+from loaders import (
     prepare_data_path,
     get_variable_names,
-    get_file_list_by_type
+    get_file_list_by_type,
 )
-from utils.exceptions import InvalidFileTypeError
+from utils import InvalidFileTypeError
 
 
 class TestGetProjectRoot:

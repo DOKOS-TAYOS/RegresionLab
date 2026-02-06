@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from fitting.custom_function_evaluator import CustomFunctionEvaluator
-from utils.exceptions import EquationError, ValidationError
+from utils import EquationError, ValidationError
 
 
 class TestCustomFunctionEvaluatorInit:

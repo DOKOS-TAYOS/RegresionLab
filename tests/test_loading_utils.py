@@ -10,8 +10,8 @@ import pandas as pd
 import csv
 from pathlib import Path
 
-from loaders.loading_utils import csv_reader, excel_reader
-from utils.exceptions import DataLoadError
+from loaders import csv_reader, excel_reader
+from utils import DataLoadError
 
 
 @pytest.fixture

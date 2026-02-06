@@ -241,7 +241,7 @@ def show_exit_confirmation(parent_menu: Tk) -> None:
     close_button = Button(
         exit_level,
         text=t('menu.yes'),
-        command=lambda: close_application(parent_menu),
+        command=lambda: _close_application(parent_menu),
         width=UI_STYLE['button_width'],
         bg=UI_STYLE['bg'],
         fg=UI_STYLE['button_fg_cancel'],
@@ -274,7 +274,7 @@ def show_exit_confirmation(parent_menu: Tk) -> None:
     parent_menu.wait_window(exit_level)
 
 
-def close_application(menu: Tk) -> None:
+def _close_application(menu: Tk) -> None:
     """
     Close the application and exit.
     

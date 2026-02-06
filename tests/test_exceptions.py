@@ -6,7 +6,7 @@ Tests for custom exceptions.
 
 import pytest
 
-from utils.exceptions import (
+from utils import (
     RegressionLabError,
     DataLoadError,
     DataValidationError,
@@ -15,7 +15,7 @@ from utils.exceptions import (
     FittingError,
     EquationError,
     ConfigurationError,
-    ValidationError
+    ValidationError,
 )
 
 

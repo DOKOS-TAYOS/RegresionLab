@@ -23,7 +23,6 @@ from .theme import (
 )
 from .paths import (
     FILE_CONFIG,
-    PLOT_FORMATS,
     ensure_output_directory,
     get_output_path,
     get_project_root,
@@ -50,7 +49,6 @@ __all__ = [
     'PLOT_CONFIG',
     'FONT_CONFIG',
     'setup_fonts',
-    'PLOT_FORMATS',
     'FILE_CONFIG',
     'get_project_root',
     'ensure_output_directory',

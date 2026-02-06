@@ -10,7 +10,7 @@ import pytest
 import tempfile
 from pathlib import Path
 
-from utils.logger import (
+from utils import (
     get_log_level_from_env,
     get_log_file_from_env,
     should_log_to_console,
@@ -18,7 +18,7 @@ from utils.logger import (
     get_logger,
     log_function_call,
     log_exception,
-    ColoredFormatter
+    ColoredFormatter,
 )
 
 

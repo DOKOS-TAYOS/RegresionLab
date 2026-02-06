@@ -13,7 +13,7 @@ from fitting.workflow_controller import (
     reload_data_by_type,
     apply_all_equations
 )
-from utils.exceptions import DataLoadError
+from utils import DataLoadError
 
 
 @pytest.fixture

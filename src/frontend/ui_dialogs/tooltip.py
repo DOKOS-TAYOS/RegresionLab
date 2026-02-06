@@ -8,7 +8,7 @@ from tkinter import Label, Toplevel
 from config import UI_STYLE
 
 
-def bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
+def _bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
     """
     Bind a tooltip to a widget: show after delay on Enter, hide on Leave.
     """
@@ -58,7 +58,3 @@ def bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
 
     widget.bind("<Enter>", on_enter)
     widget.bind("<Leave>", on_leave)
-
-
-# Backward-compatible alias
-_bind_tooltip = bind_tooltip

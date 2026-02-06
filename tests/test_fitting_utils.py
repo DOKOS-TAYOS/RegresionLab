@@ -18,7 +18,7 @@ from fitting.estimators import (
     estimate_trigonometric_parameters,
 )
 from fitting.fitting_functions import linear_function, sin_function
-from utils.exceptions import FittingError
+from utils import FittingError
 
 
 class TestFormatParameter:

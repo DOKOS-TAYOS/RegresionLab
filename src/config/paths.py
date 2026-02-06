@@ -29,7 +29,7 @@ def _normalize_plot_format(value: str) -> str:
     return 'png'
 
 
-PLOT_FORMATS = ('png', 'jpg', 'jpeg', 'pdf')
+_PLOT_FORMATS = ('png', 'jpg', 'jpeg', 'pdf')
 
 FILE_CONFIG = {
     'input_dir': get_env('FILE_INPUT_DIR', 'input'),
