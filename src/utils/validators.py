@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, List, Optional, Union
 
 # Third-party packages
+import numpy as np
 import pandas as pd
 
 # Local imports
@@ -143,7 +144,6 @@ def _validate_numeric_data(data: pd.Series, column_name: str) -> None:
     Raises:
         DataValidationError: If data is not numeric or contains NaN
     """
-    import numpy as np
     if not pd.api.types.is_numeric_dtype(data):
         logger.error(t('log.column_not_numeric', column=column_name, dtype=str(data.dtype)))
         raise DataValidationError(
@@ -294,13 +294,6 @@ def _validate_positive_integer(value: Any, name: str) -> int:
     
     logger.debug(t('log.positive_integer_validated', name=name, value=int_value))
     return int_value
-
-
-# Public aliases for use by callers and tests
-validate_column_exists = _validate_column_exists
-validate_numeric_data = _validate_numeric_data
-validate_uncertainty_column = _validate_uncertainty_column
-validate_positive_integer = _validate_positive_integer
 
 
 def parse_optional_float(s: str) -> Optional[float]:

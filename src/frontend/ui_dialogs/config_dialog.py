@@ -12,6 +12,7 @@ from tkinter import (
     Canvas,
     Scrollbar,
     Checkbutton,
+    messagebox,
     ttk,
 )
 
@@ -307,7 +308,6 @@ def show_config_dialog(parent_window: Any) -> bool:
             write_env_file(env_path, values)
             result_var[0] = True
         except OSError:
-            from tkinter import messagebox
             messagebox.showerror(
                 t('error.critical_error'),
                 t('config.save_error', path=str(env_path)),

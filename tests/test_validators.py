@@ -12,16 +12,18 @@ from utils import (
     validate_file_path,
     validate_file_type,
     validate_dataframe,
-    validate_column_exists,
-    validate_numeric_data,
-    validate_uncertainty_column,
     validate_fitting_data,
     validate_parameter_names,
-    validate_positive_integer,
     DataValidationError,
     FileNotFoundError,
     InvalidFileTypeError,
     ValidationError,
+)
+from utils.validators import (
+    _validate_column_exists,
+    _validate_numeric_data,
+    _validate_uncertainty_column,
+    _validate_positive_integer,
 )
 
 
@@ -95,22 +97,22 @@ class TestValidateDataFrame:
 
 
 class TestValidateColumnExists:
-    """Tests for validate_column_exists function."""
+    """Tests for _validate_column_exists function."""
     
     def test_existing_column(self) -> None:
         """Test validation passes for existing column."""
         df = pd.DataFrame({'x': [1, 2], 'y': [3, 4]})
-        validate_column_exists(df, 'x')
+        _validate_column_exists(df, 'x')
     
     def test_missing_column(self) -> None:
         """Test validation fails for missing column."""
         df = pd.DataFrame({'x': [1, 2]})
         with pytest.raises(DataValidationError):
-            validate_column_exists(df, 'y')
+            _validate_column_exists(df, 'y')
 
 
 class TestValidateNumericData:
-    """Tests for validate_numeric_data function."""
+    """Tests for _validate_numeric_data function."""
     
     @pytest.mark.parametrize("data", [
         pd.Series([1.0, 2.0, 3.0]),
@@ -118,12 +120,12 @@ class TestValidateNumericData:
     ])
     def test_valid_numeric(self, data: pd.Series) -> None:
         """Test validation passes for numeric data."""
-        validate_numeric_data(data, 'test_col')
+        _validate_numeric_data(data, 'test_col')
     
     def test_non_numeric(self) -> None:
         """Test validation fails for non-numeric data."""
         with pytest.raises(DataValidationError):
-            validate_numeric_data(pd.Series(['a', 'b', 'c']), 'test_col')
+            _validate_numeric_data(pd.Series(['a', 'b', 'c']), 'test_col')
     
     @pytest.mark.parametrize("data", [
         pd.Series([1.0, np.nan, 3.0]),
@@ -132,28 +134,28 @@ class TestValidateNumericData:
     def test_invalid_values(self, data: pd.Series) -> None:
         """Test validation fails for NaN or infinite values."""
         with pytest.raises(DataValidationError):
-            validate_numeric_data(data, 'test_col')
+            _validate_numeric_data(data, 'test_col')
 
 
 class TestValidateUncertaintyColumn:
-    """Tests for validate_uncertainty_column function."""
+    """Tests for _validate_uncertainty_column function."""
     
     def test_valid_uncertainty(self) -> None:
         """Test validation passes for valid uncertainty column."""
         df = pd.DataFrame({'x': [1, 2, 3], 'ux': [0.1, 0.1, 0.1]})
-        validate_uncertainty_column(df, 'x')
+        _validate_uncertainty_column(df, 'x')
     
     def test_missing_uncertainty(self) -> None:
         """Test validation fails for missing uncertainty column."""
         df = pd.DataFrame({'x': [1, 2, 3]})
         with pytest.raises(DataValidationError):
-            validate_uncertainty_column(df, 'x')
+            _validate_uncertainty_column(df, 'x')
     
     def test_negative_uncertainty(self) -> None:
         """Test validation fails for negative uncertainties."""
         df = pd.DataFrame({'x': [1, 2, 3], 'ux': [0.1, -0.1, 0.1]})
         with pytest.raises(DataValidationError):
-            validate_uncertainty_column(df, 'x')
+            _validate_uncertainty_column(df, 'x')
 
 
 class TestValidateFittingData:
@@ -217,23 +219,23 @@ class TestValidateParameterNames:
 
 
 class TestValidatePositiveInteger:
-    """Tests for validate_positive_integer function."""
+    """Tests for _validate_positive_integer function."""
     
     def test_valid_positive_integer(self) -> None:
         """Test validation passes for positive integer."""
-        assert validate_positive_integer(5, 'test_param') == 5
+        assert _validate_positive_integer(5, 'test_param') == 5
     
     def test_string_number(self) -> None:
         """Test validation passes for string number."""
-        assert validate_positive_integer('10', 'test_param') == 10
+        assert _validate_positive_integer('10', 'test_param') == 10
     
     @pytest.mark.parametrize("value", [0, -5])
     def test_non_positive(self, value: int) -> None:
         """Test validation fails for zero or negative."""
         with pytest.raises(ValidationError):
-            validate_positive_integer(value, 'test_param')
+            _validate_positive_integer(value, 'test_param')
     
     def test_non_integer(self) -> None:
         """Test validation fails for non-integer."""
         with pytest.raises(ValidationError):
-            validate_positive_integer('not_a_number', 'test_param')
+            _validate_positive_integer('not_a_number', 'test_param')

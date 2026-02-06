@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 # Third-party packages
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # Local imports
 from config import FONT_CONFIG, PLOT_CONFIG, get_output_path, setup_fonts
@@ -41,8 +42,6 @@ def create_pair_plots(
         If output_path is set: path to the saved image (str).
         Otherwise: matplotlib Figure instance.
     """
-    import pandas as pd
-
     # Restrict to columns that exist and are numeric
     cols = [c for c in variable_names if c in data.columns]
     if hasattr(data, 'select_dtypes'):
