@@ -417,19 +417,19 @@ def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
 
     text_widget = Text(
         text_frame,
-        bg='gray10',
-        fg='lawn green',
-        font=('Consolas', 10),
+        bg=UI_STYLE['text_bg'],
+        fg=UI_STYLE['text_fg'],
+        font=(UI_STYLE['text_font_family'], UI_STYLE['text_font_size']),
         wrap='none',
         yscrollcommand=scrollbar_y.set,
         xscrollcommand=scrollbar_x.set,
         relief='sunken',
-        borderwidth=2,
-        padx=5,
-        pady=5,
-        insertbackground='lawn green',
-        selectbackground='SeaGreen4',
-        selectforeground='white'
+        borderwidth=UI_STYLE['border_width'],
+        padx=UI_STYLE['padding'],
+        pady=UI_STYLE['padding'],
+        insertbackground=UI_STYLE['text_insert_bg'],
+        selectbackground=UI_STYLE['text_select_bg'],
+        selectforeground=UI_STYLE['text_select_fg']
     )
     text_widget.pack(side='left', fill='both', expand=True)
     scrollbar_y.config(command=text_widget.yview)

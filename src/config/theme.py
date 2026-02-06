@@ -21,6 +21,13 @@ UI_THEME = {
     'font_family': get_env('UI_FONT_FAMILY', 'Menlo'),
     'spinbox_width': get_env('UI_SPINBOX_WIDTH', 10, int),
     'entry_width': get_env('UI_ENTRY_WIDTH', 25, int),
+    'text_bg': get_env('UI_TEXT_BG', 'gray15'),
+    'text_fg': get_env('UI_TEXT_FG', 'light cyan'),
+    'text_font_family': get_env('UI_TEXT_FONT_FAMILY', 'Consolas'),
+    'text_font_size': get_env('UI_TEXT_FONT_SIZE', 11, int),
+    'text_insert_bg': get_env('UI_TEXT_INSERT_BG', 'spring green'),
+    'text_select_bg': get_env('UI_TEXT_SELECT_BG', 'steel blue'),
+    'text_select_fg': get_env('UI_TEXT_SELECT_FG', 'white'),
 }
 
 UI_STYLE = {
@@ -40,7 +47,14 @@ UI_STYLE = {
     'font_size_large': UI_THEME['font_size_large'],
     'font_family': UI_THEME['font_family'],
     'spinbox_width': UI_THEME['spinbox_width'],
-    'entry_width': UI_THEME['entry_width']
+    'entry_width': UI_THEME['entry_width'],
+    'text_bg': UI_THEME['text_bg'],
+    'text_fg': UI_THEME['text_fg'],
+    'text_font_family': UI_THEME['text_font_family'],
+    'text_font_size': UI_THEME['text_font_size'],
+    'text_insert_bg': UI_THEME['text_insert_bg'],
+    'text_select_bg': UI_THEME['text_select_bg'],
+    'text_select_fg': UI_THEME['text_select_fg'],
 }
 
 PLOT_CONFIG = {
