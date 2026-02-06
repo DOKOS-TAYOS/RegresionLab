@@ -15,14 +15,17 @@ import pandas as pd
 # Local imports
 from config import EXIT_SIGNAL
 from i18n import t
-from loaders.data_loader import (
+from loaders import (
     get_file_list_by_type,
     get_variable_names,
     load_data_workflow,
-)
-from loaders.loading_utils import csv_reader, excel_reader, get_file_names, txt_reader
-from utils.exceptions import DataLoadError
-from utils.logger import get_logger
+    csv_reader,
+    excel_reader,
+    get_file_names,
+    txt_reader
+    )
+
+from utils import DataLoadError, get_logger
 
 logger = get_logger(__name__)
 

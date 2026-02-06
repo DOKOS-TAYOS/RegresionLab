@@ -21,7 +21,7 @@ import streamlit as st
 try:
     from config import initialize_and_validate_config
     from i18n import initialize_i18n, t
-    from utils.logger import setup_logging, get_logger
+    from utils import setup_logging, get_logger
 
     initialize_and_validate_config()
     initialize_i18n('es')

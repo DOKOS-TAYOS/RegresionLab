@@ -21,7 +21,7 @@ from utils.exceptions import (
     DataValidationError,
     FileNotFoundError,
     InvalidFileTypeError,
-    ValidationError
+    ValidationError,
 )
 from utils.logger import get_logger
 from i18n import t

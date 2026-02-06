@@ -25,10 +25,9 @@ if str(src_dir) not in sys.path:
 # Local imports (kept lightweight at startup; heavy modules are loaded lazily)
 from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL, __version__, initialize_and_validate_config
 from i18n import t, initialize_i18n
-from frontend.ui_main_menu import start_main_menu
-from fitting.fitting_utils import get_fitting_function
-from utils.exceptions import FittingError
-from utils.logger import setup_logging, get_logger
+from frontend import start_main_menu
+from fitting import get_fitting_function
+from utils import FittingError, setup_logging, get_logger
 
 # Initialize configuration validation, i18n and logging at module level
 initialize_and_validate_config()
@@ -147,8 +146,8 @@ def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Call
         Wrapped function that performs fitting and shows results
     """
     # Lazy import heavy modules only when visualization is actually needed
-    from plotting.plot_utils import create_plot
-    from frontend.ui_dialogs import create_result_window
+    from plotting import create_plot
+    from frontend import create_result_window
     
     def wrapped_function(
         data: Any,
@@ -215,12 +214,12 @@ def normal_fitting() -> None:
         - Testing sensitivity to data modifications
     """
     # Lazy imports to avoid loading heavy dependencies at application startup
-    from fitting.workflow_controller import (
+    from fitting import (
         single_fit_with_loop,
         coordinate_data_loading,
         coordinate_equation_selection,
     )
-    from frontend.ui_dialogs import (
+    from frontend import (
         ask_file_type,
         ask_file_name,
         ask_variables,
@@ -307,12 +306,12 @@ def single_fit_multiple_datasets() -> None:
     5. Optionally reload and refit in loop
     """
     # Lazy imports to avoid loading heavy dependencies at application startup
-    from fitting.workflow_controller import (
+    from fitting import (
         multiple_fit_with_loop,
         coordinate_data_loading,
         coordinate_equation_selection,
     )
-    from frontend.ui_dialogs import (
+    from frontend import (
         ask_file_type,
         ask_file_name,
         ask_variables,
@@ -402,8 +401,8 @@ def multiple_fits_single_dataset() -> None:
     3. Compare results without reloading the data
     """
     # Lazy imports to avoid loading heavy dependencies at application startup
-    from fitting.workflow_controller import coordinate_data_loading, coordinate_equation_selection
-    from frontend.ui_dialogs import (
+    from fitting import coordinate_data_loading, coordinate_equation_selection
+    from frontend import (
         ask_file_type,
         ask_file_name,
         ask_variables,
@@ -465,8 +464,8 @@ def all_fits_single_dataset() -> None:
     to fit the data, generating results for each fitting method.
     """
     # Lazy imports to avoid loading heavy dependencies at application startup
-    from fitting.workflow_controller import apply_all_equations, coordinate_data_loading
-    from frontend.ui_dialogs import (
+    from fitting import apply_all_equations, coordinate_data_loading
+    from frontend import (
         ask_file_type,
         ask_file_name,
         ask_variables,
@@ -506,8 +505,8 @@ def watch_data() -> None:
     This function allows users to inspect loaded data.
     """
     # Lazy imports to avoid loading heavy dependencies at application startup
-    from fitting.workflow_controller import coordinate_data_viewing
-    from frontend.ui_dialogs import (
+    from fitting import coordinate_data_viewing
+    from frontend import (
         ask_file_type,
         ask_file_name,
         show_data_dialog,
@@ -530,7 +529,7 @@ def show_help() -> None:
     Shows information about fitting modes, navigation, data locations, and output locations.
     """
     # Lazy import to avoid loading help dialog module at startup
-    from frontend.ui_dialogs import show_help_dialog
+    from frontend import show_help_dialog
 
     menu = _get_menu_window()
     show_help_dialog(parent_window=menu)

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Local imports
 from config import FONT_CONFIG, PLOT_CONFIG, get_output_path, setup_fonts
-from utils.logger import get_logger
+from utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -5,7 +5,7 @@ from typing import Callable, List, Optional, Tuple
 import numpy as np
 from numpy.typing import NDArray
 
-from ._base import (
+from fitting.functions._base import (
     DataLike,
     Numeric,
     estimate_phase_shift,

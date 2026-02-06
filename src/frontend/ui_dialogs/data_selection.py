@@ -441,8 +441,8 @@ def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
 
     def _open_pair_plots_window() -> None:
         from config import get_output_path
-        from loaders.data_loader import get_variable_names
-        from plotting.plot_utils import create_pair_plots
+        from loaders import get_variable_names
+        from plotting import create_pair_plots
         try:
             variables = get_variable_names(data, filter_uncertainty=True)
             if not variables:

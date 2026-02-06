@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.special import eval_hermite
 
-from ._base import (
+from fitting.functions._base import (
     DataLike,
     Numeric,
     estimate_binomial_parameters,

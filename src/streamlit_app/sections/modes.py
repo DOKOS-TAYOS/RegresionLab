@@ -7,14 +7,14 @@ import streamlit as st
 from config import DATA_FILE_TYPES
 from i18n import t
 
-from .data import load_uploaded_file, show_data_with_pair_plots
-from .fitting import (
+from streamlit_app.sections.data import load_uploaded_file, show_data_with_pair_plots
+from streamlit_app.sections.fitting import (
     create_equation_options,
     perform_fit,
     select_variables,
     show_equation_selector,
 )
-from .results import show_results
+from streamlit_app.sections.results import show_results
 
 
 def mode_normal_fitting(equation_types: List[str]) -> None:

@@ -19,9 +19,9 @@ from tkinter import (
 
 from config import EQUATION_FORMULAS, EXIT_SIGNAL, UI_STYLE
 from i18n import t
-from utils.validators import parse_optional_float
+from utils import parse_optional_float
 
-from .tooltip import _bind_tooltip
+from frontend.ui_dialogs.tooltip import _bind_tooltip
 
 
 UNICODE_PARAM_MAP: Dict[str, str] = {
@@ -83,7 +83,7 @@ def ask_equation_type(
         Tuple of (equation_type, user_initial_guess, user_bounds).
         user_initial_guess and user_bounds are None when not configured.
     """
-    from fitting.fitting_utils import get_equation_param_info
+    from fitting import get_equation_param_info
 
     equation_level = Toplevel()
     equation_level.title(t('dialog.equation_type'))

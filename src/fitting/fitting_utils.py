@@ -13,8 +13,7 @@ from config import (
     EXIT_SIGNAL,
 )
 from i18n import t
-from utils.exceptions import FittingError
-from utils.logger import get_logger
+from utils import FittingError, get_logger
 
 logger = get_logger(__name__)
 
@@ -108,7 +107,7 @@ def generic_fit(
     # Lazy imports to avoid loading heavy numerical stack when importing this module
     from scipy import stats as scipy_stats
     from scipy.optimize import curve_fit
-    from utils.validators import validate_fitting_data
+    from utils import validate_fitting_data
 
     logger.info(t('log.starting_generic_fit', x=x_name, y=y_name, params=str(param_names)))
 

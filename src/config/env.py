@@ -348,7 +348,7 @@ def initialize_and_validate_config() -> None:
         # All config values are now validated and corrected if needed
     """
     try:
-        from utils.logger import get_logger
+        from utils import get_logger
         logger = get_logger(__name__)
     except ImportError:
         # Logger not available, skip logging

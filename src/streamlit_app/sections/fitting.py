@@ -6,7 +6,7 @@ import streamlit as st
 
 from i18n import t
 
-from .data import get_temp_output_dir, get_variable_names
+from streamlit_app.sections.data import get_temp_output_dir, get_variable_names
 
 
 def perform_fit(
@@ -42,12 +42,10 @@ def perform_fit(
         ``plot_path`` and ``plot_name`` when the fit succeeds, or ``None``
         if the operation fails or is not supported.
     """
-    from fitting.fitting_utils import get_fitting_function
-    from fitting.custom_function_evaluator import CustomFunctionEvaluator
-    from plotting.plot_utils import create_plot
-    from utils.exceptions import FittingError
+    from fitting import get_fitting_function, CustomFunctionEvaluator
+    from plotting import create_plot
+    from utils import FittingError, get_logger
     from config import FILE_CONFIG
-    from utils.logger import get_logger
 
     logger = get_logger(__name__)
 

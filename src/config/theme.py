@@ -1,6 +1,6 @@
 """UI theme, plot style, and font configuration."""
 
-from .env import get_env
+from config.env import get_env
 
 UI_THEME = {
     'background': get_env('UI_BACKGROUND', 'midnight blue'),
