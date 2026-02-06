@@ -160,7 +160,7 @@ class TestConfigConstants:
     def test_exit_signal(self) -> None:
         """Test exit signal constant."""
         assert isinstance(EXIT_SIGNAL, str)
-        assert EXIT_SIGNAL == 'Salir'
+        assert EXIT_SIGNAL == 'Exit'
 
 
 def test_setup_fonts() -> None:

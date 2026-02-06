@@ -7,11 +7,8 @@ import pandas as pd
 from pathlib import Path
 
 from config import get_project_root
-from loaders import (
-    prepare_data_path,
-    get_variable_names,
-    get_file_list_by_type,
-)
+from loaders import get_variable_names, get_file_list_by_type
+from loaders.data_loader import _prepare_data_path as prepare_data_path
 from utils import InvalidFileTypeError
 
 

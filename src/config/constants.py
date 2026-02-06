@@ -130,4 +130,4 @@ VALID_LANGUAGE_INPUTS: frozenset[str] = frozenset(SUPPORTED_LANGUAGE_CODES) | fr
 DATA_FILE_TYPES: tuple[str, ...] = ('csv', 'xlsx', 'txt')
 
 # Signal value indicating user exit intent
-EXIT_SIGNAL: str = 'Salir'
+EXIT_SIGNAL: str = 'Exit'

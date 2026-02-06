@@ -3,7 +3,7 @@ Loading utilities for data file operations.
 
 This module provides functions to:
 
-    - Load data from CSV and Excel files
+    - Load data from CSV, TXT and Excel files
     - Scan directories for available data files
     - Get the project root directory path
 

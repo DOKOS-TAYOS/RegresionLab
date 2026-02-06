@@ -8,7 +8,6 @@ from .data_loader import (
     get_variable_names,
     get_file_list_by_type,
     load_data,
-    prepare_data_path,
 )
 from .loading_utils import get_file_names, csv_reader, excel_reader, txt_reader
 
@@ -18,7 +17,6 @@ __all__ = [
     'get_variable_names',
     'get_file_list_by_type',
     'load_data',
-    'prepare_data_path',
     # File utilities
     'get_file_names',
     'csv_reader',

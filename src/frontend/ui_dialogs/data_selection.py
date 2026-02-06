@@ -15,7 +15,7 @@ def ask_file_type(parent_window: Any) -> str:
     """
     Dialog to ask for data file type.
 
-    Presents radio buttons with file type options (xlsx, csv, txt, Exit/Salir).
+    Presents radio buttons with file type options (xlsx, csv, txt, Exit).
     User can select one option.
 
     Args:

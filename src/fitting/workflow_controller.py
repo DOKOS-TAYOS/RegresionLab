@@ -531,7 +531,7 @@ def coordinate_custom_equation(
     exit_option = t('dialog.exit_option')
     if (
         EXIT_SIGNAL in parameter_names
-        or 'salir' in parameter_names
+        or 'exit' in parameter_names
         or exit_option in parameter_names
     ):
         return EXIT_SIGNAL, None
@@ -540,7 +540,7 @@ def coordinate_custom_equation(
     custom_formula = ask_custom_formula_func(parent_window, parameter_names)
     
     # Check if user wants to exit (check both translated and internal values)
-    if custom_formula in (EXIT_SIGNAL, 'salir', 's', exit_option):
+    if custom_formula in (EXIT_SIGNAL, 'exit', 'e', exit_option):
         return EXIT_SIGNAL, None
     
     # Backend: Create custom evaluator
