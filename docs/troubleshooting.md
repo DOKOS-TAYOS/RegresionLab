@@ -51,7 +51,7 @@ This guide covers known issues, common problems, and their solutions. It also in
 
 **Issue**: CSV files with special characters may not load correctly
 
-**Status**: ⚠️ **Partial Fix in 0.8.3**
+**Status**: ⚠️ **Partial Fix in 0.9.0**
 
 **Description**:
 - Files with accents, umlauts, or other non-ASCII characters may fail to load
