@@ -11,7 +11,8 @@ Supported languages:
     - 'en' or 'english': English
     - 'de' or 'german': German
 
-Usage:
+Usage::
+
     from i18n import t
     
     # In UI code
@@ -123,26 +124,26 @@ def initialize_i18n(language: Optional[str] = None) -> None:
         _translations = _load_translations(DEFAULT_LANGUAGE)
 
 
-def t(key: str, **kwargs) -> str:
+def t(key: str, **kwargs: Any) -> str:
     """
     Translate a key to the current language.
-    
-    This function retrieves the translation for a given key in the current language.
+
+    Retrieves the translation for a given key in the current language.
     The key uses dot notation to navigate nested dictionaries.
-    
+
     Args:
-        key: Translation key in dot notation (e.g., 'menu.welcome')
-        kwargs: Optional format parameters for string interpolation (use ``**kwargs`` in code)
-        
+        key: Translation key in dot notation (e.g. ``'menu.welcome'``).
+        **kwargs: Optional format parameters for string interpolation.
+
     Returns:
-        Translated string, or the key itself if translation not found
-        
+        Translated string, or the key itself if translation not found.
+
     Examples:
         >>> t('menu.welcome')
         'Welcome, scientist. What would you like to do?'
-        
+
         >>> t('error.fitting_failed_details', error='Invalid data')
-        'The fitter was unable to fit the data.\n\nDetails: Invalid data\n\nPlease try another equation or verify the data.'
+        'The fitter was unable to fit the data.\\n\\nDetails: Invalid data\\n\\nPlease try another equation or verify the data.'
     """
     # Ensure translations are loaded
     if not _translations:

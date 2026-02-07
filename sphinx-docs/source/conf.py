@@ -110,7 +110,7 @@ extensions = [
     'sphinx.ext.coverage',         # Check documentation coverage
     'sphinx.ext.mathjax',          # Math support via MathJax
     'myst_parser',                 # Markdown support
-    'sphinx_autodoc_typehints',    # Type hints support
+    # 'sphinx_autodoc_typehints' disabled: hide types for cleaner documentation
 ]
 
 # MyST Parser configuration
@@ -244,7 +244,7 @@ napoleon_use_param = True
 napoleon_use_rtype = True
 napoleon_preprocess_types = False
 napoleon_type_aliases = None
-napoleon_attr_annotations = True
+napoleon_attr_annotations = False  # Don't show type annotations in attributes
 
 # Use legacy class-based autodoc so autodoc-skip-member is applied to module members
 # (Sphinx 5+ uses a new implementation that may not emit skip-member for all members)
@@ -258,8 +258,8 @@ autodoc_default_options = {
     'undoc-members': True,
     'exclude-members': '__weakref__'
 }
-autodoc_typehints = 'description'
-autodoc_typehints_description_target = 'documented'
+# Hide types in documentation for cleaner reading (docstrings are sufficient)
+autodoc_typehints = 'none'
 
 # Todo extension
 todo_include_todos = True
