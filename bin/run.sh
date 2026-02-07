@@ -21,5 +21,6 @@ if [ ! -d ".venv" ]; then
     exit 1
 fi
 
-# Activate virtual environment and run the program
-source .venv/bin/activate && python src/main_program.py
+# Activate virtual environment and run the program (background + nohup = terminal can close)
+source .venv/bin/activate && nohup python src/main_program.py > /dev/null 2>&1 &
+exit 0
