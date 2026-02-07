@@ -488,5 +488,5 @@ If you can't solve the issue, please report it on GitHub with:
 
 ---
 
-*Document last updated: January 2026*
+*Document last updated: January 2026.*
 *If you solved a problem not listed here, please contribute by opening a pull request!*

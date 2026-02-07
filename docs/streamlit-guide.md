@@ -569,9 +569,9 @@ You can open multiple browser tabs with RegressionLab:
 
 ## Next Steps
 
-- **Learn Tkinter**: See [Tkinter Guide](tkinter-guide) for desktop version
-- **Customize**: Configure appearance in [Configuration Guide](configuration)
-- **Extend**: Learn to add functions in [Extending RegressionLab](extending)
+- **Learn Tkinter**: See [Tkinter Guide](tkinter-guide) for desktop version.
+- **Customize**: Configure appearance in [Configuration Guide](configuration).
+- **Extend**: Learn to add functions in [Extending RegressionLab](extending).
 
 ---
 

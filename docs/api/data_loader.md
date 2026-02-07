@@ -362,4 +362,4 @@ data = data.astype('float32')  # Use 32-bit instead of 64-bit
 
 ---
 
-*See also: [loading_utils](loading_utils.md) for low-level file readers*
+*See also: [loading_utils](loading_utils.md) for low-level file readers.*

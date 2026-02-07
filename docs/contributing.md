@@ -622,4 +622,4 @@ Thank you for contributing to RegressionLab! 🎉
 
 ---
 
-*Questions about contributing? Open a GitHub Discussion or email alejandro.mata.ali@gmail.com*
+*Questions about contributing? Open a GitHub Discussion or email alejandro.mata.ali@gmail.com.*

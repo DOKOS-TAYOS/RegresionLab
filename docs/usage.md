@@ -408,10 +408,10 @@ Goal: Remove outliers and improve fit quality
 
 Now that you understand the basics:
 
-- **Streamlit Guide**: For detailed information on the web interface, see [Streamlit Guide](streamlit-guide)
-- **Tkinter Guide**: For detailed information on the desktop interface, see [Tkinter Guide](tkinter-guide)
-- **Configuration**: Customize appearance and behavior in the [Configuration Guide](configuration)
-- **Advanced Usage**: Learn how to add custom functions in [Extending RegressionLab](extending)
+- **Streamlit Guide**: For detailed information on the web interface, see [Streamlit Guide](streamlit-guide).
+- **Tkinter Guide**: For detailed information on the desktop interface, see [Tkinter Guide](tkinter-guide).
+- **Configuration**: Customize appearance and behavior in the [Configuration Guide](configuration).
+- **Advanced Usage**: Learn how to add custom functions in [Extending RegressionLab](extending).
 
 ---
 

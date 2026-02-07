@@ -286,4 +286,4 @@ def test_fitting_error():
 
 ---
 
-*For more information about error handling, see [Troubleshooting Guide](../troubleshooting.md)*
+*For more information about error handling, see [Troubleshooting Guide](../troubleshooting.md).*

@@ -199,10 +199,10 @@ For information about third-party libraries and their licenses, see
 
 ## 💡 Need Help?
 
-1. Check the [User Guide](docs/usage.md) for basic usage
-2. Review the [Troubleshooting Guide](docs/troubleshooting.md) for common issues
-3. Consult the [API Documentation](docs/api/index.md) for technical details
-4. Open an issue on GitHub
+1. Check the [User Guide](docs/usage.md) for basic usage.
+2. Review the [Troubleshooting Guide](docs/troubleshooting.md) for common issues.
+3. Consult the [API Documentation](docs/api/index.md) for technical details.
+4. Open an issue on GitHub.
 
 ---
 

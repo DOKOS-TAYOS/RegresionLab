@@ -357,4 +357,4 @@ No builtins or other modules are accessible.
 
 ---
 
-*For more information about custom functions, see [Extending Guide](../extending.md)*
+*For more information about custom functions, see [Extending Guide](../extending.md).*

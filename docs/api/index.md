@@ -505,4 +505,4 @@ See [Contributing Guide](contributing) for:
 
 ---
 
-*Last updated: February 2026*
+*Last updated: February 2026.*

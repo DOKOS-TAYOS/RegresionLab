@@ -370,4 +370,4 @@ Configuration is loaded once at startup. Changes to `.env` during runtime are no
 
 ---
 
-*For complete configuration options, see [Configuration Guide](../configuration.md)*
+*For complete configuration options, see [Configuration Guide](../configuration.md).*

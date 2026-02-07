@@ -714,9 +714,9 @@ See [Configuration Guide](configuration) for extensive customization:
 
 ## Next Steps
 
-- **Customize Interface**: Edit `.env` to personalize appearance ([Configuration Guide](configuration))
-- **Add Functions**: Learn to extend RegressionLab ([Extending RegressionLab](extending))
-- **Web Version**: Try the Streamlit interface ([Streamlit Guide](streamlit-guide))
+- **Customize Interface**: Edit `.env` to personalize appearance ([Configuration Guide](configuration)).
+- **Add Functions**: Learn to extend RegressionLab ([Extending RegressionLab](extending)).
+- **Web Version**: Try the Streamlit interface ([Streamlit Guide](streamlit-guide)).
 
 ---
 

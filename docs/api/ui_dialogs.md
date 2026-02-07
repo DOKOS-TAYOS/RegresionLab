@@ -421,4 +421,4 @@ All dialog text is translated using the `i18n` module:
 
 ---
 
-*For more information about dialogs, see [Tkinter Guide](../tkinter-guide.md)*
+*For more information about dialogs, see [Tkinter Guide](../tkinter-guide.md).*

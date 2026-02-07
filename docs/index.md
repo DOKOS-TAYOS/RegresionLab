@@ -95,10 +95,10 @@ RegressionLab is a comprehensive data analysis tool that performs curve fitting 
 ## 💡 Need Help?
 
 If you need assistance:
-1. Check the [User Guide](usage.md) for basic usage
-2. Review the [Troubleshooting](troubleshooting.md) section
-3. Consult the [API Documentation](api/index.md) for technical details
-4. Open an issue on GitHub
+1. Check the [User Guide](usage.md) for basic usage.
+2. Review the [Troubleshooting](troubleshooting.md) section.
+3. Consult the [API Documentation](api/index.md) for technical details.
+4. Open an issue on GitHub.
 
 ---
 

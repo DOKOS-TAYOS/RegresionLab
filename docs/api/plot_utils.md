@@ -372,4 +372,4 @@ except Exception as e:
 
 ---
 
-*For more information about plotting, see [Usage Guide](../usage.md)*
+*For more information about plotting, see [Usage Guide](../usage.md).*

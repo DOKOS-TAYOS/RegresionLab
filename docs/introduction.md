@@ -79,11 +79,12 @@ Full support for multiple languages:
 - Easy to add more languages via JSON files in `src/locales/`
 
 ### 8. **Highly Configurable**
-Customize every aspect through the `.env` file:
+Customize every aspect through the `.env` file or the configuration screen:
 - UI colors and themes
 - Plot styles and fonts
 - Input/output directories
 - Logging levels
+- Language preference
 - And much more
 
 ### 9. **Extensible and Open Source**

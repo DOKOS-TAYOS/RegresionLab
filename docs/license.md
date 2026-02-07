@@ -244,4 +244,4 @@ Please report it on GitHub or via email. While the license disclaims warranty, w
 
 ---
 
-*For any other questions about licensing, please contact alejandro.mata.ali@gmail.com*
+*For any other questions about licensing, please contact alejandro.mata.ali@gmail.com.*

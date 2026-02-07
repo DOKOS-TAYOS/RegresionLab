@@ -307,4 +307,4 @@ data, file_path = load_data_workflow('data1', 'csv')
 
 ---
 
-*For more information about data loading, see [Data Loader](data_loader.md)*
+*For more information about data loading, see [Data Loader](data_loader.md).*

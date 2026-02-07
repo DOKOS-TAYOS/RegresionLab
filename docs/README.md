@@ -111,29 +111,29 @@ When contributing to documentation:
 
 ### Style Guide
 
-1. **Be clear and concise**: Use simple language
-2. **Use examples**: Code examples, screenshots, workflows
-3. **Link related content**: Cross-reference other documentation
-4. **Stay up-to-date**: Update docs when code changes
-5. **Test examples**: Ensure code examples actually work
+1. **Be clear and concise**: Use simple language.
+2. **Use examples**: Code examples, screenshots, workflows.
+3. **Link related content**: Cross-reference other documentation.
+4. **Stay up-to-date**: Update docs when code changes.
+5. **Test examples**: Ensure code examples actually work.
 
 ### File Naming
 
-- Use lowercase with hyphens: `configuration-guide.md`
-- Be descriptive: `installation.md` not `install.md`
-- Group related files: `api/` directory for API docs
+- Use lowercase with hyphens: `configuration-guide.md`.
+- Be descriptive: `installation.md` not `install.md`.
+- Group related files: `api/` directory for API docs.
 
 ### Structure
 
 Each document should have:
 
-1. **Title** (H1): Clear, descriptive
-2. **Introduction**: What this document covers
-3. **Table of contents** (for long docs)
-4. **Sections** (H2, H3): Logical organization
-5. **Examples**: Where appropriate
-6. **Cross-references**: Links to related docs
-7. **Navigation**: "Next steps" or "See also"
+1. **Title** (H1): Clear, descriptive.
+2. **Introduction**: What this document covers.
+3. **Table of contents** (for long docs).
+4. **Sections** (H2, H3): Logical organization.
+5. **Examples**: Where appropriate.
+6. **Cross-references**: Links to related docs.
+7. **Navigation**: "Next steps" or "See also".
 
 ### Code Examples
 
@@ -156,11 +156,11 @@ print(y)  # Output: [ 2.5  5.   7.5 10.  12.5]
 
 ### Screenshots
 
-- Store in `docs/images/`
-- Use descriptive filenames: `tkinter-main-menu-spanish.png`
-- Include in both languages if UI differs
-- Optimize file size (< 500 KB per image)
-- Use PNG for UI screenshots, JPEG for photos
+- Store in `docs/images/`.
+- Use descriptive filenames: `tkinter-main-menu-spanish.png`.
+- Include in both languages if UI differs.
+- Optimize file size (< 500 KB per image).
+- Use PNG for UI screenshots, JPEG for photos.
 
 ## Building Locally
 
@@ -207,29 +207,29 @@ When adding or updating documentation:
 
 Currently, documentation is in English only. To add translations:
 
-1. Create language subdirectory: `docs/es/` for Spanish
-2. Translate all markdown files
-3. Update links to point to translated versions
-4. Add language selector to index
-5. Update Sphinx configuration
+1. Create language subdirectory: `docs/es/` for Spanish.
+2. Translate all markdown files.
+3. Update links to point to translated versions.
+4. Add language selector to index.
+5. Update Sphinx configuration.
 
 ## Feedback
 
 Documentation feedback is welcome!
 
-- **Typos/errors**: Open a pull request with fixes
-- **Missing content**: Open an issue describing what's needed
-- **Unclear sections**: Open an issue with suggestions
-- **Questions**: Use GitHub Discussions
+- **Typos/errors**: Open a pull request with fixes.
+- **Missing content**: Open an issue describing what's needed.
+- **Unclear sections**: Open an issue with suggestions.
+- **Questions**: Use GitHub Discussions.
 
 ## Maintenance
 
 Documentation should be reviewed and updated:
 
-- **With each release**: Update version numbers, screenshots
-- **When code changes**: Update affected sections
-- **Quarterly**: Review for accuracy and completeness
-- **When issues reported**: Fix problems promptly
+- **With each release**: Update version numbers, screenshots.
+- **When code changes**: Update affected sections.
+- **Quarterly**: Review for accuracy and completeness.
+- **When issues reported**: Fix problems promptly.
 
 ## Resources
 

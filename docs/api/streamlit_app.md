@@ -432,4 +432,4 @@ The application is designed for deployment on:
 
 ---
 
-*For more information about the Streamlit interface, see [Streamlit Guide](../streamlit-guide.md)*
+*For more information about the Streamlit interface, see [Streamlit Guide](../streamlit-guide.md).*

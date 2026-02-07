@@ -356,4 +356,4 @@ Logging is thread-safe by default in Python's logging module.
 
 ---
 
-*For more information about logging, see [Troubleshooting Guide](../troubleshooting.md)*
+*For more information about logging, see [Troubleshooting Guide](../troubleshooting.md).*
