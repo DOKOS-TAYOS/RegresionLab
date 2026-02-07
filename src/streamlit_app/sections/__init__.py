@@ -23,6 +23,7 @@ from .modes import (
     mode_checker_fitting,
     mode_multiple_datasets,
     mode_total_fitting,
+    mode_view_data,
 )
 
 __all__ = [
@@ -42,4 +43,5 @@ __all__ = [
     'mode_checker_fitting',
     'mode_multiple_datasets',
     'mode_total_fitting',
+    'mode_view_data',
 ]

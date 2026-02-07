@@ -48,6 +48,7 @@ from streamlit_app.sections import (
     mode_multiple_datasets,
     mode_checker_fitting,
     mode_total_fitting,
+    mode_view_data,
 )
 
 
@@ -85,6 +86,7 @@ def main() -> None:
             t('menu.multiple_datasets'): mode_multiple_datasets,
             t('menu.checker_fitting'): mode_checker_fitting,
             t('menu.total_fitting'): mode_total_fitting,
+            t('menu.view_data'): mode_view_data,
         }
 
         mode_handler = mode_map.get(operation_mode)

@@ -6,6 +6,8 @@ import streamlit as st
 
 from i18n import t
 
+from pathlib import Path
+
 from streamlit_app.sections.data import get_temp_output_dir, get_variable_names
 
 
@@ -78,13 +80,19 @@ def perform_fit(
             output_path=str(out_path),
         )
 
-        return {
+        result: Dict[str, Any] = {
             'equation_name': display_name,
             'parameters': text,
             'equation': equation,
             'plot_path': output_path,
             'plot_name': plot_name
         }
+        # When output is PDF, plotting creates a _preview.png for display; use it for in-app visualization
+        if Path(output_path).suffix.lower() == '.pdf':
+            preview = Path(output_path).parent / (Path(output_path).stem + '_preview.png')
+            if preview.exists():
+                result['plot_path_display'] = str(preview)
+        return result
 
     except FittingError as e:
         st.error(t('error.fitting_failed_details', error=str(e)))

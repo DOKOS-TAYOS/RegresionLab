@@ -114,12 +114,14 @@ def setup_sidebar(version: str) -> str:
             t('menu.multiple_datasets'),
             t('menu.checker_fitting'),
             t('menu.total_fitting'),
+            t('menu.view_data'),
         ]
         operation_mode = st.radio(
             t('help.fitting_modes'),
             mode_options,
             label_visibility="collapsed",
         )
+
         return operation_mode
 
 

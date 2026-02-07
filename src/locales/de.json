@@ -49,6 +49,10 @@
     "help_title": "Hilfe",
     "results_title": "Anpassungsergebnisse",
     "equation": "Gleichung:",
+    "equation_formula": "Formel:",
+    "equation_formatted": "Formatierte Gleichung:",
+    "results_params_heading": "Parameter",
+    "results_stats_heading": "Statistik",
     "show_data_title": "Datenvisualisierung",
     "show_pair_plots": "Variablenpaare anzeigen (Streudiagramme)",
     "pair_plots_title": "Variablenpaar-Diagramme",
@@ -56,14 +60,21 @@
     "exit_instruction": "zum Beenden",
     "download": "Herunterladen",
     "plot_preview_unavailable": "Vorschau nicht verfügbar. Zum Anzeigen herunterladen.",
+    "plot_pdf_preview_caption": "Diagramm als PDF gespeichert. Vorschau oben; zum PDF Herunterladen verwenden.",
     "donations": "Wenn du möchtest, unterstütze das Projekt"
   },
   "workflow": {
     "loop_question": "Möchten Sie eine Schleifen-Anpassung?",
+    "loop_help": "Nach der ersten Anpassung können Sie eine weitere Datei hochladen und mit derselben Gleichung anpassen.",
+    "loop_refit_same_equation": "Weitere Datei anpassen (gleiche Gleichung)",
+    "loop_refit_caption": "Laden Sie eine weitere Datei hoch, wählen Sie Variablen und klicken Sie zum erneuten Anpassen.",
+    "fit_again": "Erneut anpassen",
     "continue_question": "Fortsetzen?",
     "normal_fitting_title": "Normale Anpassung",
     "multiple_fitting_title": "Mehrfach-Anpassung",
-    "fitting_title": "Anpassung {name}"
+    "fitting_title": "Anpassung {name}",
+    "view_data_hint": "Daten ohne Anpassung anzeigen.",
+    "multiple_loop_hint": "Sie können einen weiteren Satz Dateien hochladen und die Schaltfläche erneut klicken für eine weitere Runde mit derselben Gleichung."
   },
   "stats": {
     "chi_squared": "χ²={value}",

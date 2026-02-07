@@ -1,4 +1,4 @@
-"""Operation modes: normal, multiple datasets, checker, total fitting."""
+"""Operation modes: normal, multiple datasets, checker, total fitting, view data."""
 
 from typing import List
 
@@ -17,9 +17,32 @@ from streamlit_app.sections.fitting import (
 from streamlit_app.sections.results import show_results
 
 
+def mode_view_data(_equation_types: List[str]) -> None:
+    """Handle view-data mode: load file and show data without fitting (like Tkinter 'Mirar datos')."""
+    st.subheader(t('menu.view_data'))
+    st.caption(t('workflow.view_data_hint'))
+
+    uploaded_file = st.file_uploader(
+        t('dialog.upload_file'),
+        type=list(DATA_FILE_TYPES),
+        key='view_data_file',
+    )
+
+    if uploaded_file is not None:
+        data = load_uploaded_file(uploaded_file)
+        if data is not None:
+            show_data_with_pair_plots(data)
+
+
 def mode_normal_fitting(equation_types: List[str]) -> None:
-    """Handle normal fitting mode (single file, single equation)."""
+    """Handle normal fitting mode (single file, single equation), with optional loop mode."""
     st.subheader(t('menu.normal_fitting'))
+
+    loop_mode = st.checkbox(
+        t('workflow.loop_question'),
+        key='normal_loop_mode',
+        help=t('workflow.loop_help'),
+    )
 
     uploaded_file = st.file_uploader(
         t('dialog.upload_file'),
@@ -52,14 +75,51 @@ def mode_normal_fitting(equation_types: List[str]) -> None:
                         )
                         if result:
                             st.session_state.results = [result]
+                            if loop_mode:
+                                st.session_state.normal_fit_equation = equation_name
+                                st.session_state.normal_fit_custom_formula = custom_formula
+                                st.session_state.normal_fit_parameter_names = parameter_names
 
             if st.session_state.results:
                 show_results(st.session_state.results)
 
+            # Loop mode: after first fit, allow uploading another file and refitting with same equation
+            if loop_mode and st.session_state.results and getattr(
+                st.session_state, 'normal_fit_equation', None
+            ):
+                eq_name = st.session_state.normal_fit_equation
+                custom = getattr(st.session_state, 'normal_fit_custom_formula', None)
+                params = getattr(st.session_state, 'normal_fit_parameter_names', None)
+                with st.expander(t('workflow.loop_refit_same_equation')):
+                    st.caption(t('workflow.loop_refit_caption'))
+                    loop_file = st.file_uploader(
+                        t('dialog.upload_file'),
+                        type=list(DATA_FILE_TYPES),
+                        key='single_file_loop',
+                    )
+                    if loop_file is not None:
+                        loop_data = load_uploaded_file(loop_file)
+                        if loop_data is not None:
+                            loop_x, loop_y, loop_plot = select_variables(
+                                loop_data, key_prefix='loop_'
+                            )
+                            if st.button(t('workflow.fit_again'), key='fit_again_btn'):
+                                with st.spinner(t('workflow.normal_fitting_title')):
+                                    extra = perform_fit(
+                                        loop_data, loop_x, loop_y, eq_name, loop_plot,
+                                        custom, params
+                                    )
+                                    if extra:
+                                        st.session_state.results = (
+                                            st.session_state.results + [extra]
+                                        )
+                                        st.rerun()
+
 
 def mode_multiple_datasets(equation_types: List[str]) -> None:
-    """Handle multiple datasets mode (multiple files, single equation)."""
+    """Handle multiple datasets mode (multiple files, single equation), with loop hint."""
     st.subheader(t('menu.multiple_datasets'))
+    st.caption(t('workflow.multiple_loop_hint'))
 
     equation_name, custom_formula, parameter_names = show_equation_selector(equation_types)
 

@@ -35,7 +35,7 @@ This is the fastest and easiest way to install RegressionLab. The installation s
 #### Windows
 
 1. Download the installation script:
-   - Download `install.bat` from the repository
+   - Right-click on [`install.bat`](https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/install.bat) and select "Save link as..." to download from the repository
    - Or visit the GitHub repository and download it directly
 
 2. Navigate to the folder where you want to install RegressionLab
@@ -60,7 +60,8 @@ This is the fastest and easiest way to install RegressionLab. The installation s
 #### macOS / Linux
 
 1. Download the installation script:
-   - Download `install.sh` from the repository
+   - Right-click on [`install.sh`](https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/install.sh) and select "Save link as..." to download from the repository
+   - Or visit the GitHub repository and download it directly
    - Or use wget/curl:
      ```bash
      wget https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/install.sh
@@ -266,7 +267,7 @@ macOS/Linux:
 
 ```bash
 # Activate virtual environment first
-python src/main_program.py
+pythonw src/main_program.py
 ```
 
 ### Web Version (Streamlit)

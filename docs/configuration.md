@@ -4,6 +4,10 @@ RegressionLab is highly customizable through the `.env` configuration file. This
 
 ## Getting Started with Configuration
 
+### Configuring from Tkinter (Desktop App)
+
+If you use the **Tkinter desktop application**, you can change settings without editing files manually: from the main menu, click **Configure** (or **Configurar** in Spanish). A configuration dialog opens where you can edit the same options that are stored in `.env` (language, UI theme, plot style, fonts, paths, logging). When you save, the application restarts automatically so the new values take effect. This is the easiest way to customize RegressionLab when using the desktop version.
+
 ### Locating the Configuration File
 
 The configuration file is located in the root directory of RegressionLab:
@@ -564,9 +568,10 @@ LOG_CONSOLE=true
 
 ### For Tkinter (Desktop Version)
 
-1. Edit `.env` file
-2. Save the changes
-3. Restart the application
+You can change configuration in either of these ways:
+
+- **From the configuration menu**: Main menu → **Configure** (Configurar). Edit the values in the dialog and save; the application will restart automatically.
+- **By editing `.env`**: Edit the `.env` file, save it, then restart the application:
 
 ```bash
 # Restart the application

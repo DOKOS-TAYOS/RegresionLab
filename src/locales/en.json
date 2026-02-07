@@ -49,6 +49,10 @@
     "help_title": "Help",
     "results_title": "Fitting results",
     "equation": "Equation:",
+    "equation_formula": "Formula:",
+    "equation_formatted": "Formatted equation:",
+    "results_params_heading": "Parameters",
+    "results_stats_heading": "Statistics",
     "show_data_title": "Data visualization",
     "show_pair_plots": "Show variable pairs (scatter plots)",
     "pair_plots_title": "Variable pair plots",
@@ -56,14 +60,21 @@
     "exit_instruction": "to exit",
     "download": "Download",
     "plot_preview_unavailable": "Preview not available. Use Download to view.",
+    "plot_pdf_preview_caption": "Plot saved as PDF. Preview above; use Download to get the PDF.",
     "donations": "If you wish, support the project"
   },
   "workflow": {
     "loop_question": "Do you want loop fitting?",
+    "loop_help": "After the first fit you can upload another file and fit with the same equation.",
+    "loop_refit_same_equation": "Fit another file (same equation)",
+    "loop_refit_caption": "Upload another file, choose variables and click the button to fit again.",
+    "fit_again": "Fit again",
     "continue_question": "Continue?",
     "normal_fitting_title": "Normal fitting",
     "multiple_fitting_title": "Multiple fitting",
-    "fitting_title": "Fitting {name}"
+    "fitting_title": "Fitting {name}",
+    "view_data_hint": "View data without fitting.",
+    "multiple_loop_hint": "You can upload another set of files and click the button again for another round of fits with the same equation."
   },
   "stats": {
     "chi_squared": "χ²={value}",
