@@ -686,7 +686,7 @@ For processing many similar files:
 
 ### Customization
 
-See [Configuration Guide](configuration.md) for extensive customization:
+See [Configuration Guide](configuration) for extensive customization:
 - Colors and themes
 - Plot styles
 - Fonts and sizes
@@ -714,10 +714,10 @@ See [Configuration Guide](configuration.md) for extensive customization:
 
 ## Next Steps
 
-- **Customize Interface**: Edit `.env` to personalize appearance ([Configuration Guide](configuration.md))
-- **Add Functions**: Learn to extend RegressionLab ([Extending RegressionLab](extending.md))
-- **Web Version**: Try the Streamlit interface ([Streamlit Guide](streamlit-guide.md))
+- **Customize Interface**: Edit `.env` to personalize appearance ([Configuration Guide](configuration))
+- **Add Functions**: Learn to extend RegressionLab ([Extending RegressionLab](extending))
+- **Web Version**: Try the Streamlit interface ([Streamlit Guide](streamlit-guide))
 
 ---
 
-*Master the desktop interface! Check [Troubleshooting](troubleshooting.md) for help with any issues.*
+*Master the desktop interface! Check [Troubleshooting](troubleshooting) for help with any issues.*

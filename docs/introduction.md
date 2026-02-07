@@ -121,7 +121,7 @@ Install RegressionLab on your computer for:
 - Advanced customization options
 - Access to all features
 
-See the [Installation Guide](installation.md) for detailed instructions.
+See the [Installation Guide](installation) for detailed instructions.
 
 ## 📊 Use Cases
 
@@ -158,9 +158,9 @@ By using RegressionLab, you'll gain experience with:
 
 Ready to get started?
 
-1. **Install RegressionLab**: Follow the [Installation Guide](installation.md)
-2. **Learn the basics**: Read the [User Guide](usage.md)
-3. **Customize**: Configure your preferences in the [Configuration Guide](configuration.md)
+1. **Install RegressionLab**: Follow the [Installation Guide](installation)
+2. **Learn the basics**: Read the [User Guide](usage)
+3. **Customize**: Configure your preferences in the [Configuration Guide](configuration)
 4. **Explore**: Try different fitting modes with your data
 
 Or jump straight to the web version and start fitting curves immediately!

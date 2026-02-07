@@ -5,6 +5,22 @@ All notable changes to RegressionLab are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-02-07
+
+### Fixed
+
+- **Binaries**: Binaries corrected.
+
+### Changed
+
+- **Python**: Only Python 3.12+ is now supported.
+- **Estimators**: Estimator improvements.
+- **Imports and maintainability**: Improved imports and maintainability. New functions can now be defined more easily.
+- **run.bat / run.sh**: When using `run.bat` and `run.sh`, the command console is no longer shown.
+- **Misc**: Minor changes and optimizations.
+
+---
+
 ## [0.8.3] - 2026-02-06
 
 ### Fixed
@@ -82,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial 0.8.x release. See repository history and documentation for features and changes prior to 0.8.1.
 
+[0.9.0]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.3...v0.9.0
 [0.8.3]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.8.0...v0.8.1

@@ -360,7 +360,7 @@ def estimate_exponential_parameters(x: Any, y: Any) -> Tuple[float, float]:
 def estimate_square_pulse_parameters(x: Any, y: Any) -> Tuple[float, float, float]:
     """
     Estimate (A, t0, w) for a smooth square pulse: amplitude, center time, width.
-    A from peak-to-peak, t0 from center of mass of |y|, w from support of elevated region.
+    A from peak-to-peak, t0 from center of mass of ``y`` (absolute value), w from support of elevated region.
 
     Args:
         x: Independent variable array (e.g. time)

@@ -71,36 +71,36 @@ RegressionLab/
 
 ### Core Modules
 
-- **[config](config.md)** - Configuration management and application constants
-- **[i18n](i18n.md)** - Internationalization and translation system
+- **[config](../modules/core.html)** - Configuration management and application constants
+- **[i18n](../modules/core.html)** - Internationalization and translation system
 
 ### Fitting Modules
 
-- **[fitting.fitting_functions](fitting_functions.md)** - Mathematical functions and curve fitting implementations
-- **[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities and helpers
-- **[fitting.workflow_controller](workflow_controller.md)** - Orchestrates fitting workflows and modes
-- **[fitting.custom_function_evaluator](custom_function_evaluator.md)** - Evaluates user-defined custom formulas
+- **[fitting.fitting_functions](../modules/fitting.html)** - Mathematical functions and curve fitting implementations
+- **[fitting.fitting_utils](../modules/fitting.html)** - Generic fitting utilities and helpers
+- **[fitting.workflow_controller](../modules/fitting.html)** - Orchestrates fitting workflows and modes
+- **[fitting.custom_function_evaluator](../modules/fitting.html)** - Evaluates user-defined custom formulas
 
 ### Data Loading
 
-- **[loaders.data_loader](data_loader.md)** - High-level data loading interface
-- **[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers
+- **[loaders.data_loader](../modules/loaders.html)** - High-level data loading interface
+- **[loaders.loading_utils](../modules/loaders.html)** - CSV and Excel file readers
 
 ### Visualization
 
-- **[plotting.plot_utils](plot_utils.md)** - Plot generation and styling
+- **[plotting.plot_utils](../modules/plotting.html)** - Plot generation and styling
 
 ### User Interface
 
-- **[frontend.ui_main_menu](ui_main_menu.md)** - Main menu and navigation (Tkinter)
-- **[frontend.ui_dialogs](ui_dialogs.md)** - Dialog windows and user input (Tkinter)
-- **[streamlit_app.app](streamlit_app.md)** - Web interface (Streamlit)
+- **[frontend.ui_main_menu](../modules/frontend.html)** - Main menu and navigation (Tkinter)
+- **[frontend.ui_dialogs](../modules/frontend.html)** - Dialog windows and user input (Tkinter)
+- **[streamlit_app.app](../modules/streamlit_app.html)** - Web interface (Streamlit)
 
 ### Utilities
 
-- **[utils.exceptions](exceptions.md)** - Custom exception classes
-- **[utils.logger](logger.md)** - Logging configuration and utilities
-- **[utils.validators](validators.md)** - Data validation functions
+- **[utils.exceptions](../modules/utils.html)** - Custom exception classes
+- **[utils.logger](../modules/utils.html)** - Logging configuration and utilities
+- **[utils.validators](../modules/utils.html)** - Data validation functions
 
 ## Quick Start for Developers
 
@@ -186,7 +186,7 @@ def example_function(data: NDArray, threshold: float = 0.5) -> Tuple[NDArray, fl
 
 ### Adding a New Fitting Function
 
-See [Extending RegressionLab](../extending.md) for detailed instructions.
+See [Extending RegressionLab](extending) for detailed instructions.
 
 Quick summary:
 1. Add mathematical function in `fitting/functions/` (e.g. `polynomials.py`, `special.py`)
@@ -489,15 +489,15 @@ def example_function(param1: int, param2: str, param3: Optional[float] = None) -
 
 For detailed documentation of each module, see the individual module pages:
 
-- **Core**: [config](config.md), [i18n](i18n.md)
-- **Fitting**: [fitting_functions](fitting_functions.md), [fitting_utils](fitting_utils.md), [workflow_controller](workflow_controller.md)
-- **Loaders**: [data_loader](data_loader.md), [loading_utils](loading_utils.md)
-- **Plotting**: [plot_utils](plot_utils.md)
-- **Utils**: [exceptions](exceptions.md), [logger](logger.md), [validators](validators.md)
+- **Core**: [config](../modules/core.html), [i18n](../modules/core.html)
+- **Fitting**: [fitting_functions](../modules/fitting.html), [fitting_utils](../modules/fitting.html), [workflow_controller](../modules/fitting.html)
+- **Loaders**: [data_loader](../modules/loaders.html), [loading_utils](../modules/loaders.html)
+- **Plotting**: [plot_utils](../modules/plotting.html)
+- **Utils**: [exceptions](../modules/utils.html), [logger](../modules/utils.html), [validators](../modules/utils.html)
 
 ## Contributing
 
-See [Contributing Guide](../contributing.md) for:
+See [Contributing Guide](contributing) for:
 - Code style guidelines
 - Pull request process
 - Development workflow

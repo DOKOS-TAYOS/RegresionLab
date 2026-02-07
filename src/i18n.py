@@ -132,7 +132,7 @@ def t(key: str, **kwargs) -> str:
     
     Args:
         key: Translation key in dot notation (e.g., 'menu.welcome')
-        **kwargs: Optional format parameters for string interpolation
+        kwargs: Optional format parameters for string interpolation (use ``**kwargs`` in code)
         
     Returns:
         Translated string, or the key itself if translation not found

@@ -225,7 +225,7 @@ cp .env.example .env
 nano .env  # or vim, code, notepad, etc.
 ```
 
-See the [Configuration Guide](configuration.md) for details on available options.
+See the [Configuration Guide](configuration) for details on available options.
 
 #### Step 5: Verify Installation
 
@@ -385,10 +385,10 @@ del %USERPROFILE%\Desktop\RegressionLab.lnk
 
 Now that RegressionLab is installed:
 
-1. **Configure**: Customize your settings in the [Configuration Guide](configuration.md)
-2. **Learn**: Read the [User Guide](usage.md) to understand how to use RegressionLab
+1. **Configure**: Customize your settings in the [Configuration Guide](configuration)
+2. **Learn**: Read the [User Guide](usage) to understand how to use RegressionLab
 3. **Explore**: Try the different operation modes with sample datasets in the `input/` folder
 
 ---
 
-*Having issues? Check the [Troubleshooting Guide](troubleshooting.md) or open an issue on GitHub.*
+*Having issues? Check the [Troubleshooting Guide](troubleshooting) or open an issue on GitHub.*

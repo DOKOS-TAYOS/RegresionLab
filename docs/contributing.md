@@ -332,7 +332,7 @@ pytest tests/ --cov=src --cov-report=term-missing
 
 ### Adding New Fitting Functions
 
-See [Extending RegressionLab](extending.md) for detailed guide.
+See [Extending RegressionLab](extending) for detailed guide.
 
 Summary:
 1. Add mathematical and fitting functions in `src/fitting/functions/` (e.g. `special.py`, `polynomials.py`)
@@ -347,18 +347,15 @@ To add a new language:
 
 1. **Create locale file**: `src/locales/<language_code>.json`
 
-```json
+```text
 {
   "menu": {
     "normal_fitting": "Your translation",
-    "multiple_datasets": "Your translation",
-    ...
+    "multiple_datasets": "Your translation"
   },
   "dialog": {
-    "select_file": "Your translation",
-    ...
-  },
-  ...
+    "select_file": "Your translation"
+  }
 }
 ```
 

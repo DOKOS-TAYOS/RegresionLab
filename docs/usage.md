@@ -225,7 +225,7 @@ Your data file should contain:
 
 ### Basic Example (CSV)
 
-```csv
+```text
 time,temperature
 0,20
 1,25
@@ -238,7 +238,7 @@ time,temperature
 
 RegressionLab automatically detects uncertainty columns if they follow the naming convention: `u<variablename>`
 
-```csv
+```text
 time,utime,temperature,utemperature
 0,0.1,20,0.5
 1,0.1,25,0.5
@@ -347,7 +347,7 @@ If none of the predefined equations work, you can define your own:
    - `a*np.exp(-b*x)` (exponential decay)
    - `a/(1 + b*x)` (hyperbola)
 
-**Note**: Custom formulas currently have some limitations. See [Troubleshooting](troubleshooting.md) for details.
+**Note**: Custom formulas currently have some limitations. See [Troubleshooting](troubleshooting) for details.
 
 ## Common Workflows
 
@@ -408,11 +408,11 @@ Goal: Remove outliers and improve fit quality
 
 Now that you understand the basics:
 
-- **Streamlit Guide**: For detailed information on the web interface, see [Streamlit Guide](streamlit-guide.md)
-- **Tkinter Guide**: For detailed information on the desktop interface, see [Tkinter Guide](tkinter-guide.md)
-- **Configuration**: Customize appearance and behavior in the [Configuration Guide](configuration.md)
-- **Advanced Usage**: Learn how to add custom functions in [Extending RegressionLab](extending.md)
+- **Streamlit Guide**: For detailed information on the web interface, see [Streamlit Guide](streamlit-guide)
+- **Tkinter Guide**: For detailed information on the desktop interface, see [Tkinter Guide](tkinter-guide)
+- **Configuration**: Customize appearance and behavior in the [Configuration Guide](configuration)
+- **Advanced Usage**: Learn how to add custom functions in [Extending RegressionLab](extending)
 
 ---
 
-*Need help? Check the [Troubleshooting Guide](troubleshooting.md) for common issues and solutions.*
+*Need help? Check the [Troubleshooting Guide](troubleshooting) for common issues and solutions.*

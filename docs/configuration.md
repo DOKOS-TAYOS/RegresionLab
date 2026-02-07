@@ -702,8 +702,8 @@ Or delete `.env` and let RegressionLab use built-in defaults.
 
 - **Customize your plots**: Try different [plot styles](#3-plot-style-configuration)
 - **Create a theme**: Design a [UI theme](#2-ui-theme-configuration) that matches your preferences
-- **Learn advanced usage**: Read the [Extending RegressionLab](extending.md) guide
+- **Learn advanced usage**: Read the [Extending RegressionLab](extending) guide
 
 ---
 
-*Need more help? Check the [Troubleshooting Guide](troubleshooting.md) or open an issue on GitHub.*
+*Need more help? Check the [Troubleshooting Guide](troubleshooting) or open an issue on GitHub.*

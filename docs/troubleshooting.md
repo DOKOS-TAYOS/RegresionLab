@@ -17,7 +17,7 @@ This guide covers known issues, common problems, and their solutions. It also in
 
 **Workaround**:
 - Use predefined equations when possible
-- For custom needs, consider adding the function to the codebase (see [Extending RegressionLab](extending.md))
+- For custom needs, consider adding the function to the codebase (see [Extending RegressionLab](extending))
 - Simple custom formulas (linear combinations) may work better than complex expressions
 
 **Planned Fix**: Version 0.9.0
@@ -466,9 +466,9 @@ If you can't solve the issue, please report it on GitHub with:
 ### Resources
 
 1. **Documentation**: Start here!
-   - [User Guide](usage.md)
-   - [Configuration Guide](configuration.md)
-   - [API Documentation](api/index.md)
+   - [User Guide](usage)
+   - [Configuration Guide](configuration)
+   - [API Documentation](api/index)
 
 2. **Examples**: Check `input/` folder for sample datasets
 

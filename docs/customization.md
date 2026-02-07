@@ -689,4 +689,4 @@ def test_with_noise():
 
 ---
 
-*For more technical details, see the [API Documentation](api/index.md).*
+*For more technical details, see the [API Documentation](api/index).*
