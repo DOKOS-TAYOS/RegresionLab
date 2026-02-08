@@ -27,6 +27,7 @@ from .theme import (
     UI_THEME,
     apply_hover_to_children,
     configure_ttk_styles,
+    get_entry_font,
     setup_fonts,
 )
 from .paths import (
@@ -69,6 +70,7 @@ __all__ = [
     'UI_THEME',
     'apply_hover_to_children',
     'configure_ttk_styles',
+    'get_entry_font',
     'setup_fonts',
     # From paths
     'FILE_CONFIG',

@@ -11,7 +11,7 @@ from tkinter import (
     ttk,
 )
 
-from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children
+from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children, get_entry_font
 from i18n import t
 from utils import parse_optional_float
 
@@ -147,13 +147,13 @@ def ask_equation_type(
         for i, pname in enumerate(param_names):
             r = i + 2
             ttk.Label(frm, text=pname).grid(row=r, column=0, padx=4, pady=2, sticky='w')
-            e_init = ttk.Entry(frm, width=12)
+            e_init = ttk.Entry(frm, width=12, font=get_entry_font())
             e_init.grid(row=r, column=1, padx=4, pady=2)
             initial_entries.append(e_init)
-            e_lo = ttk.Entry(frm, width=12)
+            e_lo = ttk.Entry(frm, width=12, font=get_entry_font())
             e_lo.grid(row=r, column=2, padx=4, pady=2)
             lower_entries.append(e_lo)
-            e_hi = ttk.Entry(frm, width=12)
+            e_hi = ttk.Entry(frm, width=12, font=get_entry_font())
             e_hi.grid(row=r, column=3, padx=4, pady=2)
             upper_entries.append(e_hi)
 
@@ -366,6 +366,7 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
             parameter_asker_leve.frame_custom,
             textvariable=parameter_asker_leve.name_parame,
             width=UI_STYLE['entry_width'],
+            font=get_entry_font(),
         )
         parameter_asker_leve.accept_button = ttk.Button(
             parameter_asker_leve.frame_custom,
@@ -473,6 +474,7 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str]) -> str:
         formulator_level.frame_custom,
         textvariable=formulator_level.formule,
         width=UI_STYLE['entry_width'],
+        font=get_entry_font(),
     )
     formulator_level.accept_button = ttk.Button(
         formulator_level.frame_custom,

@@ -3,6 +3,7 @@
 from typing import Any, List, Tuple, Union
 from tkinter import (
     Toplevel,
+    Frame,
     StringVar,
     BooleanVar,
     Canvas,
@@ -15,6 +16,7 @@ from config import (
     UI_STYLE,
     apply_hover_to_children,
     get_current_env_values,
+    get_entry_font,
     get_project_root,
     write_env_file,
 )
@@ -137,21 +139,38 @@ def show_config_dialog(parent_window: Any) -> bool:
     row_index = 0
 
     for section, section_items in _build_config_sections():
-        header_frame = ttk.Frame(inner)
+        header_frame = ttk.Frame(inner, style='ConfigSectionHeader.TFrame')
         header_frame.bind('<Enter>', lambda e: header_frame.configure(cursor='hand2'))
         header_frame.bind('<Leave>', lambda e: header_frame.configure(cursor=''))
         arrow_var = StringVar(value=_CONFIG_COLLAPSED)
-        arrow_lbl = ttk.Label(header_frame, textvariable=arrow_var, style='Bold.TLabel')
-        arrow_lbl.pack(side='left', padx=(0, 4))
-        title_lbl = ttk.Label(header_frame, text=t(f'config.section_{section}'), style='Bold.TLabel')
-        title_lbl.pack(side='left')
-        header_frame.grid(row=row_index, column=0, columnspan=2, sticky='w', padx=4, pady=(12, 4))
+        arrow_lbl = ttk.Label(
+            header_frame, textvariable=arrow_var, style='ConfigSectionHeader.TLabel'
+        )
+        arrow_lbl.pack(side='left', padx=(10, 6), pady=8)
+        title_lbl = ttk.Label(
+            header_frame,
+            text=t(f'config.section_{section}'),
+            style='ConfigSectionHeader.TLabel',
+        )
+        title_lbl.pack(side='left', pady=8)
+        header_frame.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=(14, 0))
         row_index += 1
 
-        section_frame = ttk.Frame(inner)
-        section_frame.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
-        section_frame.grid_remove()
+        content_wrapper = ttk.Frame(inner, style='ConfigSectionContent.TFrame')
+        content_wrapper.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
+        content_wrapper.grid_remove()
         row_index += 1
+
+        accent_line = Frame(
+            content_wrapper,
+            width=4,
+            bg=UI_STYLE['combobox_focus_bg'],
+            highlightthickness=0,
+        )
+        accent_line.pack(side='left', fill='y')
+        accent_line.pack_propagate(False)
+        section_frame = ttk.Frame(content_wrapper)
+        section_frame.pack(side='left', fill='both', expand=True, padx=(6, 0), pady=(4, 12))
 
         sub_row = 0
         for item in section_items:
@@ -196,12 +215,18 @@ def show_config_dialog(parent_window: Any) -> bool:
                         values=opts_list,
                         state='readonly',
                         width=UI_STYLE['entry_width'],
+                        font=get_entry_font(),
                     )
                     combo.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
                     entries[key] = ('entry', sv)
                 else:
                     sv = StringVar(value=current.get(key, str(default)))
-                    ent = ttk.Entry(section_frame, textvariable=sv, width=UI_STYLE['entry_width'])
+                    ent = ttk.Entry(
+                        section_frame,
+                        textvariable=sv,
+                        width=UI_STYLE['entry_width'],
+                        font=get_entry_font(),
+                    )
                     ent.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
                     entries[key] = ('entry', sv)
             sub_row += 1
@@ -231,7 +256,7 @@ def show_config_dialog(parent_window: Any) -> bool:
             for w in (header_fr, arrow_label, title_label):
                 w.bind('<Button-1>', lambda e: toggle())
 
-        _make_toggle(section_frame, arrow_var, header_frame, arrow_lbl, title_lbl)
+        _make_toggle(content_wrapper, arrow_var, header_frame, arrow_lbl, title_lbl)
 
     inner.columnconfigure(0, weight=1)
     _bind_mousewheel_recursive(inner)

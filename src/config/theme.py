@@ -28,8 +28,10 @@ UI_THEME = {
     'font_family': get_env('UI_FONT_FAMILY', 'Menlo'),
     'spinbox_width': get_env('UI_SPINBOX_WIDTH', 10, int),
     'entry_width': get_env('UI_ENTRY_WIDTH', 25, int),
-    'entry_font_size': get_env('UI_ENTRY_FONT_SIZE', 14, int),
+    'entry_font_size': get_env('UI_ENTRY_FONT_SIZE', 18, int),
     'widget_hover_bg': get_env('UI_WIDGET_HOVER_BG', 'gray25'),
+    'checkbutton_hover_bg': get_env('UI_CHECKBUTTON_HOVER_BG', 'gray35'),
+    'combobox_focus_bg': get_env('UI_COMBOBOX_FOCUS_BG', 'steel blue'),
     'button_bg': get_env('UI_BUTTON_BG', 'gray20'),
     'text_bg': get_env('UI_TEXT_BG', 'gray15'),
     'text_fg': get_env('UI_TEXT_FG', 'light cyan'),
@@ -65,6 +67,8 @@ UI_STYLE = {
     'entry_width': UI_THEME['entry_width'],
     'entry_font_size': UI_THEME['entry_font_size'],
     'widget_hover_bg': UI_THEME['widget_hover_bg'],
+    'checkbutton_hover_bg': UI_THEME['checkbutton_hover_bg'],
+    'combobox_focus_bg': UI_THEME['combobox_focus_bg'],
     'button_bg': UI_THEME['button_bg'],
     'text_bg': UI_THEME['text_bg'],
     'text_fg': UI_THEME['text_fg'],
@@ -138,6 +142,11 @@ FONT_CONFIG = {
 _font_cache = None
 
 
+def get_entry_font() -> tuple[str, int]:
+    """Font tuple for ttk Entry and Combobox. Use as font= when creating widgets so size applies regardless of theme."""
+    return (UI_STYLE['font_family'], UI_STYLE['entry_font_size'])
+
+
 def _lighter_color(bg_color: str) -> str:
     """Return a lighter shade for 3D button highlight (clam theme lightcolor)."""
     # Map common theme backgrounds to a slightly lighter border highlight
@@ -182,10 +191,12 @@ def configure_ttk_styles(root: Any) -> None:
     Uses 'clam' theme so style options (e.g. fieldbackground) apply consistently.
     """
     style = ttk.Style(root)
-    try:
-        style.theme_use('clam')
-    except tkinter.TclError:
-        pass  # use default theme if clam not available
+    for theme_name in ('clam', 'alt', 'classic'):
+        try:
+            style.theme_use(theme_name)
+            break
+        except tkinter.TclError:
+            continue
     font_normal = (UI_STYLE['font_family'], UI_STYLE['font_size'])
     font_large = (UI_STYLE['font_family'], UI_STYLE['font_size_large'])
     font_bold = (UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold')
@@ -352,7 +363,8 @@ def configure_ttk_styles(root: Any) -> None:
         padding=UI_STYLE['padding'],
     )
 
-    # Combobox: same as entry so dropdown field and selection are readable
+    # Combobox: same as entry, larger font; highlight when focused (currently selected)
+    combo_focus_bg = UI_STYLE.get('combobox_focus_bg', hover_bg)
     style.configure(
         'TCombobox',
         fieldbackground=field_bg,
@@ -371,8 +383,22 @@ def configure_ttk_styles(root: Any) -> None:
         font=font_entry,
         padding=UI_STYLE['padding'],
     )
-    style.map('TCombobox', fieldbackground=[('readonly', field_bg)], foreground=[('readonly', field_fg)])
-    style.map('TCombobox.Hover', fieldbackground=[('readonly', hover_bg)], foreground=[('readonly', field_fg)])
+    # Use style map for focus so we never change style on FocusOut (avoids arrow disappearing).
+    # Keep arrow box (background) and arrowcolor the same in all states; only field highlights on focus.
+    style.map(
+        'TCombobox',
+        fieldbackground=[('readonly', field_bg), ('focus', combo_focus_bg)],
+        foreground=[('readonly', field_fg)],
+        background=[('focus', bg)],
+        arrowcolor=[('focus', fg), ('readonly', fg)],
+    )
+    style.map(
+        'TCombobox.Hover',
+        fieldbackground=[('readonly', hover_bg), ('focus', combo_focus_bg)],
+        foreground=[('readonly', field_fg)],
+        background=[('focus', bg)],
+        arrowcolor=[('focus', fg), ('readonly', fg)],
+    )
 
     # Radiobutton and Checkbutton
     style.configure(
@@ -395,14 +421,16 @@ def configure_ttk_styles(root: Any) -> None:
         foreground=fg,
         font=font_normal,
     )
+    check_hover_bg = UI_STYLE.get('checkbutton_hover_bg', hover_bg)
+    check_hover_fg = UI_STYLE.get('text_fg', 'light cyan')
     style.configure(
         'TCheckbutton.Hover',
-        background=hover_bg,
-        foreground=fg,
+        background=check_hover_bg,
+        foreground=check_hover_fg,
         font=font_normal,
     )
     style.map('TCheckbutton', background=[('active', bg)], foreground=[('active', fg)])
-    style.map('TCheckbutton.Hover', background=[('active', hover_bg)], foreground=[('active', fg)])
+    style.map('TCheckbutton.Hover', background=[('active', check_hover_bg)], foreground=[('active', check_hover_fg)])
 
     # Scrollbars
     style.configure(
@@ -418,12 +446,30 @@ def configure_ttk_styles(root: Any) -> None:
         arrowcolor=fg,
     )
 
+    # Config dialog: collapsible section headers (desplegables)
+    section_header_bg = _lighter_color(bg)
+    style.configure(
+        'ConfigSectionHeader.TFrame',
+        background=section_header_bg,
+    )
+    style.configure(
+        'ConfigSectionHeader.TLabel',
+        background=section_header_bg,
+        foreground=fg,
+        font=font_bold,
+    )
+    style.configure(
+        'ConfigSectionContent.TFrame',
+        background=bg,
+    )
+
 
 def apply_hover_to_children(parent: Any) -> None:
     """
     Recursively bind hover highlight to ttk Entry, Combobox, Checkbutton, and Radiobutton
     under the given parent. Call after building a dialog so those widgets get a slight
     background change on mouse over (controlled by UI_WIDGET_HOVER_BG).
+    Combobox focus highlight is done via style map (focus state), not style switch.
     """
     for w in parent.winfo_children():
         apply_hover_to_children(w)
@@ -433,10 +479,20 @@ def apply_hover_to_children(parent: Any) -> None:
         hover_style = cls + '.Hover'
         normal_style = w.cget('style') or cls
 
-        def _on_enter(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+        def _on_enter(
+            ev: Any,
+            widget: Any = w,
+            norm: str = normal_style,
+            hov: str = hover_style,
+        ) -> None:
             widget.configure(style=hov)
 
-        def _on_leave(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+        def _on_leave(
+            ev: Any,
+            widget: Any = w,
+            norm: str = normal_style,
+            hov: str = hover_style,
+        ) -> None:
             widget.configure(style=norm)
 
         w.bind('<Enter>', _on_enter)

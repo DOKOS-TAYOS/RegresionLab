@@ -3,7 +3,7 @@
 from typing import Any, List, Tuple
 from tkinter import Tk, Toplevel, StringVar, Text, ttk
 
-from config import DATA_FILE_TYPES, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children
+from config import DATA_FILE_TYPES, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children, get_entry_font
 from i18n import t
 
 # Max size for pair-plot image window so it does not resize the desktop
@@ -121,6 +121,7 @@ def ask_file_name(parent_window: Any, file_list: List[str]) -> str:
         values=file_list,
         state='readonly',
         width=UI_STYLE['entry_width'],
+        font=get_entry_font(),
     )
     if file_list:
         call_data_level.name_entry.current(0)
@@ -215,6 +216,7 @@ def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, s
         values=variable_names,
         state='readonly',
         width=UI_STYLE['spinbox_width'],
+        font=get_entry_font(),
     )
     if variable_names:
         call_var_level.x_nom.current(0)
@@ -229,6 +231,7 @@ def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, s
         values=variable_names,
         state='readonly',
         width=UI_STYLE['spinbox_width'],
+        font=get_entry_font(),
     )
     if len(variable_names) > 1:
         call_var_level.y_nom.current(1)
@@ -249,6 +252,7 @@ def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, s
         call_var_level.frame_custom,
         textvariable=call_var_level.graf_name,
         width=UI_STYLE['entry_width'],
+        font=get_entry_font(),
     )
 
     call_var_level.frame_custom.grid(column=0, row=0)
