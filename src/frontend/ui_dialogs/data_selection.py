@@ -78,6 +78,7 @@ def ask_file_type(parent_window: Any) -> str:
 
     apply_hover_to_children(call_file_level.frame)
     call_file_level.radiobuttons[0].focus_set()
+    call_file_level.resizable(False, False)
     parent_window.wait_window(call_file_level)
 
     if getattr(call_file_level, 'cancelled', False):
@@ -148,6 +149,7 @@ def ask_file_name(parent_window: Any, file_list: List[str]) -> str:
 
     apply_hover_to_children(call_data_level.frame_custom)
     call_data_level.name_entry.focus_set()
+    call_data_level.resizable(False, False)
     parent_window.wait_window(call_data_level)
 
     if getattr(call_data_level, 'cancelled', False):
@@ -283,6 +285,7 @@ def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, s
 
     apply_hover_to_children(call_var_level.frame_custom)
     call_var_level.x_nom.focus_set()
+    call_var_level.resizable(False, False)
     parent_window.wait_window(call_var_level)
 
     if getattr(call_var_level, 'cancelled', False):
@@ -350,6 +353,7 @@ def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
     watch_data_level.title(t('dialog.show_data_title'))
     watch_data_level.configure(background=UI_STYLE['bg'])
     watch_data_level.minsize(800, 600)
+    watch_data_level.resizable(False, False)
 
     text_frame = ttk.Frame(watch_data_level)
     text_frame.pack(padx=UI_STYLE['padding'], pady=6, fill='both', expand=True)

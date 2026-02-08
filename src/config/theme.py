@@ -5,130 +5,180 @@ colors, relief and spacing are unified for consistency.
 """
 
 import tkinter
-from typing import Any
+from typing import Any, Type, Union
 
 from tkinter import ttk
 
 from config.env import get_env
 
 # -----------------------------------------------------------------------------
-# Single source: read only the unified env vars
+# Single source: env vars (reduced set) + derived constants (same default look)
 # -----------------------------------------------------------------------------
 
-# Colors: main palette
-_UI_BG = get_env('UI_BACKGROUND', 'midnight blue')
-_UI_FG = get_env('UI_FOREGROUND', 'snow')
-_UI_BTN_BG = get_env('UI_BUTTON_BG', 'gray20')
-_UI_ACTIVE_BG = get_env('UI_ACTIVE_BG', 'navy')
-_UI_ACTIVE_FG = get_env('UI_ACTIVE_FG', 'snow')
-# Button text colors (by role)
-_UI_BTN_FG_PRIMARY = get_env('UI_BUTTON_FG', 'lime green')
-_UI_BTN_FG_CANCEL = get_env('UI_BUTTON_FG_CANCEL', 'red2')
-_UI_BTN_FG_ACCENT = get_env('UI_BUTTON_FG_CYAN', 'cyan2')
-_UI_BTN_FG_ACCENT2 = get_env('UI_BUTTON_FG_ACCENT2', 'yellow')
-# Hover/focus: one value for all widgets
-_UI_HOVER_BG = get_env('UI_WIDGET_HOVER_BG', 'gray25')
-# Text widget (data preview)
-_UI_TEXT_BG = get_env('UI_TEXT_BG', 'gray15')
-_UI_TEXT_FG = get_env('UI_TEXT_FG', 'light cyan')
-_UI_TEXT_INSERT_BG = get_env('UI_TEXT_INSERT_BG', 'spring green')
-_UI_TEXT_SELECT_BG = get_env('UI_TEXT_SELECT_BG', 'steel blue')
-_UI_TEXT_SELECT_FG = get_env('UI_TEXT_SELECT_FG', 'white')
-# Tooltip
-_UI_TOOLTIP_BG = get_env('UI_TOOLTIP_BG', '#fffacd')
-_UI_TOOLTIP_FG = get_env('UI_TOOLTIP_FG', 'black')
-_UI_TOOLTIP_BORDER = get_env('UI_TOOLTIP_BORDER', 'gray40')
+def _e(key: str, default: Any, cast_type: Type[Union[str, int, float, bool]] = str) -> Any:
+    """Read env with default and type (str, int, float, bool)."""
+    return get_env(key, default, cast_type)
 
-# Layout: unified relief and border for frames and buttons
-_UI_RELIEF = get_env('UI_RELIEF', 'ridge')
-_UI_BORDER = get_env('UI_BORDER_WIDTH', 8, int)
-_UI_PADDING = get_env('UI_PADDING', 8, int)
 
-# Sizes
-_UI_BTN_W = get_env('UI_BUTTON_WIDTH', 12, int)
-_UI_BTN_WIDE = get_env('UI_BUTTON_WIDTH_WIDE', 28, int)
-_UI_SPIN_W = get_env('UI_SPINBOX_WIDTH', 10, int)
-_UI_ENTRY_W = get_env('UI_ENTRY_WIDTH', 25, int)
+def _darken_bg(color: str) -> str:
+    """Return a slightly darker shade for backgrounds (button active, widget hover)."""
+    key = color.lower() if isinstance(color, str) else ''
+    m = {
+        'navy': 'midnight blue',
+        'midnight blue': 'dark slate blue',
+        'gray15': 'gray10',
+        'gray20': 'gray12',
+        'gray25': 'gray20',
+    }
+    return m.get(key, 'gray12')
 
-# Fonts: one family, two sizes (base and large)
-_UI_FONT_FAMILY = get_env('UI_FONT_FAMILY', 'Menlo')
-_UI_FONT_SIZE = get_env('UI_FONT_SIZE', 16, int)
-_UI_FONT_SIZE_LARGE = get_env('UI_FONT_SIZE_LARGE', 20, int)
+
+def _lighten_fg(color: str) -> str:
+    """Return a slightly lighter shade for foreground (button text when active/pressed)."""
+    key = color.lower() if isinstance(color, str) else ''
+    m = {
+        'snow': 'white',
+        'lime green': 'pale green',
+        'red2': 'indian red',
+        'cyan2': 'light cyan',
+        'yellow': 'light yellow',
+        'white': 'white',
+        'forest green': 'lime green',
+    }
+    return m.get(key, 'white')
+
+
+def _tooltip_bg_from_ui(ui_bg: str) -> str:
+    """UI background -> tooltip background: more grayish and slightly lighter."""
+    key = ui_bg.lower() if isinstance(ui_bg, str) else ''
+    m = {
+        'navy': 'gray30',
+        'midnight blue': 'gray30',
+        'gray15': 'gray25',
+        'gray20': 'gray28',
+    }
+    return m.get(key, 'gray30')
+
+
+# Colors (only main knobs; rest derived where used)
+_bg = _e('UI_BACKGROUND', 'navy')
+_fg = _e('UI_FOREGROUND', 'snow')
+_btn_bg = _e('UI_BUTTON_BG', 'midnight blue')
+_btn_fg_primary = _e('UI_BUTTON_FG', 'lime green')
+_btn_fg_cancel = _e('UI_BUTTON_FG_CANCEL', 'red2')
+_btn_fg_accent = _e('UI_BUTTON_FG_CYAN', 'cyan2')
+_btn_fg_accent2 = _e('UI_BUTTON_FG_ACCENT2', 'yellow')
+_text_bg = _e('UI_TEXT_BG', 'gray15')
+_text_fg = _e('UI_TEXT_FG', 'light cyan')
+_text_select_bg = _e('UI_TEXT_SELECT_BG', 'steel blue')
+_text_select_fg = _e('UI_TEXT_SELECT_FG', 'white')
+
+# Layout and sizes (fixed or derived)
+_border = 8
+_relief = 'raised'
+_padding = _e('UI_PADDING', 8, int)
+_btn_w = _e('UI_BUTTON_WIDTH', 12, int)
+_btn_wide = int(2.5 * _btn_w)
+_spin_w = _e('UI_SPINBOX_WIDTH', 10, int)
+_entry_w = _e('UI_ENTRY_WIDTH', 25, int)
+_font_family = _e('UI_FONT_FAMILY', 'Menlo')
+_font_size = _e('UI_FONT_SIZE', 16, int)
+_font_size_large = int(1.25 * _font_size)
 
 # -----------------------------------------------------------------------------
 # UI_STYLE: single dict used everywhere (includes aliases for compatibility)
 # -----------------------------------------------------------------------------
 
+# Computed once for UI_STYLE (derived from base colors)
+_active_bg = _darken_bg(_btn_bg)
+_hover_bg = _darken_bg(_bg)
+_tooltip_bg = _tooltip_bg_from_ui(_bg)
+
 UI_STYLE = {
     # Core colors
-    'bg': _UI_BG,
-    'fg': _UI_FG,
-    'background': _UI_BG,
-    'foreground': _UI_FG,
-    'button_bg': _UI_BTN_BG,
-    'active_bg': _UI_ACTIVE_BG,
-    'active_fg': _UI_ACTIVE_FG,
-    'button_fg_accept': _UI_BTN_FG_PRIMARY,
-    'button_fg_cancel': _UI_BTN_FG_CANCEL,
-    'button_fg_cyan': _UI_BTN_FG_ACCENT,
-    'button_fg_accent2': _UI_BTN_FG_ACCENT2,
-    # Hover/focus: same for entry, combobox, check, radio
-    'widget_hover_bg': _UI_HOVER_BG,
-    'checkbutton_hover_bg': _UI_HOVER_BG,
-    'combobox_focus_bg': _UI_HOVER_BG,
-    # Text widget
-    'text_bg': _UI_TEXT_BG,
-    'text_fg': _UI_TEXT_FG,
-    'text_insert_bg': _UI_TEXT_INSERT_BG,
-    'text_select_bg': _UI_TEXT_SELECT_BG,
-    'text_select_fg': _UI_TEXT_SELECT_FG,
-    # Tooltip
-    'tooltip_bg': _UI_TOOLTIP_BG,
-    'tooltip_fg': _UI_TOOLTIP_FG,
-    'tooltip_border': _UI_TOOLTIP_BORDER,
-    # Layout: one relief and border for all
-    'relief': _UI_RELIEF,
-    'border_width': _UI_BORDER,
-    'button_relief': _UI_RELIEF,
-    'button_borderwidth': max(1, min(_UI_BORDER, 4)),
-    'padding': _UI_PADDING,
-    'padding_x': _UI_PADDING,
-    'padding_y': _UI_PADDING,
-    # Sizes
-    'button_width': _UI_BTN_W,
-    'button_width_wide': _UI_BTN_WIDE,
-    'spinbox_width': _UI_SPIN_W,
-    'entry_width': _UI_ENTRY_W,
-    # Fonts: unified (entry and text use base size)
-    'font_family': _UI_FONT_FAMILY,
-    'font_size': _UI_FONT_SIZE,
-    'font_size_large': _UI_FONT_SIZE_LARGE,
-    'entry_fg': _UI_BG,
-    'text_font_family': _UI_FONT_FAMILY,
-    'text_font_size': _UI_FONT_SIZE,
-    'entry_font_size': _UI_FONT_SIZE,
+    'bg': _bg,
+    'fg': _fg,
+    'background': _bg,
+    'foreground': _fg,
+    'button_bg': _btn_bg,
+    'active_bg': _active_bg,
+    'button_fg_accept': _btn_fg_primary,
+    'button_fg_cancel': _btn_fg_cancel,
+    'button_fg_cyan': _btn_fg_accent,
+    'button_fg_accent2': _btn_fg_accent2,
+    # Hover/focus: element bg darkened (entry, combobox, check, radio use _bg)
+    'widget_hover_bg': _hover_bg,
+    'checkbutton_hover_bg': _hover_bg,
+    'combobox_focus_bg': _hover_bg,
+    # Text widget (cursor = text colour)
+    'text_bg': _text_bg,
+    'text_fg': _text_fg,
+    'text_insert_bg': _text_fg,
+    'text_select_bg': _text_select_bg,
+    'text_select_fg': _text_select_fg,
+    # Tooltip: UI bg grayish+lighter, text = UI fg
+    'tooltip_bg': _tooltip_bg,
+    'tooltip_fg': _fg,
+    'tooltip_border': 'gray40',
+    # Layout: fixed relief and border
+    'relief': _relief,
+    'border_width': _border,
+    'button_relief': _relief,
+    'button_borderwidth': max(1, min(_border, 4)),
+    'padding': _padding,
+    'padding_x': _padding,
+    'padding_y': _padding,
+    # Sizes (wide = 2.5*normal, font large = 1.25*normal)
+    'button_width': _btn_w,
+    'button_width_wide': _btn_wide,
+    'spinbox_width': _spin_w,
+    'entry_width': _entry_w,
+    # Fonts
+    'font_family': _font_family,
+    'font_size': _font_size,
+    'font_size_large': _font_size_large,
+    'entry_fg': _bg,
+    'text_font_family': _font_family,
+    'text_font_size': _font_size,
+    'entry_font_size': _font_size,
 }
 
 # Backward compatibility: UI_THEME is the same source
 UI_THEME = UI_STYLE
 
+# tk Spinbox options so it matches ttk Combobox (same bg, fg, font, relief).
+# readonlybackground: needed so readonly state uses theme bg on Windows.
+SPINBOX_STYLE: dict[str, Any] = {
+    'bg': _bg,
+    'fg': _fg,
+    'readonlybackground': _bg,
+    'font': (_font_family, _font_size),
+    'relief': 'sunken',
+    'bd': 2,
+    'highlightthickness': 0,
+    'insertbackground': _fg,
+}
+
 # -----------------------------------------------------------------------------
 # Button style presets (tk widgets): same relief/border/font, color by role
 # -----------------------------------------------------------------------------
 
-_BASE_BUTTON = {
-    'relief': UI_STYLE['button_relief'],
-    'bd': UI_STYLE['button_borderwidth'],
-    'highlightthickness': 0,
-    'activebackground': UI_STYLE['active_bg'],
-    'activeforeground': UI_STYLE['active_fg'],
-    'font': (UI_STYLE['font_family'], UI_STYLE['font_size']),
-}
+def _tk_button_base() -> dict[str, Any]:
+    base = {
+        'relief': UI_STYLE['button_relief'],
+        'bd': UI_STYLE['button_borderwidth'],
+        'highlightthickness': 0,
+        'activebackground': UI_STYLE['active_bg'],
+        'font': (UI_STYLE['font_family'], UI_STYLE['font_size']),
+    }
+    return base
 
-BUTTON_STYLE_PRIMARY = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_accept']}
-BUTTON_STYLE_SECONDARY = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['fg']}
-BUTTON_STYLE_DANGER = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_cancel']}
-BUTTON_STYLE_ACCENT = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_cyan']}
+_BASE_BUTTON = _tk_button_base()
+
+BUTTON_STYLE_PRIMARY = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_accept'], 'activeforeground': _lighten_fg(UI_STYLE['button_fg_accept'])}
+BUTTON_STYLE_SECONDARY = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['fg'], 'activeforeground': _lighten_fg(UI_STYLE['fg'])}
+BUTTON_STYLE_DANGER = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_cancel'], 'activeforeground': _lighten_fg(UI_STYLE['button_fg_cancel'])}
+BUTTON_STYLE_ACCENT = {**_BASE_BUTTON, 'bg': UI_STYLE['button_bg'], 'fg': UI_STYLE['button_fg_cyan'], 'activeforeground': _lighten_fg(UI_STYLE['button_fg_cyan'])}
 
 # -----------------------------------------------------------------------------
 # Plot config (unchanged)
@@ -224,11 +274,12 @@ def configure_ttk_styles(root: Any) -> None:
     btn_common = {'font': font_normal, 'padding': pad, 'lightcolor': btn_light, 'darkcolor': btn_dark}
 
     def _btn_style(name: str, fg_color: str) -> None:
+        active_fg = _lighten_fg(fg_color)
         style.configure(name, background=btn_bg, foreground=fg_color, **btn_common)
         style.map(
             name,
             background=[('active', UI_STYLE['active_bg']), ('pressed', UI_STYLE['active_bg'])],
-            foreground=[('active', UI_STYLE['active_fg']), ('pressed', UI_STYLE['active_fg'])],
+            foreground=[('active', active_fg), ('pressed', active_fg)],
             lightcolor=[('pressed', btn_dark)],
             darkcolor=[('pressed', btn_light)],
         )

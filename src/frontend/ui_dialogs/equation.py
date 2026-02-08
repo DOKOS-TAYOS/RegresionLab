@@ -11,7 +11,7 @@ from tkinter import (
     ttk,
 )
 
-from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children, get_entry_font
+from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, SPINBOX_STYLE, apply_hover_to_children, get_entry_font
 from i18n import t
 from utils import parse_optional_float
 
@@ -90,6 +90,7 @@ def ask_equation_type(
         equation_level.destroy()
 
     equation_level.protocol("WM_DELETE_WINDOW", _on_close_equation_type)
+    equation_level.resizable(False, False)
 
     equation_level.frame_custom = ttk.Frame(equation_level, padding=UI_STYLE['border_width'])
 
@@ -180,7 +181,7 @@ def ask_equation_type(
         )
         btn_accept.grid(row=len(param_names) + 2, column=1, columnspan=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
         apply_hover_to_children(frm)
-        param_dlg.resizable(True, False)
+        param_dlg.resizable(False, False)
         equation_level.wait_window(param_dlg)
 
     def handle_equation_click(eq_type: str) -> None:
@@ -288,9 +289,7 @@ def ask_num_parameters(parent_window: Any) -> Optional[int]:
         wrap=True,
         state='readonly',
         width=UI_STYLE['spinbox_width'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
-        bg=UI_STYLE['bg'],
+        **SPINBOX_STYLE,
     )
     num_parameter_level.accept_button = ttk.Button(
         num_parameter_level.frame_custom,
@@ -307,6 +306,7 @@ def ask_num_parameters(parent_window: Any) -> Optional[int]:
     num_parameter_level.accept_button.grid(column=1, row=1, padx=_pad, pady=_pad)
 
     num_parameter_level.num.focus_set()
+    num_parameter_level.resizable(False, False)
     parent_window.wait_window(num_parameter_level)
 
     if getattr(num_parameter_level, 'cancelled', False):
@@ -501,6 +501,7 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str]) -> str:
 
     apply_hover_to_children(formulator_level.frame_custom)
     formulator_level.name_entry.focus_set()
+    formulator_level.resizable(False, False)
     parent_window.wait_window(formulator_level)
 
     if getattr(formulator_level, 'cancelled', False):
@@ -542,9 +543,7 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
         wrap=True,
         state='readonly',
         width=UI_STYLE['spinbox_width'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
-        bg=UI_STYLE['bg'],
+        **SPINBOX_STYLE,
     )
     number_fits_level.accept_button = ttk.Button(
         number_fits_level.frame_custom,
@@ -561,6 +560,7 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
     number_fits_level.accept_button.grid(column=1, row=1, padx=_pad, pady=_pad)
 
     number_fits_level.num_x.focus_set()
+    number_fits_level.resizable(False, False)
     parent_window.wait_window(number_fits_level)
 
     if getattr(number_fits_level, 'cancelled', False):

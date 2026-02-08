@@ -125,5 +125,6 @@ def create_result_window(
     plot_level.accept_button.pack(padx=_pad, pady=_pad)
     plot_level.accept_button.focus_set()
     plot_level.protocol("WM_DELETE_WINDOW", _on_close)
+    plot_level.resizable(False, False)
 
     return plot_level

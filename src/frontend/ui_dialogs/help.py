@@ -44,7 +44,7 @@ def show_help_dialog(parent_window: Tk | Toplevel) -> None:
     help_level = Toplevel()
     help_level.title(t('dialog.help_title'))
     help_level.configure(background=UI_STYLE['bg'])
-    help_level.resizable(width=True, height=True)
+    help_level.resizable(width=False, height=False)
 
     screen_width = help_level.winfo_screenwidth()
     screen_height = help_level.winfo_screenheight()

@@ -49,7 +49,7 @@ def create_main_menu(
     menu.title(f"{t('menu.title')} — v{__version__}")
     menu.attributes('-fullscreen', False)
     menu.configure(background=UI_STYLE['bg'])
-    menu.resizable(width=True, height=True)
+    menu.resizable(width=False, height=False)
     configure_ttk_styles(menu)
     # Closing with X: same as Exit button (show confirmation, then close app)
     menu.protocol("WM_DELETE_WINDOW", lambda: show_exit_confirmation(menu))

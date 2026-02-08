@@ -337,7 +337,7 @@ def show_config_dialog(parent_window: Any) -> bool:
     dialog_width = min(760, int(screen_width * 0.58))
     dialog_height = min(800, int(screen_height * 0.85))
     config_level.geometry(f'{dialog_width}x{dialog_height}+{max(0, (screen_width - dialog_width) // 2)}+{max(0, (screen_height - dialog_height) // 2)}')
-    config_level.resizable(True, True)
+    config_level.resizable(False, False)
     config_level.update_idletasks()
     _update_config_wraplength()
 

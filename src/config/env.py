@@ -91,10 +91,8 @@ def _validate_env_value(
             
         # Define validation rules for integer fields
         size_fields = {
-            'UI_BORDER_WIDTH', 'UI_PADDING',
-            'UI_BUTTON_WIDTH', 'UI_BUTTON_WIDTH_WIDE',
-            'UI_FONT_SIZE', 'UI_FONT_SIZE_LARGE',
-            'UI_SPINBOX_WIDTH', 'UI_ENTRY_WIDTH',
+            'UI_PADDING', 'UI_BUTTON_WIDTH',
+            'UI_FONT_SIZE', 'UI_SPINBOX_WIDTH', 'UI_ENTRY_WIDTH',
             'PLOT_FIGSIZE_WIDTH', 'PLOT_FIGSIZE_HEIGHT',
             'PLOT_MARKER_SIZE',
             'FONT_AXIS_SIZE', 'FONT_TICK_SIZE'
@@ -192,34 +190,23 @@ DEFAULT_LOG_FILE = 'regressionlab.log'
 
 ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'LANGUAGE', 'default': 'es', 'cast_type': str, 'options': SUPPORTED_LANGUAGE_CODES},
-    {'key': 'UI_BACKGROUND', 'default': 'midnight blue', 'cast_type': str},
+    {'key': 'UI_BACKGROUND', 'default': 'navy', 'cast_type': str},
     {'key': 'UI_FOREGROUND', 'default': 'snow', 'cast_type': str},
     {'key': 'UI_BUTTON_FG', 'default': 'lime green', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_CANCEL', 'default': 'red2', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_CYAN', 'default': 'cyan2', 'cast_type': str},
-    {'key': 'UI_ACTIVE_BG', 'default': 'navy', 'cast_type': str},
-    {'key': 'UI_ACTIVE_FG', 'default': 'snow', 'cast_type': str},
-    {'key': 'UI_BORDER_WIDTH', 'default': 8, 'cast_type': int},
-    {'key': 'UI_RELIEF', 'default': 'ridge', 'cast_type': str, 'options': ('flat', 'raised', 'sunken', 'groove', 'ridge')},
     {'key': 'UI_PADDING', 'default': 8, 'cast_type': int},
     {'key': 'UI_BUTTON_WIDTH', 'default': 12, 'cast_type': int},
-    {'key': 'UI_BUTTON_WIDTH_WIDE', 'default': 28, 'cast_type': int},
     {'key': 'UI_FONT_SIZE', 'default': 16, 'cast_type': int},
-    {'key': 'UI_FONT_SIZE_LARGE', 'default': 20, 'cast_type': int},
     {'key': 'UI_FONT_FAMILY', 'default': 'Menlo', 'cast_type': str},
     {'key': 'UI_SPINBOX_WIDTH', 'default': 10, 'cast_type': int},
     {'key': 'UI_ENTRY_WIDTH', 'default': 25, 'cast_type': int},
-    {'key': 'UI_WIDGET_HOVER_BG', 'default': 'gray25', 'cast_type': str},
-    {'key': 'UI_BUTTON_BG', 'default': 'gray20', 'cast_type': str},
+    {'key': 'UI_BUTTON_BG', 'default': 'midnight blue', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_ACCENT2', 'default': 'yellow', 'cast_type': str},
     {'key': 'UI_TEXT_BG', 'default': 'gray15', 'cast_type': str},
     {'key': 'UI_TEXT_FG', 'default': 'light cyan', 'cast_type': str},
-    {'key': 'UI_TEXT_INSERT_BG', 'default': 'spring green', 'cast_type': str},
     {'key': 'UI_TEXT_SELECT_BG', 'default': 'steel blue', 'cast_type': str},
     {'key': 'UI_TEXT_SELECT_FG', 'default': 'white', 'cast_type': str},
-    {'key': 'UI_TOOLTIP_BG', 'default': '#fffacd', 'cast_type': str},
-    {'key': 'UI_TOOLTIP_FG', 'default': 'black', 'cast_type': str},
-    {'key': 'UI_TOOLTIP_BORDER', 'default': 'gray40', 'cast_type': str},
     {'key': 'PLOT_FIGSIZE_WIDTH', 'default': 12, 'cast_type': int},
     {'key': 'PLOT_FIGSIZE_HEIGHT', 'default': 6, 'cast_type': int},
     {'key': 'DPI', 'default': 100, 'cast_type': int},
@@ -240,9 +227,9 @@ ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'FONT_TICK_SIZE', 'default': 16, 'cast_type': int},
     {'key': 'FILE_INPUT_DIR', 'default': 'input', 'cast_type': str},
     {'key': 'FILE_OUTPUT_DIR', 'default': 'output', 'cast_type': str},
-    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}.png', 'cast_type': str},
+    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}', 'cast_type': str},
     {'key': 'FILE_PLOT_FORMAT', 'default': 'png', 'cast_type': str, 'options': ('png', 'jpg', 'pdf')},
-    {'key': 'DONATIONS_URL', 'default': '', 'cast_type': str},
+    {'key': 'DONATIONS_URL', 'default': 'https://www.youtube.com/@whenphysics', 'cast_type': str},
     {'key': 'LOG_LEVEL', 'default': DEFAULT_LOG_LEVEL, 'cast_type': str, 'options': ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')},
     {'key': 'LOG_FILE', 'default': DEFAULT_LOG_FILE, 'cast_type': str},
     {'key': 'LOG_CONSOLE', 'default': False, 'cast_type': bool},
@@ -433,4 +420,4 @@ def initialize_and_validate_config() -> None:
             logger.info(f"  {key}: '{original}' -> '{corrected}' (default)")
 
 
-DONATIONS_URL = get_env('DONATIONS_URL', '').strip()
+DONATIONS_URL = get_env('DONATIONS_URL', 'https://www.youtube.com/@whenphysics').strip()
