@@ -11,7 +11,7 @@ from tkinter import (
     ttk,
 )
 
-from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE
+from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children
 from i18n import t
 from utils import parse_optional_float
 
@@ -179,6 +179,7 @@ def ask_equation_type(
             width=UI_STYLE['button_width'],
         )
         btn_accept.grid(row=len(param_names) + 2, column=1, columnspan=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+        apply_hover_to_children(frm)
         param_dlg.resizable(True, False)
         equation_level.wait_window(param_dlg)
 
@@ -246,6 +247,7 @@ def ask_equation_type(
     equation_level.custom.grid(column=0, row=_last_row, columnspan=3, padx=_pad, pady=_pad)
     equation_level.accept_button.grid(column=2, row=_last_row + 1, padx=_pad, pady=_pad)
 
+    apply_hover_to_children(equation_level.frame_custom)
     equation_level.linear_function_with_n.focus_set()
     parent_window.wait_window(equation_level)
 
@@ -382,6 +384,7 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
         parameter_asker_leve.name_entry.grid(column=1, row=1, padx=_pad, pady=_pad)
         parameter_asker_leve.accept_button.grid(column=1, row=2, padx=_pad, pady=_pad)
 
+        apply_hover_to_children(parameter_asker_leve.frame_custom)
         parameter_asker_leve.name_entry.focus_set()
         parent_window.wait_window(parameter_asker_leve)
 
@@ -494,6 +497,7 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str]) -> str:
     formulator_level.name_entry.grid(column=1, row=3, padx=_pad, pady=_pad)
     formulator_level.accept_button.grid(column=1, row=4, padx=_pad, pady=_pad)
 
+    apply_hover_to_children(formulator_level.frame_custom)
     formulator_level.name_entry.focus_set()
     parent_window.wait_window(formulator_level)
 

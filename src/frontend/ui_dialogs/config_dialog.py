@@ -13,6 +13,7 @@ from tkinter import (
 from config import (
     ENV_SCHEMA,
     UI_STYLE,
+    apply_hover_to_children,
     get_current_env_values,
     get_project_root,
     write_env_file,
@@ -234,6 +235,7 @@ def show_config_dialog(parent_window: Any) -> bool:
 
     inner.columnconfigure(0, weight=1)
     _bind_mousewheel_recursive(inner)
+    apply_hover_to_children(inner)
 
     def _update_config_wraplength(_e: Any = None) -> None:
         w = inner.winfo_width()

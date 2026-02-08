@@ -28,6 +28,9 @@ UI_THEME = {
     'font_family': get_env('UI_FONT_FAMILY', 'Menlo'),
     'spinbox_width': get_env('UI_SPINBOX_WIDTH', 10, int),
     'entry_width': get_env('UI_ENTRY_WIDTH', 25, int),
+    'entry_font_size': get_env('UI_ENTRY_FONT_SIZE', 14, int),
+    'widget_hover_bg': get_env('UI_WIDGET_HOVER_BG', 'gray25'),
+    'button_bg': get_env('UI_BUTTON_BG', 'gray20'),
     'text_bg': get_env('UI_TEXT_BG', 'gray15'),
     'text_fg': get_env('UI_TEXT_FG', 'light cyan'),
     'text_font_family': get_env('UI_TEXT_FONT_FAMILY', 'Consolas'),
@@ -60,6 +63,9 @@ UI_STYLE = {
     'font_family': UI_THEME['font_family'],
     'spinbox_width': UI_THEME['spinbox_width'],
     'entry_width': UI_THEME['entry_width'],
+    'entry_font_size': UI_THEME['entry_font_size'],
+    'widget_hover_bg': UI_THEME['widget_hover_bg'],
+    'button_bg': UI_THEME['button_bg'],
     'text_bg': UI_THEME['text_bg'],
     'text_fg': UI_THEME['text_fg'],
     'text_font_family': UI_THEME['text_font_family'],
@@ -81,24 +87,25 @@ _BASE_BUTTON = {
     'activeforeground': UI_STYLE['active_fg'],
     'font': (UI_STYLE['font_family'], UI_STYLE['font_size']),
 }
+_btn_bg = UI_STYLE['button_bg']
 BUTTON_STYLE_PRIMARY = {
     **_BASE_BUTTON,
-    'bg': UI_STYLE['bg'],
+    'bg': _btn_bg,
     'fg': UI_STYLE['button_fg_accept'],
 }
 BUTTON_STYLE_SECONDARY = {
     **_BASE_BUTTON,
-    'bg': UI_STYLE['bg'],
+    'bg': _btn_bg,
     'fg': UI_STYLE['fg'],
 }
 BUTTON_STYLE_DANGER = {
     **_BASE_BUTTON,
-    'bg': UI_STYLE['bg'],
+    'bg': _btn_bg,
     'fg': UI_STYLE['button_fg_cancel'],
 }
 BUTTON_STYLE_ACCENT = {
     **_BASE_BUTTON,
-    'bg': UI_STYLE['bg'],
+    'bg': _btn_bg,
     'fg': UI_STYLE['button_fg_cyan'],
 }
 
@@ -143,6 +150,30 @@ def _lighter_color(bg_color: str) -> str:
     return lighter.get(bg_color.lower() if isinstance(bg_color, str) else '', 'steel blue')
 
 
+def _lighter_color_strong(bg_color: str) -> str:
+    """Return a noticeably lighter shade for a stronger 3D raised highlight."""
+    strong = {
+        'midnight blue': 'slate gray',
+        'navy': 'steel blue',
+        'dark slate blue': 'steel blue',
+        'gray15': 'gray45',
+        'gray20': 'gray50',
+    }
+    return strong.get(bg_color.lower() if isinstance(bg_color, str) else '', 'gray50')
+
+
+def _darker_color(bg_color: str) -> str:
+    """Return a darker shade for 3D button shadow (clam theme darkcolor)."""
+    darker = {
+        'midnight blue': 'midnight blue',
+        'navy': 'midnight blue',
+        'dark slate blue': 'navy',
+        'gray15': 'gray10',
+        'gray20': 'gray12',
+    }
+    return darker.get(bg_color.lower() if isinstance(bg_color, str) else '', 'gray12')
+
+
 def configure_ttk_styles(root: Any) -> None:
     """
     Configure ttk styles so all themed widgets use UI_THEME/UI_STYLE colors and fonts.
@@ -159,11 +190,16 @@ def configure_ttk_styles(root: Any) -> None:
     font_large = (UI_STYLE['font_family'], UI_STYLE['font_size_large'])
     font_bold = (UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold')
     font_large_bold = (UI_STYLE['font_family'], UI_STYLE['font_size_large'], 'bold')
+    font_entry = (UI_STYLE['font_family'], UI_STYLE['entry_font_size'])
     bg = UI_STYLE['bg']
     fg = UI_STYLE['fg']
-    # 3D effect for buttons (clam: lightcolor/darkcolor; borderwidth ignored in clam)
-    btn_light = _lighter_color(bg)
-    btn_dark = UI_STYLE['active_bg']
+    btn_bg = UI_STYLE['button_bg']
+    hover_bg = UI_STYLE['widget_hover_bg']
+    # 3D effect for buttons (clam: lightcolor/darkcolor). Stronger highlight/shadow when raised/ridge.
+    button_relief = UI_STYLE.get('button_relief', 'ridge')
+    use_strong_3d = str(button_relief).lower() in ('raised', 'ridge')
+    btn_light = _lighter_color_strong(btn_bg) if use_strong_3d else _lighter_color(btn_bg)
+    btn_dark = _darker_color(btn_bg) if use_strong_3d else UI_STYLE['active_bg']
     # Entry/Combobox: dark field, light text (no black on dark blue, no white on gray at rest)
     field_bg = UI_THEME['background']
     field_fg = UI_THEME['foreground']
@@ -213,7 +249,7 @@ def configure_ttk_styles(root: Any) -> None:
 
     style.configure(
         'TButton',
-        background=bg,
+        background=btn_bg,
         foreground=fg,
         **_btn_common,
     )
@@ -228,7 +264,7 @@ def configure_ttk_styles(root: Any) -> None:
     # Primary (accept, main actions) - green
     style.configure(
         'Primary.TButton',
-        background=bg,
+        background=btn_bg,
         foreground=UI_STYLE['button_fg_accept'],
         **_btn_common,
     )
@@ -243,7 +279,7 @@ def configure_ttk_styles(root: Any) -> None:
     # Secondary (neutral)
     style.configure(
         'Secondary.TButton',
-        background=bg,
+        background=btn_bg,
         foreground=fg,
         **_btn_common,
     )
@@ -258,7 +294,7 @@ def configure_ttk_styles(root: Any) -> None:
     # Danger (exit, cancel) - red
     style.configure(
         'Danger.TButton',
-        background=bg,
+        background=btn_bg,
         foreground=UI_STYLE['button_fg_cancel'],
         **_btn_common,
     )
@@ -273,7 +309,7 @@ def configure_ttk_styles(root: Any) -> None:
     # Accent (cyan)
     style.configure(
         'Accent.TButton',
-        background=bg,
+        background=btn_bg,
         foreground=UI_STYLE['button_fg_cyan'],
         **_btn_common,
     )
@@ -288,7 +324,7 @@ def configure_ttk_styles(root: Any) -> None:
     # Equation type buttons (gold)
     style.configure(
         'Equation.TButton',
-        background=bg,
+        background=btn_bg,
         foreground='yellow',
         **_btn_common,
     )
@@ -300,12 +336,19 @@ def configure_ttk_styles(root: Any) -> None:
         darkcolor=[('pressed', btn_light)],
     )
 
-    # Entry: readable text on dark field
+    # Entry: readable text on dark field, larger font for input
     style.configure(
         'TEntry',
         fieldbackground=field_bg,
         foreground=field_fg,
-        font=font_normal,
+        font=font_entry,
+        padding=UI_STYLE['padding'],
+    )
+    style.configure(
+        'TEntry.Hover',
+        fieldbackground=hover_bg,
+        foreground=field_fg,
+        font=font_entry,
         padding=UI_STYLE['padding'],
     )
 
@@ -316,10 +359,20 @@ def configure_ttk_styles(root: Any) -> None:
         foreground=field_fg,
         background=bg,
         arrowcolor=fg,
-        font=font_normal,
+        font=font_entry,
+        padding=UI_STYLE['padding'],
+    )
+    style.configure(
+        'TCombobox.Hover',
+        fieldbackground=hover_bg,
+        foreground=field_fg,
+        background=bg,
+        arrowcolor=fg,
+        font=font_entry,
         padding=UI_STYLE['padding'],
     )
     style.map('TCombobox', fieldbackground=[('readonly', field_bg)], foreground=[('readonly', field_fg)])
+    style.map('TCombobox.Hover', fieldbackground=[('readonly', hover_bg)], foreground=[('readonly', field_fg)])
 
     # Radiobutton and Checkbutton
     style.configure(
@@ -328,14 +381,28 @@ def configure_ttk_styles(root: Any) -> None:
         foreground=fg,
         font=font_normal,
     )
+    style.configure(
+        'TRadiobutton.Hover',
+        background=hover_bg,
+        foreground=fg,
+        font=font_normal,
+    )
     style.map('TRadiobutton', background=[('active', bg)], foreground=[('active', fg)])
+    style.map('TRadiobutton.Hover', background=[('active', hover_bg)], foreground=[('active', fg)])
     style.configure(
         'TCheckbutton',
         background=bg,
         foreground=fg,
         font=font_normal,
     )
+    style.configure(
+        'TCheckbutton.Hover',
+        background=hover_bg,
+        foreground=fg,
+        font=font_normal,
+    )
     style.map('TCheckbutton', background=[('active', bg)], foreground=[('active', fg)])
+    style.map('TCheckbutton.Hover', background=[('active', hover_bg)], foreground=[('active', fg)])
 
     # Scrollbars
     style.configure(
@@ -350,6 +417,30 @@ def configure_ttk_styles(root: Any) -> None:
         troughcolor=bg,
         arrowcolor=fg,
     )
+
+
+def apply_hover_to_children(parent: Any) -> None:
+    """
+    Recursively bind hover highlight to ttk Entry, Combobox, Checkbutton, and Radiobutton
+    under the given parent. Call after building a dialog so those widgets get a slight
+    background change on mouse over (controlled by UI_WIDGET_HOVER_BG).
+    """
+    for w in parent.winfo_children():
+        apply_hover_to_children(w)
+        cls = w.winfo_class()
+        if cls not in ('TEntry', 'TCombobox', 'TCheckbutton', 'TRadiobutton'):
+            continue
+        hover_style = cls + '.Hover'
+        normal_style = w.cget('style') or cls
+
+        def _on_enter(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+            widget.configure(style=hov)
+
+        def _on_leave(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+            widget.configure(style=norm)
+
+        w.bind('<Enter>', _on_enter)
+        w.bind('<Leave>', _on_leave)
 
 
 def setup_fonts() -> tuple[Any, Any]:

@@ -25,6 +25,7 @@ from .theme import (
     PLOT_CONFIG,
     UI_STYLE,
     UI_THEME,
+    apply_hover_to_children,
     configure_ttk_styles,
     setup_fonts,
 )
@@ -66,6 +67,7 @@ __all__ = [
     'PLOT_CONFIG',
     'UI_STYLE',
     'UI_THEME',
+    'apply_hover_to_children',
     'configure_ttk_styles',
     'setup_fonts',
     # From paths

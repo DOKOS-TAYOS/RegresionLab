@@ -3,7 +3,7 @@
 from typing import Any, List, Tuple
 from tkinter import Tk, Toplevel, StringVar, Text, ttk
 
-from config import DATA_FILE_TYPES, EXIT_SIGNAL, UI_STYLE
+from config import DATA_FILE_TYPES, EXIT_SIGNAL, UI_STYLE, apply_hover_to_children
 from i18n import t
 
 # Max size for pair-plot image window so it does not resize the desktop
@@ -76,6 +76,7 @@ def ask_file_type(parent_window: Any) -> str:
         column=0, row=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding']
     )
 
+    apply_hover_to_children(call_file_level.frame)
     call_file_level.radiobuttons[0].focus_set()
     parent_window.wait_window(call_file_level)
 
@@ -144,6 +145,7 @@ def ask_file_name(parent_window: Any, file_list: List[str]) -> str:
         padx=UI_STYLE['padding'], pady=UI_STYLE['padding']
     )
 
+    apply_hover_to_children(call_data_level.frame_custom)
     call_data_level.name_entry.focus_set()
     parent_window.wait_window(call_data_level)
 
@@ -275,6 +277,7 @@ def ask_variables(parent_window: Any, variable_names: List[str]) -> Tuple[str, s
         column=1, row=4, padx=UI_STYLE['padding'], pady=UI_STYLE['padding']
     )
 
+    apply_hover_to_children(call_var_level.frame_custom)
     call_var_level.x_nom.focus_set()
     parent_window.wait_window(call_var_level)
 

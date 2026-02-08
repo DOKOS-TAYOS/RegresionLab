@@ -19,6 +19,7 @@ from config import (
     __version__,
     configure_ttk_styles,
 )
+from frontend.ui_dialogs.tooltip import bind_tooltip
 from i18n import t
 
 
@@ -150,6 +151,16 @@ def create_main_menu(
         style='Danger.TButton',
         width=UI_STYLE['button_width'],
     )
+
+    # Tooltips for menu buttons
+    bind_tooltip(normal_fitting_button, t('menu.tooltip_normal_fitting'))
+    bind_tooltip(multiple_datasets_button, t('menu.tooltip_multiple_datasets'))
+    bind_tooltip(multiple_fits_button, t('menu.tooltip_checker_fitting'))
+    bind_tooltip(all_fits_button, t('menu.tooltip_total_fitting'))
+    bind_tooltip(view_data_button, t('menu.tooltip_view_data'))
+    bind_tooltip(help_button, t('menu.tooltip_information'))
+    bind_tooltip(config_button, t('menu.tooltip_config'))
+    bind_tooltip(exit_button, t('menu.tooltip_exit'))
     
     # Layout
     outer_frame.grid(column=0, row=0)
