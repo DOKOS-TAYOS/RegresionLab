@@ -300,9 +300,9 @@ def _edge_color(bg_color: str, lighter: bool) -> str:
     """Return a lighter or darker shade for 3D button highlight/shadow."""
     key = bg_color.lower() if isinstance(bg_color, str) else ''
     if lighter:
-        m = {'midnight blue': 'steel blue', 'navy': 'steel blue', 'gray15': 'gray30', 'gray20': 'gray35'}
+        m = {'midnight blue': 'steel blue', 'navy': 'steel blue', 'black': 'gray20', 'gray5': 'gray15', 'gray10': 'gray25', 'gray15': 'gray30', 'gray20': 'gray35'}
     else:
-        m = {'midnight blue': 'midnight blue', 'navy': 'midnight blue', 'gray15': 'gray10', 'gray20': 'gray12'}
+        m = {'midnight blue': 'midnight blue', 'navy': 'midnight blue', 'black': 'black', 'gray5': 'gray3', 'gray10': 'gray8', 'gray15': 'gray10', 'gray20': 'gray12'}
     return m.get(key, 'steel blue' if lighter else 'gray12')
 
 

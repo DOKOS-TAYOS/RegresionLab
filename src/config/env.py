@@ -190,7 +190,7 @@ DEFAULT_LOG_FILE = 'regressionlab.log'
 
 ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'LANGUAGE', 'default': 'es', 'cast_type': str, 'options': SUPPORTED_LANGUAGE_CODES},
-    {'key': 'UI_BACKGROUND', 'default': 'navy', 'cast_type': str},
+    {'key': 'UI_BACKGROUND', 'default': 'black', 'cast_type': str},
     {'key': 'UI_FOREGROUND', 'default': 'snow', 'cast_type': str},
     {'key': 'UI_BUTTON_FG', 'default': 'lime green', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_CANCEL', 'default': 'red2', 'cast_type': str},
@@ -201,9 +201,9 @@ ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'UI_FONT_FAMILY', 'default': 'Menlo', 'cast_type': str},
     {'key': 'UI_SPINBOX_WIDTH', 'default': 10, 'cast_type': int},
     {'key': 'UI_ENTRY_WIDTH', 'default': 25, 'cast_type': int},
-    {'key': 'UI_BUTTON_BG', 'default': 'midnight blue', 'cast_type': str},
+    {'key': 'UI_BUTTON_BG', 'default': 'gray10', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_ACCENT2', 'default': 'yellow', 'cast_type': str},
-    {'key': 'UI_TEXT_BG', 'default': 'gray15', 'cast_type': str},
+    {'key': 'UI_TEXT_BG', 'default': 'gray5', 'cast_type': str},
     {'key': 'UI_TEXT_FG', 'default': 'light cyan', 'cast_type': str},
     {'key': 'UI_TEXT_SELECT_BG', 'default': 'steel blue', 'cast_type': str},
     {'key': 'UI_TEXT_SELECT_FG', 'default': 'white', 'cast_type': str},
