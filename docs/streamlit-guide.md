@@ -11,7 +11,7 @@ The Streamlit interface offers:
 - **Visual feedback**: Real-time updates and progress indicators.
 - **Easy sharing**: Share results by downloading plots.
 
-Configuration (language, plot style, paths, etc.) is done by editing the `.env` file; the web version has no in-app configuration dialog (unlike the Tkinter **Configure** menu).
+Configuration (language, UI colors, fonts, plot style, paths, etc.) is the same as the Tkinter app: edit the `.env` file or use the Tkinter **Configure** menu. The Streamlit UI has no in-app configuration dialog; it reads `LANGUAGE`, `UI_BACKGROUND`, `UI_FOREGROUND`, `UI_BUTTON_*`, `UI_FONT_*`, and the rest of the env schema. The initial language and the entire look (background, sidebar, buttons, text) follow the same rules as the desktop version. The sidebar is rendered slightly lighter than the main area for visual separation.
 
 ## Accessing Streamlit
 
@@ -51,7 +51,8 @@ The app will open automatically in your default browser at `http://localhost:850
 The Streamlit interface consists of three main areas:
 
 ### 1. Sidebar (Left)
-- **Language Toggle**: Switch between English and Spanish.
+- Slightly lighter background than the main area (same theme rules as Tkinter).
+- **Language Toggle**: Switch between English and Spanish (initial value from `.env` `LANGUAGE`).
 - **Mode Selection**: Choose your operation mode:
   - Normal Fitting.
   - Multiple Datasets.
@@ -584,10 +585,22 @@ You can open multiple browser tabs with RegressionLab:
 - Useful for comparing different analyses.
 - Be mindful of memory usage.
 
+## Appearance and theme
+
+The Streamlit UI uses the same configuration as the Tkinter app. Colors and fonts come from `.env` (or the Tkinter Configure dialog):
+
+- **Background and text:** `UI_BACKGROUND`, `UI_FOREGROUND`
+- **Sidebar:** Slightly lighter than the main area for separation
+- **Buttons and accents:** `UI_BUTTON_BG`, `UI_BUTTON_FG`, etc.
+- **Fonts:** `UI_FONT_FAMILY`, `UI_FONT_SIZE`
+
+So changing the theme in `.env` (or in Tkinter’s configuration) affects both the desktop and the web interface consistently.
+
 ## Differences from Tkinter Version
 
 **Streamlit has**:
 - ✓ Modern, web-based interface.
+- ✓ Same theme and configuration source (`.env` / config): colors, fonts, and layout rules match the Tkinter app where applicable (sidebar slightly lighter than main).
 - ✓ Easy sharing via URL.
 - ✓ Mobile/tablet support.
 - ✓ No installation needed (online).
@@ -596,13 +609,13 @@ You can open multiple browser tabs with RegressionLab:
 
 **Streamlit differs**:
 - File input is by upload only (no local file browser).
-- No configuration panel in the sidebar (language and mode only).
+- No configuration panel in the sidebar (language and mode only); change settings in `.env` or via Tkinter’s Configure menu.
 - Results layout: three columns (Equation, Parameters, Statistics), plot, then download button.
 - If output format is PDF, the in-app preview is PNG and the download is PDF.
 
 **When to use each**:
 - **Streamlit**: Quick analysis, sharing, accessibility, View Data.
-- **Tkinter**: Offline, local file browsing, full configuration dialog.
+- **Tkinter**: Offline, local file browsing, in-app configuration dialog.
 
 ## Next Steps
 

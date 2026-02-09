@@ -202,7 +202,7 @@ def generic_fit(
         formatted_params[name] = formatted_param
         formatted_uncertainties[name] = formatted_uncertainty
         text_lines.append(
-            '{0}={{{0}}} ,\u03C3({0})={{{0}_u}}'.format(name).format(
+            '{0}={{{0}}}, \u03C3({0})={{{0}_u}}'.format(name).format(
                 **{name: formatted_param, f'{name}_u': formatted_uncertainty}
             )
         )

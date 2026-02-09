@@ -1,19 +1,23 @@
-# streamlit_app.app
+# streamlit_app
 
-Streamlit Application for RegressionLab - Web-based interface for curve fitting operations.
+Streamlit Application for RegressionLab – web-based interface for curve fitting operations.
 
 ## Overview
 
-The `streamlit_app.app` module is the entry point for the web interface; the main UI logic is organized in the `streamlit_app.sections` package. `app.py` sets up the page, sidebar, and mode routing; each operation mode and shared components (data loading, fitting, results, help) live in `streamlit_app/sections/`:
+The `streamlit_app.app` module is the entry point for the web interface. The main UI logic lives in `streamlit_app.sections`; appearance is driven by `streamlit_app.theme`, which uses the same config as the Tkinter app (`config.env`, `config.theme.UI_STYLE` when available).
 
-- **`sections/sidebar.py`** – Sidebar setup, logo, language toggle, session state
+**Package layout:**
+
+- **`app.py`** – Entry point: page config, theme injection, session state, sidebar, mode routing.
+- **`theme.py`** – Theme from config: `get_streamlit_theme()`, `get_main_css()`. Uses `config.theme.UI_STYLE` (env + theme) when importable; fallback to `config.env` only. Sidebar background is slightly lighter than main area. Colors and fonts come from `UI_BACKGROUND`, `UI_FOREGROUND`, `UI_BUTTON_*`, `UI_FONT_*`, etc.
+- **`sections/sidebar.py`** – Sidebar setup, logo (or fallback header with theme colors), language toggle, session state. Initial language from `config.env` (`LANGUAGE`).
 - **`sections/data.py`** – `load_uploaded_file`, `show_data_with_pair_plots`, `get_variable_names`, `get_temp_output_dir`
-- **`sections/fitting.py`** – `perform_fit`, `show_equation_selector`, `select_variables`, `create_equation_options`
+- **`sections/fitting.py`** – `perform_fit`, `show_equation_selector`, `select_variables`, `create_equation_options`. Uses `config.FILE_CONFIG` for plot format/paths.
 - **`sections/results.py`** – `show_results`
-- **`sections/help_section.py`** – `show_help_section`
-- **`sections/modes.py`** – `mode_normal_fitting`, `mode_multiple_datasets`, `mode_checker_fitting`, `mode_total_fitting`, `mode_view_data`
+- **`sections/help_section.py`** – `show_help_section`. Uses `config.DONATIONS_URL` for the donations link.
+- **`sections/modes.py`** – `mode_normal_fitting`, `mode_multiple_datasets`, `mode_checker_fitting`, `mode_total_fitting`, `mode_view_data`. Uses `config.DATA_FILE_TYPES`.
 
-Imports such as `from streamlit_app.app import main, mode_normal_fitting` or `from streamlit_app.sections import perform_fit, load_uploaded_file` work as before. The application offers the same functionality as the Tkinter desktop version but in a web browser.
+**Imports:** `from streamlit_app.app import main`; `from streamlit_app.sections import mode_normal_fitting, perform_fit, load_uploaded_file`, etc. (modes and helpers are in `sections`). The application offers the same functionality as the Tkinter desktop version, with the same configuration sources (env, paths, theme).
 
 ## Main Application
 
@@ -21,7 +25,7 @@ Imports such as `from streamlit_app.app import main, mode_normal_fitting` or `fr
 
 Main Streamlit application entry point.
 
-This function sets up the Streamlit page configuration, initializes session state, displays the UI, and routes to the appropriate operation mode handler.
+This function sets up the Streamlit page configuration, injects theme CSS from config (`get_streamlit_theme()`, `get_main_css()`), initializes session state, displays the UI, and routes to the appropriate operation mode handler.
 
 **Example:**
 ```python
@@ -50,7 +54,7 @@ Single file, single equation fitting.
 
 **Example Usage:**
 ```python
-from streamlit_app.app import mode_normal_fitting
+from streamlit_app.sections import mode_normal_fitting
 from config import AVAILABLE_EQUATION_TYPES
 
 mode_normal_fitting(AVAILABLE_EQUATION_TYPES)
@@ -71,7 +75,7 @@ Multiple files, single equation fitting.
 
 **Example Usage:**
 ```python
-from streamlit_app.app import mode_multiple_datasets
+from streamlit_app.sections import mode_multiple_datasets
 
 mode_multiple_datasets(AVAILABLE_EQUATION_TYPES)
 ```
@@ -91,7 +95,7 @@ Single file, multiple equations fitting.
 
 **Example Usage:**
 ```python
-from streamlit_app.app import mode_checker_fitting
+from streamlit_app.sections import mode_checker_fitting
 
 mode_checker_fitting(AVAILABLE_EQUATION_TYPES)
 ```
@@ -111,7 +115,7 @@ Single file, all equations fitting.
 
 **Example Usage:**
 ```python
-from streamlit_app.app import mode_total_fitting
+from streamlit_app.sections import mode_total_fitting
 
 mode_total_fitting(AVAILABLE_EQUATION_TYPES)
 ```
@@ -189,6 +193,8 @@ Perform curve fitting and return results.
 
 **Example:**
 ```python
+from streamlit_app.sections import perform_fit
+
 result = perform_fit(
     data=data,
     x_name='x',
@@ -198,8 +204,8 @@ result = perform_fit(
 )
 
 if result:
-    st.write(f"R² = {result['r_squared']:.4f}")
-    st.image(result['plot_path'])
+    st.image(result['plot_path'], width='stretch')
+    st.download_button("Download", data=open(result['plot_path'], 'rb'), file_name=result['plot_name'] + '.png')
 ```
 
 ## UI Components
@@ -231,7 +237,7 @@ Shows information about:
 - Fitting modes explanation
 - Data format requirements
 
-#### `_select_variables(data, key_prefix='') -> Tuple[str, str, str]`
+#### `select_variables(data, key_prefix='') -> Tuple[str, str, str]`
 
 Show variable selection widgets and return selected values.
 
@@ -278,7 +284,7 @@ Display fitting results.
 Initialize Streamlit session state variables.
 
 **Variables:**
-- `language`: Current language ('es' or 'en')
+- `language`: Current language (initialized from `config.env` `LANGUAGE`; 'es', 'en', etc.)
 - `results`: List of fitting results
 - `plot_counter`: Counter for plot filenames
 
@@ -289,6 +295,8 @@ Toggle between Spanish and English.
 Updates the session state language and re-initializes the i18n system.
 
 ## Configuration
+
+Configuration is shared with the Tkinter app: `config.env` (`.env`), `config.paths`, and when available `config.theme`. The Streamlit UI does not provide an in-app configuration dialog; edit `.env` (or use the Tkinter Configure menu) to change language, UI colors, fonts, plot style, paths, etc.
 
 ### Page Configuration
 
@@ -301,13 +309,12 @@ st.set_page_config(
 )
 ```
 
-### CSS Styling
+### Theme and CSS
 
-The sidebar uses custom CSS defined in `SIDEBAR_CSS` in `sections/sidebar.py` for:
-- Brand header styling
-- Button hover effects
-- Section titles
-- Responsive design
+- **Source:** `streamlit_app/theme.py`. Theme is built from `config.theme.UI_STYLE` when importable (same env + theme as Tkinter); otherwise from `config.env` only. All colors are converted to hex for CSS (no tkinter at runtime in theme).
+- **Applied in:** `app.py` calls `get_streamlit_theme()` and `get_main_css(theme)`, then injects the returned CSS once.
+- **Rules:** Main area uses `UI_BACKGROUND` and `UI_FOREGROUND`; sidebar uses a slightly lighter background (`sidebar_bg`); buttons use `UI_BUTTON_BG` and `UI_BUTTON_FG`; headings/accents use primary and accent2; fonts from `UI_FONT_FAMILY` and `UI_FONT_SIZE`.
+- **Sidebar layout:** `sections/sidebar.py` defines layout-only CSS (brand, version badge, section labels); colors come from the global theme CSS.
 
 ## Usage Examples
 
@@ -326,24 +333,24 @@ bin/run_streamlit.bat  # Windows
 
 ```python
 import streamlit as st
-from streamlit_app.app import perform_fit, load_uploaded_file
+from streamlit_app.sections import perform_fit, load_uploaded_file
+from config import DATA_FILE_TYPES
 
 st.title("Custom Fitting Interface")
 
-uploaded_file = st.file_uploader("Upload data", type=['csv'])
+uploaded_file = st.file_uploader("Upload data", type=list(DATA_FILE_TYPES))
 if uploaded_file:
     data = load_uploaded_file(uploaded_file)
     if data is not None:
         x_name = st.selectbox("X variable", data.columns)
         y_name = st.selectbox("Y variable", data.columns)
-        
         if st.button("Fit Linear"):
             result = perform_fit(
                 data, x_name, y_name,
                 'linear_function', 'fit'
             )
             if result:
-                st.image(result['plot_path'])
+                st.image(result['plot_path'], width='stretch')
 ```
 
 ## File Handling

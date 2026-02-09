@@ -277,7 +277,16 @@ time,utime,temperature,utemperature
 
 ## Interpreting Results
 
-After fitting, RegressionLab provides several pieces of information:
+When you perform a fit, RegressionLab displays a results window showing:
+
+![Results Window](../images/en_documentation/tkinter_docs/result.png)
+
+The results window contains:
+- **Fitted equation**: The mathematical expression with your fitted parameters.
+- **Parameter values**: Each parameter with its uncertainty.
+- **Statistical measures**: R², RMSE, χ², and reduced χ².
+- **Plot preview**: Visual representation of your data and the fitted curve.
+
 
 ### 1. Fitted Parameters
 

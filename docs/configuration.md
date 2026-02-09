@@ -16,6 +16,8 @@ If you use the **Tkinter desktop application**, you can change settings without 
 - **Links**: Donations URL (optional).
 - **Logging**: Log level, log file path, console output on/off.
 
+![Configuration Dialog](../images/en_documentation/tkinter_docs/configuration.png)
+
 Each option shows a short description. When you click **Accept**, the values are written to `.env` and the application restarts so the new settings take effect. **Cancel** discards changes. This is the easiest way to customize RegressionLab when using the desktop version.
 
 ### Locating the Configuration File
@@ -249,7 +251,7 @@ PLOT_SHOW_TITLE=false
 ```ini
 PLOT_LINE_COLOR="black"
 PLOT_LINE_WIDTH=1.0
-PLOT_LINE_STYLE="-."
+PLOT_LINE_STYLE="-"
 ```
 
 - **PLOT_LINE_COLOR**: Color of the fitted curve line
@@ -257,9 +259,9 @@ PLOT_LINE_STYLE="-."
 - **PLOT_LINE_STYLE**: Line style
 
 **Line Style Options**:
-- `"-"`: Solid line.
+- `"-"`: Solid line (default).
 - `"--"`: Dashed line.
-- `"-."`: Dash-dot line (default).
+- `"-."`: Dash-dot line.
 - `":"`: Dotted line.
 
 ### Data Points Style
