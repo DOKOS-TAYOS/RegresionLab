@@ -93,7 +93,7 @@ def show_results(results: List[Dict[str, Any]]) -> None:
                     ".jpg",
                     ".jpeg",
                 ):
-                    st.image(plot_path_display, use_container_width=True)
+                    st.image(plot_path_display, width='stretch')
                 elif plot_ext == ".pdf":
                     st.caption(t("dialog.plot_pdf_preview_caption"))
 

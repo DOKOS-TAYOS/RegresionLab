@@ -6,26 +6,20 @@ from typing import Optional
 import streamlit as st
 
 from i18n import initialize_i18n, t
+from streamlit_app.theme import get_streamlit_theme
 
-_SIDEBAR_CSS = """
+# Layout-only CSS (colors come from theme via get_main_css in app)
+_SIDEBAR_LAYOUT_CSS = """
     <style>
     .sidebar-brand {
         text-align: center;
         padding: 0.5rem 0 1rem 0;
-        border-bottom: 2px solid rgba(49, 51, 63, 0.2);
+        border-bottom: 2px solid rgba(255,255,255,0.08);
         margin-bottom: 1rem;
     }
-    .sidebar-brand h2 {
-        color: #1f77b4;
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin: 0;
-        letter-spacing: -0.02em;
-    }
-    .sidebar-brand .version {
+    .sidebar-brand h2 { font-size: 1.4rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+    .sidebar-brand .version-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #1f77b4 0%, #2a9d8f 100%);
-        color: white;
         font-size: 0.7rem;
         padding: 0.2rem 0.5rem;
         border-radius: 12px;
@@ -36,22 +30,10 @@ _SIDEBAR_CSS = """
         margin: 1.25rem 0 0.75rem 0;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #666;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    div[data-testid="stSidebar"] .stButton > button {
-        border-radius: 8px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-    }
-    div[data-testid="stSidebar"] .stButton > button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(31, 119, 180, 0.25);
-    }
-    div[data-testid="stSidebar"] [data-testid="stRadio"] > label {
-        font-size: 0.9rem;
-    }
+    div[data-testid="stSidebar"] [data-testid="stRadio"] > label { font-size: 0.9rem; }
     </style>
 """
 
@@ -64,9 +46,10 @@ def _cached_logo_bytes(path: str) -> Optional[bytes]:
 
 
 def initialize_session_state() -> None:
-    """Initialize Streamlit session state variables."""
+    """Initialize Streamlit session state variables (language from config env)."""
     if 'language' not in st.session_state:
-        st.session_state.language = 'es'
+        from config.env import get_env_from_schema
+        st.session_state.language = get_env_from_schema('LANGUAGE')
     if 'results' not in st.session_state:
         st.session_state.results = []
     if 'plot_counter' not in st.session_state:
@@ -93,11 +76,11 @@ def setup_sidebar(version: str) -> str:
         Selected operation mode (e.g. 'normal_fitting', 'watch_data').
     """
     with st.sidebar:
-        st.markdown(_SIDEBAR_CSS, unsafe_allow_html=True)
+        st.markdown(_SIDEBAR_LAYOUT_CSS, unsafe_allow_html=True)
         st.markdown(f"""
             <div class="sidebar-brand">
                 <h2>📊 RegressionLab</h2>
-                <span class="version">v{version}</span>
+                <span class="version-badge">v{version}</span>
             </div>
         """, unsafe_allow_html=True)
 
@@ -126,20 +109,23 @@ def setup_sidebar(version: str) -> str:
 
 
 def show_logo() -> None:
-    """Display application logo or fallback header."""
+    """Display application logo or fallback header (colors from config theme)."""
     # __file__ is streamlit_app/sections/sidebar.py -> parent.parent = streamlit_app, parent.parent.parent = src, project root = parent.parent.parent.parent
     logo_path = Path(__file__).resolve().parent.parent.parent.parent / "images" / "RegressionLab_logo.png"
     logo_bytes = _cached_logo_bytes(str(logo_path))
+    theme = get_streamlit_theme()
+    primary = theme['button_fg_primary']
+    muted = theme['muted']
 
     if logo_bytes is not None:
         st.image(logo_bytes, width='content')
     else:
-        st.markdown("""
-            <h1 style='text-align: center; color: #1f77b4; font-size: 3.5em;
+        st.markdown(f"""
+            <h1 class="main-title" style='text-align: center; color: {primary}; font-size: 3.5em;
                 font-weight: bold; margin-bottom: 0;'>
                 RegressionLab
             </h1>
-            <p style='text-align: center; color: #666; font-size: 1.2em; margin-top: 0;'>
+            <p style='text-align: center; color: {muted}; font-size: 1.2em; margin-top: 0;'>
                 📈 Curve Fitting & Data Analysis
             </p>
         """, unsafe_allow_html=True)

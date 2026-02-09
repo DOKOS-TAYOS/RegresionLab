@@ -217,7 +217,7 @@ ENV_SCHEMA: list[dict[str, Any]] = [
     # --- plot: line ---
     {'key': 'PLOT_LINE_COLOR', 'default': 'black', 'cast_type': str},
     {'key': 'PLOT_LINE_WIDTH', 'default': 1.0, 'cast_type': float},
-    {'key': 'PLOT_LINE_STYLE', 'default': '-.', 'cast_type': str, 'options': ('-', '--', '-.', ':')},
+    {'key': 'PLOT_LINE_STYLE', 'default': '-', 'cast_type': str, 'options': ('-', '--', '-.', ':')},
     # --- plot: markers ---
     {'key': 'PLOT_MARKER_FORMAT', 'default': 'o', 'cast_type': str, 'options': ('o', 's', '^', 'd', '*')},
     {'key': 'PLOT_MARKER_SIZE', 'default': 5, 'cast_type': int},
