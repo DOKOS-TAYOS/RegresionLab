@@ -17,6 +17,8 @@ The Tkinter interface offers:
 
 Double-click the "RegressionLab" shortcut created during installation.
 
+![Desktop Shortcut](../images/en_documentation/tkinter_docs/shortcut.png)
+
 ### Method 2: Shell Scripts
 
 **Windows:**
@@ -37,7 +39,7 @@ source .venv/bin/activate  # macOS/Linux
 .venv\Scripts\activate     # Windows
 
 # Run the application
-python src/main_program.py
+pythonw src/main_program.py
 ```
 
 ## Interface Layout
@@ -47,6 +49,9 @@ The Tkinter application uses a menu-based navigation system:
 ### Main Menu Window
 
 When you launch the application, you see the main menu with buttons for each operation mode:
+
+![Main Menu](../images/en_documentation/tkinter_docs/main.png)
+
 
 ```
 ┌─────────────────────────────────────┐
@@ -72,14 +77,15 @@ When you launch the application, you see the main menu with buttons for each ope
 
 ## Language
 
-The language is set in the `.env` file:
+The language is set in the `.env` file or in the **Configure** dialog (Language section):
 
 ```ini
-LANGUAGE="es"  # Spanish
+LANGUAGE="es"  # Spanish (default)
 LANGUAGE="en"  # English
+LANGUAGE="de"  # German (Deutsch)
 ```
 
-Change requires restarting the application.
+You can also use aliases (e.g. `spanish`, `english`, `deutsch`). Change requires restarting the application.
 
 ## Operation Modes
 
@@ -93,6 +99,7 @@ Change requires restarting the application.
 
 2. **Select Equation Type**:
    - Dialog appears with dropdown menu.
+   ![Equation Selector](../images/en_documentation/tkinter_docs/equations.png)
    - Choose from predefined equations:
      - Linear (y=mx)
      - Linear with intercept (y=mx+n)
@@ -120,12 +127,14 @@ Change requires restarting the application.
 
 5. **Select Data File**:
    - File browser opens.
+   ![File Selection](../images/en_documentation/tkinter_docs/files.png)
    - Navigate to your data file.
    - Default location: `input/` directory.
    - Select file and click "Open".
 
 6. **Select Variables**:
    - Dialog shows available columns.
+   ![Variable Selection](../images/en_documentation/tkinter_docs/names.png)
    - **Select X (independent variable)**:
      - Dropdown with all non-uncertainty columns.
      - Example: "time", "voltage", "concentration".
@@ -140,6 +149,7 @@ Change requires restarting the application.
 
 7. **View Results**:
    - New window opens showing:
+     ![Results Window](../images/en_documentation/tkinter_docs/result.png)
      - **Plot**: Your data with fitted curve.
      - **Equation**: Mathematical formula with parameters.
      - **Parameters**: Values with uncertainties.
@@ -165,11 +175,13 @@ If you select "Custom Formula":
 
 2. **Parameter Names**:
    - Dialog appears for each parameter.
+   ![Parameter Names](../images/en_documentation/tkinter_docs/custom_name.png)
    - Enter meaningful names (e.g., "amplitude", "frequency", "phase").
    - Or use defaults (p1, p2, etc.).
 
 3. **Enter Formula**:
    - Text entry dialog.
+   ![Custom Formula Entry](../images/en_documentation/tkinter_docs/custom_equation.png)
    - Enter formula using parameter names and `x`.
    - Example: `amplitude * sin(frequency * x + phase)`.
    - Click "Accept".
@@ -364,6 +376,9 @@ If you select "Custom Formula":
    - Select file.
 
 3. **View Data**:
+
+   ![Data View](../images/en_documentation/tkinter_docs/variable_pair.png)
+
    - Dialog shows:
      - All columns.
      - All rows.
@@ -386,6 +401,8 @@ If you select "Custom Formula":
 1. **Click "Information"** from the main menu.
 
 2. **View Help Dialog**:
+   ![Information Dialog](../images/en_documentation/tkinter_docs/information.png)
+
    - Window with scrollable content and **collapsible sections** (click the section header to expand/collapse).
    - Sections: **Objective**, **Advantages**, **Fitting Modes** (including loop mode), **Custom Functions**, **Data Format** (columns, uncertainty prefix), **Data Location** (input dir, formats), **Output Location** (plots, logs), **Statistics** (R², RMSE, χ², reduced χ², DoF, 95% parameter intervals).
    - If a donations URL is set in configuration, a **Donations** button appears at the bottom.
@@ -400,6 +417,8 @@ If you select "Custom Formula":
 1. **Click "Configure"** from the main menu.
 
 2. **Configuration dialog**:
+   ![Configuration Dialog](../images/en_documentation/tkinter_docs/configuration.png)
+
    - **Collapsible sections** (click header to expand/collapse): Language, UI, Plot, Font, Paths, Links, Logging.
    - Each option has a label and a short description; values are shown in text fields, checkboxes (for booleans), or dropdowns (for fixed options).
    - Use the scroll area and mouse wheel to move through sections.
@@ -457,9 +476,9 @@ If you select "Custom Formula":
 - Embedded in Tkinter window.
 - Includes:
   - Plot image.
-  - Equation text.
-  - Parameters text.
-  - R² value.
+  - Equation text (formula with fitted values).
+  - Parameters with uncertainties and 95% confidence intervals.
+  - Statistics: R², RMSE, χ², reduced χ², degrees of freedom.
 - Click "Close" to dismiss.
 
 ## File Browsing
@@ -505,6 +524,7 @@ Main menu:
 ## Understanding Results
 
 ### Result Window Components
+![Result Window](../images/en_documentation/tkinter_docs/result.png)
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -521,11 +541,34 @@ Main menu:
 │  R² = 0.987                                     │
 │                                                 │
 │  Parameter Results:                             │
-│  m = 5.123 ± 0.045                              │
-│  n = 2.456 ± 0.123                              │
+│  m = 5.123 ± 0.045   [IC 95%: 5.03, 5.21]      │
+│  n = 2.456 ± 0.123   [IC 95%: 2.21, 2.70]      │
+│  R² = 0.987   RMSE = 0.12   χ² = ...           │
 │                                                 │
 └─────────────────────────────────────────────────┘
 ```
+
+The result text includes **parameters** (value ± uncertainty and 95% confidence interval per parameter) and **statistics** (R², RMSE, χ², reduced χ², degrees of freedom). The **Information** dialog (main menu → Information) has a **Statistics** section that explains these in detail.
+
+### Statistics Shown
+
+- **R²**: Coefficient of determination (goodness of fit).
+- **RMSE**: Root mean square error.
+- **χ²**: Chi-squared.
+- **χ²_red**: Reduced chi-squared.
+- **DoF (ν)**: Degrees of freedom.
+- **IC 95%**: 95% confidence interval for each fitted parameter.
+
+### R² Value (Coefficient of Determination)
+
+**Interpretation**:
+- **R² = 1.0**: Perfect fit (rare in real data).
+- **R² > 0.95**: Excellent fit ✓.
+- **R² > 0.85**: Good fit ✓.
+- **R² > 0.70**: Acceptable fit ⚠️.
+- **R² < 0.70**: Poor fit — try a different equation ✗.
+
+R² is the fraction of variance in the data explained by the model (e.g. R² = 0.95 means 95% of the variance is explained). Higher is better.
 
 ### Plot Features
 

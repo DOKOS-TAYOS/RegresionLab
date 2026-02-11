@@ -52,7 +52,7 @@ The Streamlit interface consists of three main areas:
 
 ### 1. Sidebar (Left)
 - Slightly lighter background than the main area (same theme rules as Tkinter).
-- **Language Toggle**: Switch between English and Spanish (initial value from `.env` `LANGUAGE`).
+- **Language**: One button that cycles through all supported languages (Spanish → English → Deutsch → Spanish). The button label shows the *next* language (e.g. "English 🇬🇧" when current is Spanish). Initial value comes from `.env` `LANGUAGE`.
 - **Mode Selection**: Choose your operation mode:
   - Normal Fitting.
   - Multiple Datasets.
@@ -76,13 +76,14 @@ The Streamlit interface consists of three main areas:
 ### Changing the Language
 
 1. Look at the sidebar (left side).
-2. Click the language toggle button:
-   - "English 🇬🇧" to switch to English.
-   - "Español 🇪🇸" to switch to Spanish.
-3. The entire interface updates immediately.
+2. Click the language button. The button always shows the *next* language in the cycle:
+   - **"English 🇬🇧"** → switch to English (when current is Spanish).
+   - **"Deutsch 🇩🇪"** → switch to German (when current is English).
+   - **"Español 🇪🇸"** → switch to Spanish (when current is German).
+3. The entire interface updates immediately. Click again to cycle to the next language.
 
-**Available Languages**:
-- Spanish (Español) - Default.
+**Available Languages** (cycle order: es → en → de → es):
+- Spanish (Español) – default.
 - English.
 - German (Deutsch).
 
@@ -604,7 +605,6 @@ So changing the theme in `.env` (or in Tkinter’s configuration) affects both t
 - ✓ Easy sharing via URL.
 - ✓ Mobile/tablet support.
 - ✓ No installation needed (online).
-- ✓ View Data mode (inspect data without fitting).
 - ✓ Loop-like workflow: in Normal Fitting you can enable "loop fitting" and then fit another file with the same equation without changing mode; in Multiple Datasets you can upload another set of files and run again.
 
 **Streamlit differs**:
@@ -614,8 +614,8 @@ So changing the theme in `.env` (or in Tkinter’s configuration) affects both t
 - If output format is PDF, the in-app preview is PNG and the download is PDF.
 
 **When to use each**:
-- **Streamlit**: Quick analysis, sharing, accessibility, View Data.
-- **Tkinter**: Offline, local file browsing, in-app configuration dialog.
+- **Streamlit**: Quick analysis, sharing, accessibility.
+- **Tkinter**: Offline, local file browsing, in-app configuration dialog, extra features.
 
 ## Next Steps
 

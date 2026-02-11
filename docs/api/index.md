@@ -34,6 +34,7 @@ RegressionLab/
 │   ├── frontend/              # User interface (Tkinter)
 │   │   ├── ui_main_menu.py
 │   │   ├── image_utils.py
+│   │   ├── keyboard_nav.py    # Keyboard navigation
 │   │   └── ui_dialogs/        # Dialog package
 │   │       ├── data_selection.py
 │   │       ├── equation.py
@@ -51,6 +52,7 @@ RegressionLab/
 │   │
 │   ├── streamlit_app/         # Web interface
 │   │   ├── app.py             # Entry point
+│   │   ├── theme.py           # Streamlit theme config
 │   │   └── sections/          # UI sections
 │   │       ├── sidebar.py
 │   │       ├── data.py
@@ -71,36 +73,37 @@ RegressionLab/
 
 ### Core Modules
 
-- **[config](../modules/core.html)** - Configuration management and application constants
-- **[i18n](../modules/core.html)** - Internationalization and translation system
+- **[config](config.md)** - Configuration management and application constants
+- **[i18n](i18n.md)** - Internationalization and translation system
 
 ### Fitting Modules
 
-- **[fitting.fitting_functions](../modules/fitting.html)** - Mathematical functions and curve fitting implementations
-- **[fitting.fitting_utils](../modules/fitting.html)** - Generic fitting utilities and helpers
-- **[fitting.workflow_controller](../modules/fitting.html)** - Orchestrates fitting workflows and modes
-- **[fitting.custom_function_evaluator](../modules/fitting.html)** - Evaluates user-defined custom formulas
+- **[fitting.fitting_functions](fitting_functions.md)** - Mathematical functions and curve fitting implementations
+- **[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities and helpers
+- **[fitting.workflow_controller](workflow_controller.md)** - Orchestrates fitting workflows and modes
+- **[fitting.custom_function_evaluator](custom_function_evaluator.md)** - Evaluates user-defined custom formulas
 
 ### Data Loading
 
-- **[loaders.data_loader](../modules/loaders.html)** - High-level data loading interface
-- **[loaders.loading_utils](../modules/loaders.html)** - CSV and Excel file readers
+- **[loaders.data_loader](data_loader.md)** - High-level data loading interface
+- **[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers
 
 ### Visualization
 
-- **[plotting.plot_utils](../modules/plotting.html)** - Plot generation and styling
+- **[plotting.plot_utils](plot_utils.md)** - Plot generation and styling
 
 ### User Interface
 
-- **[frontend.ui_main_menu](../modules/frontend.html)** - Main menu and navigation (Tkinter)
-- **[frontend.ui_dialogs](../modules/frontend.html)** - Dialog windows and user input (Tkinter)
-- **[streamlit_app.app](../modules/streamlit_app.html)** - Web interface (Streamlit)
+- **[frontend.ui_main_menu](ui_main_menu.md)** - Main menu and navigation (Tkinter)
+- **[frontend.keyboard_nav](ui_dialogs.md)** - Keyboard navigation (Tkinter)
+- **[frontend.ui_dialogs](ui_dialogs.md)** - Dialog windows and user input (Tkinter)
+- **[streamlit_app.app](streamlit_app.md)** - Web interface (Streamlit)
 
 ### Utilities
 
-- **[utils.exceptions](../modules/utils.html)** - Custom exception classes
-- **[utils.logger](../modules/utils.html)** - Logging configuration and utilities
-- **[utils.validators](../modules/utils.html)** - Data validation functions
+- **[utils.exceptions](exceptions.md)** - Custom exception classes
+- **[utils.logger](logger.md)** - Logging configuration and utilities
+- **[utils.validators](validators.md)** - Data validation functions
 
 ## Quick Start for Developers
 
@@ -198,11 +201,13 @@ Quick summary:
 
 **Tkinter**:
 - Main menu: Edit `frontend/ui_main_menu.py`
+- Keyboard shortcuts: Edit `frontend/keyboard_nav.py`
 - Dialogs: Edit modules in `frontend/ui_dialogs/` (e.g. `data_selection.py`, `equation.py`)
 - Styling: Configure in `.env` file
 
 **Streamlit**:
 - Entry point: `streamlit_app/app.py`; UI logic in `streamlit_app/sections/`
+- Theme: `streamlit_app/theme.py`
 - CSS in `SIDEBAR_CSS` in `sections/sidebar.py`
 - Add new modes in `sections/modes.py`
 
@@ -489,11 +494,12 @@ def example_function(param1: int, param2: str, param3: Optional[float] = None) -
 
 For detailed documentation of each module, see the individual module pages:
 
-- **Core**: [config](../modules/core.html), [i18n](../modules/core.html)
-- **Fitting**: [fitting_functions](../modules/fitting.html), [fitting_utils](../modules/fitting.html), [workflow_controller](../modules/fitting.html)
-- **Loaders**: [data_loader](../modules/loaders.html), [loading_utils](../modules/loaders.html)
-- **Plotting**: [plot_utils](../modules/plotting.html)
-- **Utils**: [exceptions](../modules/utils.html), [logger](../modules/utils.html), [validators](../modules/utils.html)
+- **Core**: [config](config.md), [i18n](i18n.md)
+- **Fitting**: [fitting_functions](fitting_functions.md), [fitting_utils](fitting_utils.md), [workflow_controller](workflow_controller.md), [custom_function_evaluator](custom_function_evaluator.md)
+- **Loaders**: [data_loader](data_loader.md), [loading_utils](loading_utils.md)
+- **Plotting**: [plot_utils](plot_utils.md)
+- **Frontend**: [ui_main_menu](ui_main_menu.md), [ui_dialogs](ui_dialogs.md)
+- **Utils**: [exceptions](exceptions.md), [logger](logger.md), [validators](validators.md)
 
 ## Contributing
 
