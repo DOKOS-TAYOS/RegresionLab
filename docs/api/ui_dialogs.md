@@ -316,16 +316,15 @@ if show_config_dialog(root):
 
 ## Result Display Dialog
 
-#### `create_result_window(fit_name: str, text: str, equation_str: str, output_path: str, r_squared: float = None) -> Toplevel`
+#### `create_result_window(fit_name: str, text: str, equation_str: str, output_path: str) -> Toplevel`
 
 Create a Tkinter window to display the fitting results.
 
 **Parameters:**
 - `fit_name`: Name of the fit for window title
-- `text`: Formatted text with parameters and uncertainties
+- `text`: Formatted text with parameters, uncertainties, R², and statistics
 - `equation_str`: Formatted equation string
 - `output_path`: Path to the plot image file
-- `r_squared`: Coefficient of determination (R²), optional
 
 **Returns:**
 - The created Toplevel window
@@ -336,10 +335,9 @@ from frontend.ui_dialogs import create_result_window
 
 result_window = create_result_window(
     fit_name='Linear Fit',
-    text='a = 2.0 ± 0.1\nb = 1.0 ± 0.05',
+    text='a = 2.0 ± 0.1\nb = 1.0 ± 0.05\nR²=0.99',
     equation_str='y = 2.0*x + 1.0',
-    output_path='output/fit.png',
-    r_squared=0.99
+    output_path='output/fit.png'
 )
 
 # Window displays:

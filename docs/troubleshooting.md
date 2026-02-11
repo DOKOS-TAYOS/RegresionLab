@@ -323,35 +323,29 @@ If you can't solve the issue, please report it on GitHub with:
 
 ## Future Updates and Roadmap
 
-### Version 0.9.0 (Q2 2026) - Planned
+### Version 0.9.1 (Q1 2026) - Planned
 
 **Major Features**:
-- ✨ **Fixed Custom Formula System**: Complete rewrite using `sympy`.
-- 🚀 **Performance Improvements**: Optimized fitting for large datasets.
 - 📊 **Enhanced Plotting**: Interactive plots, zoom, pan.
+- 🔮 **Prediction Windows**: Input specific X values to get predicted Y values from fitted models.
+- 📐 **Multidimensional Fitting**: Support for fitting functions with multiple independent variables (z = f(x, y)).
+- 🔧 **Data Preprocessing Tools**: Data smoothing, filtering, and transformation utilities.
 
-**Minor Improvements**:
-- Additional predefined equations (exponential, power law, logistic).
-- Improved uncertainty visualization.
-- Configuration GUI (no more manual `.env` editing).
-- Possible to export in other formats as .pdf.
-
-### Version 1.0.0 (Q4 2026) - Planned
+### Version 1.0.0 (Q1 2026) - Planned
 
 **Major Features**:
-- 📱 **Mobile-Optimized Streamlit**: Better tablet/phone experience.
-- 📈 **Advanced Statistics**: Residual analysis, confidence intervals.
+- 📱 **Android Support**: Run RegressionLab on Android devices using Termux terminal emulator.
 
 **Documentation**:
 - Video tutorials.
-- Interactive examples.
 
 ### Long-Term Goals (2027+)
 
 **Under Consideration**:
 - Time-series analysis tools.
-- Mobile app fully integrated.
-- Better fitting with initial parameter estimation.
+- Machine learning models (SVM, Random Forest, Neural Networks).
+- Bayesian regression and uncertainty quantification.
+- Automated model selection and comparison tools.
 
 ### How to Request Features
 
@@ -406,5 +400,5 @@ If you can't solve the issue, please report it on GitHub with:
 
 ---
 
-*Document last updated: January 2026.*
+*Document last updated: February 2026.*
 *If you solved a problem not listed here, please contribute by opening a pull request!*

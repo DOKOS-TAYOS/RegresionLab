@@ -307,11 +307,11 @@ y_name = 'temperature'
 data_dict = {col: data[col].values for col in data.columns}
 
 # 5. Perform fitting
-param_text, y_fitted, equation, r_squared = fit_linear_function_with_n(
+text, y_fitted, equation = fit_linear_function_with_n(
     data_dict, x_name, y_name
 )
 
-print(f"Fitting complete: R² = {r_squared:.4f}")
+print(f"Fitting complete:\n{text}")  # R² is included in the text output
 ```
 
 ## Performance Considerations

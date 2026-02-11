@@ -42,26 +42,26 @@ evaluator = CustomFunctionEvaluator("a*exp(-b*x)", ["a", "b"])
 
 ### Methods
 
-#### `fit(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit(data: Union[dict, pd.DataFrame], x_name: str, y_name: str) -> Tuple[str, NDArray, str]`
 
 Perform curve fitting using the custom function.
 
 This method uses the generic_fit function from fitting_utils to perform the actual curve fitting with error propagation.
 
 **Parameters:**
-- `data`: Data dictionary containing x, y and their uncertainties
+- `data`: Data dictionary or DataFrame containing x, y and their uncertainties
 - `x_name`: Name of the independent variable
 - `y_name`: Name of the dependent variable
 
 **Returns:**
-- Tuple of `(text, y_fitted, equation, r_squared)`:
-  - `text`: Formatted text with parameters and uncertainties
+- Tuple of `(text, y_fitted, equation)`:
+  - `text`: Formatted text with parameters, uncertainties, R², and statistics
   - `y_fitted`: Array with fitted y values
   - `equation`: Formatted equation with parameter values
-  - `r_squared`: Coefficient of determination (R²)
 
 **Raises:**
 - `FittingError`: If fitting fails
+- `EquationError`: If equation evaluation fails
 
 **Example:**
 ```python
@@ -75,10 +75,10 @@ evaluator = CustomFunctionEvaluator("a*x**2 + b", ["a", "b"])
 data = pd.DataFrame({'x': [1, 2, 3, 4], 'y': [2, 5, 10, 17]})
 
 # Perform fit
-text, y_fitted, equation, r_squared = evaluator.fit(data, 'x', 'y')
+text, y_fitted, equation = evaluator.fit(data, 'x', 'y')
 
 print(f"Equation: {equation}")
-print(f"R²: {r_squared:.4f}")
+print(f"Results:\n{text}")  # R² is included in the text output
 ```
 
 #### `get_function() -> Callable`
@@ -220,10 +220,10 @@ data = pd.DataFrame({
 })
 
 # Perform fit
-text, y_fitted, equation, r_squared = evaluator.fit(data, 'x', 'y')
+text, y_fitted, equation = evaluator.fit(data, 'x', 'y')
 
 print(equation)  # y=a*x**2 + b*x + c
-print(f"R² = {r_squared:.4f}")
+print(f"Results:\n{text}")  # R² is included in the text output
 ```
 
 ### Exponential Decay
@@ -242,7 +242,7 @@ data = pd.DataFrame({
     'uy': [0.2] * 5
 })
 
-text, y_fitted, equation, r_squared = evaluator.fit(data, 'x', 'y')
+text, y_fitted, equation = evaluator.fit(data, 'x', 'y')
 ```
 
 ### Trigonometric Function
@@ -261,7 +261,7 @@ data = pd.DataFrame({
     'uy': [0.1] * 5
 })
 
-text, y_fitted, equation, r_squared = evaluator.fit(data, 'x', 'y')
+text, y_fitted, equation = evaluator.fit(data, 'x', 'y')
 ```
 
 ## Integration with Workflow
@@ -284,7 +284,7 @@ eq_id, fit_func = coordinate_custom_equation(
 
 if fit_func:
     # Use like any other fitting function
-    text, y_fitted, equation, r_squared = fit_func(data, 'x', 'y')
+    text, y_fitted, equation = fit_func(data, 'x', 'y')
 ```
 
 ## Best Practices

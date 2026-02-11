@@ -7,10 +7,10 @@ Configuration package for RegressionLab.
 The `config` package centralizes all application configuration, constants, and settings. It is split into submodules; the main package re-exports everything so that `from config import PLOT_CONFIG`, `from config import __version__`, etc. continue to work.
 
 **Package structure:**
-- **`config/env.py`** – Environment variables, `.env` loading, `get_env`, `get_current_env_values`, `write_env_file`
-- **`config/theme.py`** – `UI_THEME`, `UI_STYLE`, `PLOT_CONFIG`, `FONT_CONFIG`, `setup_fonts`
+- **`config/env.py`** – Environment variables, `.env` loading, validation, `get_env`, `get_env_from_schema`, `get_current_env_values`, `write_env_file`, `validate_all_env_values`, `initialize_and_validate_config`, `ENV_SCHEMA`, `DEFAULT_LOG_FILE`, `DEFAULT_LOG_LEVEL`, `DONATIONS_URL`
+- **`config/theme.py`** – `UI_THEME`, `UI_STYLE`, `PLOT_CONFIG`, `FONT_CONFIG`, `BUTTON_STYLE_PRIMARY`, `BUTTON_STYLE_SECONDARY`, `BUTTON_STYLE_DANGER`, `BUTTON_STYLE_ACCENT`, `SPINBOX_STYLE`, `setup_fonts`, `get_entry_font`, `configure_ttk_styles`, `apply_hover_to_children`
 - **`config/paths.py`** – `FILE_CONFIG`, `get_project_root`, `ensure_output_directory`, `get_output_path`
-- **`config/constants.py`** – `__version__`, `EQUATIONS`, `AVAILABLE_EQUATION_TYPES`, `EXIT_SIGNAL`, `MATH_FUNCTION_REPLACEMENTS`, `SUPPORTED_LANGUAGE_CODES`, `LANGUAGE_ALIASES`, `DATA_FILE_TYPES`
+- **`config/constants.py`** – `__version__`, `EQUATIONS`, `AVAILABLE_EQUATION_TYPES`, `EXIT_SIGNAL`, `MATH_FUNCTION_REPLACEMENTS`, `SUPPORTED_LANGUAGE_CODES`, `LANGUAGE_ALIASES`, `DEFAULT_LANGUAGE`, `DATA_FILE_TYPES`
 - **`config/equations.yaml`** – Single source of truth for equation definitions (function name, formula, format, param_names). Loaded by `constants.py` into `EQUATIONS`.
 
 Usage remains the same: import from `config` (e.g. `from config import PLOT_CONFIG, get_project_root`).
@@ -124,26 +124,127 @@ FONT_CONFIG = {
 
 ### Configuration Functions
 
-#### `get_env(key, default, cast_type=str)`
+#### Environment Functions
 
-Generic function to get environment variables with type casting.
+##### `get_env(key, default, cast_type=str)`
+
+Get environment variable with type casting, validation, and default value.
 
 ```python
-def get_env(key: str, default, cast_type=str):
+def get_env(
+    key: str,
+    default: Any,
+    cast_type: Type[Union[str, int, float, bool]] = str
+) -> Union[str, int, float, bool]:
     """
-    Get environment variable with type casting and default value.
+    Get environment variable with type casting, validation, and default value.
+    
+    This function validates the value according to ENV_SCHEMA rules. If validation
+    fails, the default value is returned.
     
     Args:
         key: Environment variable name
-        default: Default value if variable not found
+        default: Default value if variable not found or invalid
         cast_type: Type to cast the value to (str, int, float, bool)
         
     Returns:
-        The environment variable value cast to the specified type, or default
+        The environment variable value cast to the specified type, validated,
+        or default if invalid or missing
     """
 ```
 
-#### `setup_fonts()`
+##### `get_env_from_schema(key)`
+
+Get environment variable using `ENV_SCHEMA`: default and cast_type come from the schema.
+
+```python
+def get_env_from_schema(key: str) -> Any:
+    """
+    Get environment variable using ENV_SCHEMA: default and cast_type come from
+    the schema. Use this when the key is defined in ENV_SCHEMA to avoid
+    duplicating defaults.
+    
+    Args:
+        key: Environment variable name (must exist in ENV_SCHEMA)
+        
+    Returns:
+        The validated value from get_env(key, default, cast_type)
+        
+    Raises:
+        KeyError: If key is not in ENV_SCHEMA
+    """
+```
+
+##### `validate_all_env_values()`
+
+Validate all environment values according to `ENV_SCHEMA` and return validation results.
+
+```python
+def validate_all_env_values() -> dict[str, tuple[Any, bool]]:
+    """
+    Validate all environment values according to ENV_SCHEMA and return
+    validation results.
+    
+    Returns:
+        Dictionary mapping environment keys to tuples of (corrected_value, was_corrected).
+        was_corrected is True if the value was invalid and had to be corrected.
+    """
+```
+
+##### `get_current_env_values()`
+
+Collect current environment values for all keys defined in `ENV_SCHEMA`.
+
+```python
+def get_current_env_values() -> dict[str, str]:
+    """
+    Collect current environment values for all keys defined in ENV_SCHEMA.
+    
+    Values are read using get_env so casting, defaults and boolean
+    handling are applied consistently. Booleans are converted to the strings
+    "true" or "false" so they can be written back to .env files.
+    
+    Returns:
+        Dictionary mapping environment keys to their string representation
+    """
+```
+
+##### `write_env_file(env_path, values)`
+
+Write a `.env` file with the given key=value pairs.
+
+```python
+def write_env_file(env_path: Path, values: dict[str, str]) -> None:
+    """
+    Write a .env file with the given key=value pairs.
+    
+    Only keys present in ENV_SCHEMA are written, and values are quoted
+    when they contain spaces, # or line breaks.
+    
+    Args:
+        env_path: Destination path for the .env file
+        values: Mapping from environment keys to their desired string values
+    """
+```
+
+##### `initialize_and_validate_config()`
+
+Initialize configuration and validate all environment values. Should be called at application startup.
+
+```python
+def initialize_and_validate_config() -> None:
+    """
+    Initialize configuration and validate all environment values.
+    
+    This function should be called at application startup to ensure all
+    configuration values are valid. Invalid values are automatically corrected
+    to their defaults, and warnings are logged if any corrections were made.
+    """
+```
+
+#### Theme Functions
+
+##### `setup_fonts()`
 
 Setup and return font properties for plots.
 
@@ -158,7 +259,52 @@ def setup_fonts() -> Tuple[FontProperties, FontProperties]:
     """
 ```
 
-#### `get_project_root() -> Path`
+##### `get_entry_font()`
+
+Get font tuple for ttk Entry and Combobox (unified with UI base font).
+
+```python
+def get_entry_font() -> tuple[str, int]:
+    """
+    Font tuple for ttk Entry and Combobox (unified with UI base font).
+    
+    Returns:
+        Tuple of (font_family, font_size)
+    """
+```
+
+##### `configure_ttk_styles(root)`
+
+Configure ttk styles from the unified `UI_STYLE`. Call once after creating the Tk root.
+
+```python
+def configure_ttk_styles(root: Any) -> None:
+    """
+    Configure ttk styles from the unified UI_STYLE. Call once after creating
+    the Tk root. Uses 'clam' theme for consistent field colors.
+    
+    Args:
+        root: Tkinter root window
+    """
+```
+
+##### `apply_hover_to_children(parent)`
+
+Apply hover effects to all children widgets of a parent widget.
+
+```python
+def apply_hover_to_children(parent: Any) -> None:
+    """
+    Apply hover effects to all children widgets of a parent widget.
+    
+    Args:
+        parent: Parent Tkinter widget
+    """
+```
+
+#### Path Functions
+
+##### `get_project_root() -> Path`
 
 Get the project root directory.
 
@@ -172,7 +318,7 @@ def get_project_root() -> Path:
     """
 ```
 
-#### `ensure_output_directory(output_dir=None) -> str`
+##### `ensure_output_directory(output_dir=None) -> str`
 
 Create output directory if it doesn't exist.
 
@@ -192,7 +338,7 @@ def ensure_output_directory(output_dir: str = None) -> str:
     """
 ```
 
-#### `get_output_path(fit_name, output_dir=None) -> str`
+##### `get_output_path(fit_name, output_dir=None) -> str`
 
 Get the full output path for a plot.
 
@@ -269,7 +415,10 @@ Equation-to-function mapping is provided by the **`function`** field of each ent
 ### Getting Current Configuration
 
 ```python
-from config import PLOT_CONFIG, UI_THEME, FONT_CONFIG, __version__, get_project_root
+from config import (
+    PLOT_CONFIG, UI_THEME, FONT_CONFIG, __version__, get_project_root,
+    get_current_env_values, validate_all_env_values
+)
 
 # Application version
 print(f"RegressionLab v{__version__}")
@@ -288,6 +437,16 @@ print(f"Font family: {FONT_CONFIG['family']}")
 # Project root
 root = get_project_root()
 print(f"Project root: {root}")
+
+# Get all current environment values
+env_values = get_current_env_values()
+print(f"Current language: {env_values['LANGUAGE']}")
+
+# Validate all environment values
+validation_results = validate_all_env_values()
+for key, (value, was_corrected) in validation_results.items():
+    if was_corrected:
+        print(f"Warning: {key} was corrected to {value}")
 ```
 
 ### Checking Available Equations

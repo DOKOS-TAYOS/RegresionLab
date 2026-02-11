@@ -82,6 +82,7 @@ RegressionLab/
 - **[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities and helpers
 - **[fitting.workflow_controller](workflow_controller.md)** - Orchestrates fitting workflows and modes
 - **[fitting.custom_function_evaluator](custom_function_evaluator.md)** - Evaluates user-defined custom formulas
+- **[fitting.estimators](estimators.md)** - Parameter estimation functions for initial guesses
 
 ### Data Loading
 
@@ -95,8 +96,9 @@ RegressionLab/
 ### User Interface
 
 - **[frontend.ui_main_menu](ui_main_menu.md)** - Main menu and navigation (Tkinter)
-- **[frontend.keyboard_nav](ui_dialogs.md)** - Keyboard navigation (Tkinter)
 - **[frontend.ui_dialogs](ui_dialogs.md)** - Dialog windows and user input (Tkinter)
+- **[frontend.image_utils](image_utils.md)** - Image loading and scaling utilities
+- **[frontend.keyboard_nav](keyboard_nav.md)** - Keyboard navigation utilities
 - **[streamlit_app.app](streamlit_app.md)** - Web interface (Streamlit)
 
 ### Utilities
@@ -201,7 +203,8 @@ Quick summary:
 
 **Tkinter**:
 - Main menu: Edit `frontend/ui_main_menu.py`
-- Keyboard shortcuts: Edit `frontend/keyboard_nav.py`
+- Keyboard navigation: Edit `frontend/keyboard_nav.py` (see [keyboard_nav](keyboard_nav.md))
+- Image utilities: Edit `frontend/image_utils.py` (see [image_utils](image_utils.md))
 - Dialogs: Edit modules in `frontend/ui_dialogs/` (e.g. `data_selection.py`, `equation.py`)
 - Styling: Configure in `.env` file
 
@@ -303,10 +306,10 @@ def test_ajlineal_perfect_fit():
     
     data = pd.DataFrame({'x': x, 'y': y})
     
-    param_text, y_fitted, equation, r_squared = ajlineal(data, 'x', 'y')
+    text, y_fitted, equation = ajlineal(data, 'x', 'y')
     
-    # Check R² is nearly perfect
-    assert r_squared > 0.9999
+    # Check R² is nearly perfect (R² is included in text output)
+    assert 'R²' in text or 'R^2' in text
     
     # Check fitted values match data
     np.testing.assert_array_almost_equal(y_fitted, y, decimal=10)
@@ -324,20 +327,22 @@ def test_ajlineal_various_slopes(slope, n_points):
     
     data = pd.DataFrame({'x': x, 'y': y})
     
-    _, _, _, r_squared = ajlineal(data, 'x', 'y')
+    text, _, _ = ajlineal(data, 'x', 'y')
     
-    # Even with noise, should be good fit
-    assert r_squared > 0.95
+    # Even with noise, should be good fit (R² is included in text output)
+    assert 'R²' in text or 'R^2' in text
 ```
 
 ## API Conventions
 
 ### Return Values
 
-**Fitting functions** return a 4-tuple:
+**Fitting functions** return a 3-tuple:
 ```python
-(parameter_text: str, y_fitted: NDArray, equation: str, r_squared: float)
+(text: str, y_fitted: NDArray, equation: str)
 ```
+
+Where `text` contains formatted parameters, uncertainties, R², and statistics.
 
 **Data loaders** return pandas DataFrame
 
@@ -495,10 +500,10 @@ def example_function(param1: int, param2: str, param3: Optional[float] = None) -
 For detailed documentation of each module, see the individual module pages:
 
 - **Core**: [config](config.md), [i18n](i18n.md)
-- **Fitting**: [fitting_functions](fitting_functions.md), [fitting_utils](fitting_utils.md), [workflow_controller](workflow_controller.md), [custom_function_evaluator](custom_function_evaluator.md)
+- **Fitting**: [fitting_functions](fitting_functions.md), [fitting_utils](fitting_utils.md), [workflow_controller](workflow_controller.md), [custom_function_evaluator](custom_function_evaluator.md), [estimators](estimators.md)
 - **Loaders**: [data_loader](data_loader.md), [loading_utils](loading_utils.md)
 - **Plotting**: [plot_utils](plot_utils.md)
-- **Frontend**: [ui_main_menu](ui_main_menu.md), [ui_dialogs](ui_dialogs.md)
+- **Frontend**: [ui_main_menu](ui_main_menu.md), [ui_dialogs](ui_dialogs.md), [image_utils](image_utils.md), [keyboard_nav](keyboard_nav.md), [streamlit_app](streamlit_app.md)
 - **Utils**: [exceptions](exceptions.md), [logger](logger.md), [validators](validators.md)
 
 ## Contributing
