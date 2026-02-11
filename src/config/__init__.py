@@ -17,10 +17,18 @@ from .env import (
     write_env_file,
 )
 from .theme import (
+    BUTTON_STYLE_ACCENT,
+    BUTTON_STYLE_DANGER,
+    BUTTON_STYLE_PRIMARY,
+    BUTTON_STYLE_SECONDARY,
     FONT_CONFIG,
     PLOT_CONFIG,
+    SPINBOX_STYLE,
     UI_STYLE,
     UI_THEME,
+    apply_hover_to_children,
+    configure_ttk_styles,
+    get_entry_font,
     setup_fonts,
 )
 from .paths import (
@@ -53,10 +61,18 @@ __all__ = [
     'validate_all_env_values',
     'write_env_file',
     # From theme
+    'BUTTON_STYLE_ACCENT',
+    'BUTTON_STYLE_DANGER',
+    'BUTTON_STYLE_PRIMARY',
+    'BUTTON_STYLE_SECONDARY',
     'FONT_CONFIG',
     'PLOT_CONFIG',
+    'SPINBOX_STYLE',
     'UI_STYLE',
     'UI_THEME',
+    'apply_hover_to_children',
+    'configure_ttk_styles',
+    'get_entry_font',
     'setup_fonts',
     # From paths
     'FILE_CONFIG',

@@ -1,10 +1,10 @@
 """Streamlit app sections: sidebar, data, fitting, results, help, modes."""
 
 from .sidebar import (
+    cycle_language,
     initialize_session_state,
     setup_sidebar,
     show_logo,
-    toggle_language,
 )
 from .data import (
     get_temp_output_dir,
@@ -23,13 +23,14 @@ from .modes import (
     mode_checker_fitting,
     mode_multiple_datasets,
     mode_total_fitting,
+    mode_view_data,
 )
 
 __all__ = [
     'initialize_session_state',
     'setup_sidebar',
     'show_logo',
-    'toggle_language',
+    'cycle_language',
     'get_temp_output_dir',
     'load_uploaded_file',
     'show_data_with_pair_plots',
@@ -42,4 +43,5 @@ __all__ = [
     'mode_checker_fitting',
     'mode_multiple_datasets',
     'mode_total_fitting',
+    'mode_view_data',
 ]

@@ -6,14 +6,21 @@ Contains the main application window and exit confirmation dialog.
 # Standard library
 import os
 import sys
-from tkinter import Tk, Toplevel, Frame, Label, Button, TOP, LEFT, RIGHT
+from tkinter import Tk, Toplevel, TOP, LEFT, RIGHT
+from tkinter import ttk
 from typing import Callable
 
 # Third-party packages
 from PIL import Image, ImageTk
 
 # Local imports
-from config import UI_STYLE
+from config import (
+    UI_STYLE,
+    __version__,
+    configure_ttk_styles,
+)
+from frontend.keyboard_nav import setup_arrow_enter_navigation
+from frontend.ui_dialogs.tooltip import bind_tooltip
 from i18n import t
 
 
@@ -40,22 +47,18 @@ def create_main_menu(
         The main Tk window instance
     """
     menu = Tk()
-    menu.title(t('menu.title'))
+    menu.title(f"{t('menu.title')} — v{__version__}")
     menu.attributes('-fullscreen', False)
     menu.configure(background=UI_STYLE['bg'])
-    menu.resizable(width=True, height=True)
+    menu.resizable(width=False, height=False)
+    configure_ttk_styles(menu)
     # Closing with X: same as Exit button (show confirmation, then close app)
     menu.protocol("WM_DELETE_WINDOW", lambda: show_exit_confirmation(menu))
 
-    # Create main frame
-    main_frame = Frame(
-        menu,
-        borderwidth=2,
-        relief="raised",
-        bg=UI_STYLE['bg'],
-        bd=UI_STYLE['border_width']
-    )
-    
+    # Main frame: ttk with Raised.TFrame (lighter border) and inner content frame
+    outer_frame = ttk.Frame(menu, style='Raised.TFrame')
+    main_frame = ttk.Frame(outer_frame, padding=UI_STYLE['border_width'])
+
     # Load and display logo
     logo_label = None
     try:
@@ -77,11 +80,7 @@ def create_main_menu(
             logo_photo = ImageTk.PhotoImage(logo_image)
             
             # Create label for logo
-            logo_label = Label(
-                main_frame,
-                image=logo_photo,
-                bg=UI_STYLE['bg']
-            )
+            logo_label = ttk.Label(main_frame, image=logo_photo)
             # Keep a reference to prevent garbage collection
             logo_label.image = logo_photo
     except Exception as e:
@@ -89,95 +88,84 @@ def create_main_menu(
         print(f"Warning: Could not load logo: {e}")
     
     # Welcome message
-    message = Label(
-        main_frame,
-        text=t('menu.welcome'),
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size_large'], 'bold')
-    )
-    
-    # Button configuration
-    btn_config = {
-        'width': UI_STYLE['button_width_wide'],
-        'bg': UI_STYLE['bg'],
-        'fg': UI_STYLE['fg'],
-        'activebackground': UI_STYLE['active_bg'],
-        'activeforeground': UI_STYLE['active_fg'],
-        'font': (UI_STYLE['font_family'], UI_STYLE['font_size'])
-    }
-    
-    # Create buttons
-    normal_fitting_button = Button(
+    message = ttk.Label(main_frame, text=t('menu.welcome'), style='LargeBold.TLabel')
+    version_label = ttk.Label(main_frame, text=f"v{__version__}")
+
+    # Primary actions: main fitting and data options (green)
+    normal_fitting_button = ttk.Button(
         main_frame,
         text=t('menu.normal_fitting'),
         command=normal_fitting_callback,
-        **btn_config
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
     )
-    
-    multiple_datasets_button = Button(
+    multiple_datasets_button = ttk.Button(
         main_frame,
         text=t('menu.multiple_datasets'),
         command=single_fit_multiple_datasets_callback,
-        **btn_config
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
     )
-    
-    help_button = Button(
-        main_frame,
-        text=t('menu.information'),
-        command=help_callback,
-        **btn_config
-    )
-    
-    multiple_fits_button = Button(
+    multiple_fits_button = ttk.Button(
         main_frame,
         text=t('menu.checker_fitting'),
         command=multiple_fits_single_dataset_callback,
-        **btn_config
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
     )
-    
-    view_data_button = Button(
-        main_frame,
-        text=t('menu.view_data'),
-        command=watch_data_callback,
-        **btn_config
-    )
-    
-    all_fits_button = Button(
+    all_fits_button = ttk.Button(
         main_frame,
         text=t('menu.total_fitting'),
         command=all_fits_single_dataset_callback,
-        **btn_config
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
     )
-    
-    # Config button (next to exit)
-    config_button = Button(
+    view_data_button = ttk.Button(
+        main_frame,
+        text=t('menu.view_data'),
+        command=watch_data_callback,
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
+    )
+    help_button = ttk.Button(
+        main_frame,
+        text=t('menu.information'),
+        command=help_callback,
+        style='Primary.TButton',
+        width=UI_STYLE['button_width_wide'],
+    )
+
+    # Secondary: config (neutral)
+    config_button = ttk.Button(
         main_frame,
         text=t('menu.config'),
         command=lambda: _handle_config(menu),
+        style='Secondary.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
     )
-    
-    # Exit button with different styling
-    exit_button = Button(
+
+    # Danger: exit (red)
+    exit_button = ttk.Button(
         main_frame,
         text=t('menu.exit'),
         command=lambda: show_exit_confirmation(menu),
+        style='Danger.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['button_fg_cancel'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
     )
+
+    # Tooltips for menu buttons
+    bind_tooltip(normal_fitting_button, t('menu.tooltip_normal_fitting'))
+    bind_tooltip(multiple_datasets_button, t('menu.tooltip_multiple_datasets'))
+    bind_tooltip(multiple_fits_button, t('menu.tooltip_checker_fitting'))
+    bind_tooltip(all_fits_button, t('menu.tooltip_total_fitting'))
+    bind_tooltip(view_data_button, t('menu.tooltip_view_data'))
+    bind_tooltip(help_button, t('menu.tooltip_information'))
+    bind_tooltip(config_button, t('menu.tooltip_config'))
+    bind_tooltip(exit_button, t('menu.tooltip_exit'))
     
     # Layout
-    main_frame.grid(column=0, row=0)
+    outer_frame.grid(column=0, row=0)
+    main_frame.pack(fill='both', expand=True)
     
     # Place logo if it was loaded successfully
     _pad = UI_STYLE['padding']
@@ -186,6 +174,8 @@ def create_main_menu(
         logo_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
         current_row += 1
     message.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
+    current_row += 1
+    version_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=(0, 6))
     current_row += 1
     normal_fitting_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
     multiple_datasets_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
@@ -198,15 +188,27 @@ def create_main_menu(
     current_row += 1
     config_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
     exit_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
-    
+
+    setup_arrow_enter_navigation([
+        [normal_fitting_button, multiple_datasets_button],
+        [multiple_fits_button, all_fits_button],
+        [help_button, view_data_button],
+        [config_button, exit_button],
+    ])
     normal_fitting_button.focus_set()
-    
+
     return menu
 
 
 def _handle_config(menu: Tk) -> None:
     """
-    Open configuration dialog. If user saves, restart the application.
+    Open configuration dialog and restart application if user saves.
+
+    Displays the configuration dialog. If the user accepts and saves changes,
+    the application is restarted to apply the new configuration.
+
+    Args:
+        menu: The main menu Tkinter window (``Tk`` instance).
     """
     from frontend.ui_dialogs import show_config_dialog
     if show_config_dialog(menu):
@@ -227,46 +229,31 @@ def show_exit_confirmation(parent_menu: Tk) -> None:
     exit_level.configure(background=UI_STYLE['bg'])
     
     # Message
-    message = Label(
-        exit_level,
-        text=t('menu.exit_confirm'),
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size_large'])
-    )
-    
-    # Buttons
-    close_button = Button(
+    message = ttk.Label(exit_level, text=t('menu.exit_confirm'), style='Large.TLabel')
+
+    # Buttons: confirm exit = danger, cancel = accent
+    close_button = ttk.Button(
         exit_level,
         text=t('menu.yes'),
         command=lambda: _close_application(parent_menu),
+        style='Danger.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['button_fg_cancel'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
     )
-    
-    abort_button = Button(
+    abort_button = ttk.Button(
         exit_level,
         text=t('menu.no'),
         command=exit_level.destroy,
+        style='Accent.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['button_fg_cyan'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size'])
     )
     
     # Layout
     message.pack(side=TOP, padx=5, pady=UI_STYLE['padding'])
     close_button.pack(side=LEFT, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
     abort_button.pack(side=RIGHT, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    
+
+    setup_arrow_enter_navigation([[close_button, abort_button]])
     close_button.focus_set()
-    exit_level.transient(master=parent_menu)
     # Closing with X = cancel exit (same as "No")
     exit_level.protocol("WM_DELETE_WINDOW", exit_level.destroy)
     parent_menu.wait_window(exit_level)

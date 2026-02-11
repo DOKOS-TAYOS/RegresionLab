@@ -20,5 +20,6 @@ if not exist .venv (
     exit /b 1
 )
 
-REM Activate virtual environment and run the program
-call .venv\Scripts\activate.bat && python src\main_program.py
+REM Activate virtual environment and run the program (start = console closes after launch)
+call .venv\Scripts\activate.bat
+start "" pythonw src\main_program.py

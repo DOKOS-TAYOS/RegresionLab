@@ -401,4 +401,4 @@ All validators provide detailed error messages including:
 
 ---
 
-*For more information about validation, see [Troubleshooting Guide](../troubleshooting.md)*
+*For more information about validation, see [Troubleshooting Guide](../troubleshooting.md).*

@@ -4,14 +4,9 @@ from typing import Any, List, Tuple, Union
 from tkinter import (
     Toplevel,
     Frame,
-    Label,
-    Button,
-    Entry,
     StringVar,
     BooleanVar,
     Canvas,
-    Scrollbar,
-    Checkbutton,
     messagebox,
     ttk,
 )
@@ -19,7 +14,9 @@ from tkinter import (
 from config import (
     ENV_SCHEMA,
     UI_STYLE,
+    apply_hover_to_children,
     get_current_env_values,
+    get_entry_font,
     get_project_root,
     write_env_file,
 )
@@ -30,7 +27,18 @@ _CONFIG_EXPANDED = '\u25bc'
 
 
 def _config_section_for_key(key: str) -> str:
-    """Return section key for grouping env vars in config dialog."""
+    """
+    Determine configuration section for an environment variable key.
+
+    Groups environment variables into logical sections (language, ui, plot,
+    font, paths, links, logging, other) based on key prefixes and names.
+
+    Args:
+        key: Environment variable key (e.g., ``'LANGUAGE'``, ``'UI_BG'``, ``'PLOT_DPI'``).
+
+    Returns:
+        Section identifier string (e.g., ``'language'``, ``'ui'``, ``'plot'``).
+    """
     if key == 'LANGUAGE':
         return 'language'
     if key.startswith('UI_'):
@@ -49,7 +57,16 @@ def _config_section_for_key(key: str) -> str:
 
 
 def _build_config_sections() -> List[Tuple[str, List[dict]]]:
-    """Group ENV_SCHEMA items by section, preserving order of first occurrence."""
+    """
+    Group ENV_SCHEMA items by section, preserving order of first occurrence.
+
+    Organizes environment variable schema items into sections based on their
+    keys, maintaining the order in which sections first appear.
+
+    Returns:
+        List of tuples ``(section_name, [schema_items])``, ordered by first
+        occurrence of each section in ``ENV_SCHEMA``.
+    """
     order: List[str] = []
     sections_dict: dict[str, List[dict]] = {}
     for item in ENV_SCHEMA:
@@ -64,29 +81,26 @@ def _build_config_sections() -> List[Tuple[str, List[dict]]]:
 def show_config_dialog(parent_window: Any) -> bool:
     """
     Show configuration dialog to edit .env fields.
+
     Pre-fills with current env values (or defaults). On Accept, writes .env
     and returns True so the caller can restart the app. On Cancel returns False.
 
+    Args:
+        parent_window: Parent Tkinter window (``Tk`` or ``Toplevel``).
+
     Returns:
-        True if user accepted and .env was written (caller should restart).
-        False if user cancelled.
+        ``True`` if user accepted and ``.env`` was written (caller should restart).
+        ``False`` if user cancelled.
     """
-    config_level = Toplevel(parent_window)
+    config_level = Toplevel()
     config_level.title(t('config.title'))
     config_level.configure(background=UI_STYLE['bg'])
-    config_level.transient(parent_window)
     config_level.grab_set()
 
     current = get_current_env_values()
     result_var: List[bool] = [False]
 
-    main_frame = Frame(
-        config_level,
-        borderwidth=2,
-        relief='raised',
-        bg=UI_STYLE['bg'],
-        bd=UI_STYLE['border_width'],
-    )
+    main_frame = ttk.Frame(config_level, padding=UI_STYLE['border_width'])
     main_frame.pack(padx=UI_STYLE['padding'], pady=6, fill='both', expand=True)
 
     canvas = Canvas(
@@ -94,8 +108,8 @@ def show_config_dialog(parent_window: Any) -> bool:
         bg=UI_STYLE['bg'],
         highlightthickness=0,
     )
-    scrollbar = Scrollbar(main_frame, orient='vertical', command=canvas.yview)
-    inner = Frame(canvas, bg=UI_STYLE['bg'])
+    scrollbar = ttk.Scrollbar(main_frame, orient='vertical', command=canvas.yview)
+    inner = ttk.Frame(canvas)
 
     inner.bind(
         '<Configure>',
@@ -139,45 +153,46 @@ def show_config_dialog(parent_window: Any) -> bool:
     scrollbar.pack(side='right', fill='y')
     canvas.pack(side='left', fill='both', expand=True)
 
-    lbl_style = {
-        'bg': UI_STYLE['bg'],
-        'fg': UI_STYLE['fg'],
-        'font': (UI_STYLE['font_family'], UI_STYLE['font_size']),
-    }
-    desc_style = {
-        'bg': UI_STYLE['bg'],
-        'fg': UI_STYLE['fg'],
-        'font': (UI_STYLE['font_family'], max(8, UI_STYLE['font_size'] - 2)),
-    }
-    entry_style = {
-        'width': UI_STYLE['entry_width'],
-        'fg': UI_STYLE['entry_fg'],
-        'font': (UI_STYLE['font_family'], UI_STYLE['font_size']),
-    }
-
     entries: dict[str, Tuple[str, Union[BooleanVar, StringVar]]] = {}
-    config_desc_labels: List[Label] = []
+    config_desc_labels: List[ttk.Label] = []
+    first_section_ref: List[Tuple[Any, Any, int]] = []
     row_index = 0
-    section_header_style = {
-        'bg': UI_STYLE['bg'],
-        'fg': UI_STYLE['fg'],
-        'font': (UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold'),
-    }
 
     for section, section_items in _build_config_sections():
-        header_frame = Frame(inner, bg=UI_STYLE['bg'], cursor='hand2')
+        header_frame = ttk.Frame(inner, style='ConfigSectionHeader.TFrame')
+        header_frame.bind('<Enter>', lambda e: header_frame.configure(cursor='hand2'))
+        header_frame.bind('<Leave>', lambda e: header_frame.configure(cursor=''))
         arrow_var = StringVar(value=_CONFIG_COLLAPSED)
-        arrow_lbl = Label(header_frame, textvariable=arrow_var, **section_header_style)
-        arrow_lbl.pack(side='left', padx=(0, 4))
-        title_lbl = Label(header_frame, text=t(f'config.section_{section}'), **section_header_style)
-        title_lbl.pack(side='left')
-        header_frame.grid(row=row_index, column=0, columnspan=2, sticky='w', padx=4, pady=(12, 4))
+        arrow_lbl = ttk.Label(
+            header_frame, textvariable=arrow_var, style='ConfigSectionHeader.TLabel'
+        )
+        arrow_lbl.pack(side='left', padx=(10, 6), pady=8)
+        title_lbl = ttk.Label(
+            header_frame,
+            text=t(f'config.section_{section}'),
+            style='ConfigSectionHeader.TLabel',
+        )
+        title_lbl.pack(side='left', pady=8)
+        header_frame.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=(14, 0))
         row_index += 1
 
-        section_frame = Frame(inner, bg=UI_STYLE['bg'])
-        section_frame.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
-        section_frame.grid_remove()
+        content_wrapper = ttk.Frame(inner, style='ConfigSectionContent.TFrame')
+        content_wrapper.grid(row=row_index, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
+        content_wrapper.grid_remove()
+        if not first_section_ref:
+            first_section_ref.append((content_wrapper, arrow_var, row_index))
         row_index += 1
+
+        accent_line = Frame(
+            content_wrapper,
+            width=4,
+            bg=UI_STYLE['widget_hover_bg'],
+            highlightthickness=0,
+        )
+        accent_line.pack(side='left', fill='y')
+        accent_line.pack_propagate(False)
+        section_frame = ttk.Frame(content_wrapper)
+        section_frame.pack(side='left', fill='both', expand=True, padx=(6, 0), pady=(4, 12))
 
         sub_row = 0
         for item in section_items:
@@ -186,12 +201,16 @@ def show_config_dialog(parent_window: Any) -> bool:
             cast_type = item['cast_type']
 
             label_text = t(f'config.label_{key}')
-            Label(section_frame, text=label_text, **lbl_style).grid(
+            ttk.Label(section_frame, text=label_text).grid(
                 row=sub_row, column=0, sticky='w', padx=4, pady=2
             )
             desc_text = t(f'config.desc_{key}')
-            desc_lbl = Label(
-                section_frame, text=desc_text, **desc_style, wraplength=600, justify='left'
+            desc_lbl = ttk.Label(
+                section_frame,
+                text=desc_text,
+                wraplength=600,
+                justify='left',
+                style='ConfigOptionDesc.TLabel',
             )
             desc_lbl.grid(row=sub_row + 1, column=0, columnspan=2, sticky='w', padx=12, pady=(0, 6))
             config_desc_labels.append(desc_lbl)
@@ -199,9 +218,7 @@ def show_config_dialog(parent_window: Any) -> bool:
 
             if cast_type == bool:
                 var = BooleanVar(value=current.get(key, 'false').lower() in ('true', '1', 'yes'))
-                cb = Checkbutton(
-                    section_frame, variable=var, **lbl_style, selectcolor=UI_STYLE['bg']
-                )
+                cb = ttk.Checkbutton(section_frame, variable=var)
                 cb.grid(row=sub_row, column=0, columnspan=2, sticky='w', padx=4, pady=2)
                 entries[key] = ('check', var)
             else:
@@ -225,14 +242,19 @@ def show_config_dialog(parent_window: Any) -> bool:
                         textvariable=sv,
                         values=opts_list,
                         state='readonly',
-                        width=entry_style['width'],
-                        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+                        width=UI_STYLE['entry_width'],
+                        font=get_entry_font(),
                     )
                     combo.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
                     entries[key] = ('entry', sv)
                 else:
                     sv = StringVar(value=current.get(key, str(default)))
-                    ent = Entry(section_frame, textvariable=sv, **entry_style)
+                    ent = ttk.Entry(
+                        section_frame,
+                        textvariable=sv,
+                        width=UI_STYLE['entry_width'],
+                        font=get_entry_font(),
+                    )
                     ent.grid(row=sub_row, column=0, columnspan=2, sticky='ew', padx=4, pady=2)
                     entries[key] = ('entry', sv)
             sub_row += 1
@@ -240,11 +262,11 @@ def show_config_dialog(parent_window: Any) -> bool:
         section_frame.columnconfigure(0, weight=1)
 
         def _make_toggle(
-            content: Frame,
+            content: ttk.Frame,
             arrow: StringVar,
-            header_fr: Frame,
-            arrow_label: Label,
-            title_label: Label,
+            header_fr: ttk.Frame,
+            arrow_label: ttk.Label,
+            title_label: ttk.Label,
         ) -> None:
             def toggle() -> None:
                 if content.winfo_viewable():
@@ -262,10 +284,16 @@ def show_config_dialog(parent_window: Any) -> bool:
             for w in (header_fr, arrow_label, title_label):
                 w.bind('<Button-1>', lambda e: toggle())
 
-        _make_toggle(section_frame, arrow_var, header_frame, arrow_lbl, title_lbl)
+        _make_toggle(content_wrapper, arrow_var, header_frame, arrow_lbl, title_lbl)
+
+    if first_section_ref:
+        first_content, first_arrow, first_row = first_section_ref[0]
+        first_content.grid(row=first_row, column=0, columnspan=2, sticky='ew', padx=0, pady=0)
+        first_arrow.set(_CONFIG_EXPANDED)
 
     inner.columnconfigure(0, weight=1)
     _bind_mousewheel_recursive(inner)
+    apply_hover_to_children(inner)
 
     def _update_config_wraplength(_e: Any = None) -> None:
         w = inner.winfo_width()
@@ -318,31 +346,30 @@ def show_config_dialog(parent_window: Any) -> bool:
     def on_cancel() -> None:
         config_level.destroy()
 
-    btn_frame = Frame(config_level, bg=UI_STYLE['bg'])
+    restart_hint = ttk.Label(
+        config_level,
+        text=t('config.restart_hint'),
+        justify='center',
+    )
+    restart_hint.pack(pady=(0, 4))
+
+    btn_frame = ttk.Frame(config_level)
     btn_frame.pack(padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
 
-    Button(
+    ttk.Button(
         btn_frame,
         text=t('dialog.accept'),
         command=on_accept,
+        style='Primary.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['button_fg_accept'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
     ).pack(side='left', padx=(0, UI_STYLE['padding']))
 
-    Button(
+    ttk.Button(
         btn_frame,
         text=t('dialog.cancel'),
         command=on_cancel,
+        style='Danger.TButton',
         width=UI_STYLE['button_width'],
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['button_fg_cancel'],
-        activebackground=UI_STYLE['active_bg'],
-        activeforeground=UI_STYLE['active_fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
     ).pack(side='left')
 
     screen_width = config_level.winfo_screenwidth()
@@ -350,10 +377,22 @@ def show_config_dialog(parent_window: Any) -> bool:
     dialog_width = min(760, int(screen_width * 0.58))
     dialog_height = min(800, int(screen_height * 0.85))
     config_level.geometry(f'{dialog_width}x{dialog_height}+{max(0, (screen_width - dialog_width) // 2)}+{max(0, (screen_height - dialog_height) // 2)}')
-    config_level.resizable(True, True)
+    config_level.resizable(False, False)
     config_level.update_idletasks()
     _update_config_wraplength()
 
+    def _focus_first_focusable(widget: Any) -> bool:
+        """Set focus to the first focusable child; return True if found."""
+        c = widget.winfo_class()
+        if c in ('Entry', 'TEntry', 'TCombobox', 'TCheckbutton', 'TRadiobutton', 'TButton', 'Button'):
+            widget.focus_set()
+            return True
+        for child in widget.winfo_children():
+            if _focus_first_focusable(child):
+                return True
+        return False
+
+    config_level.after(50, lambda: _focus_first_focusable(config_level))
     config_level.protocol('WM_DELETE_WINDOW', on_cancel)
     parent_window.wait_window(config_level)
     return result_var[0]

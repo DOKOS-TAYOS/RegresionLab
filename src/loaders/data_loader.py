@@ -8,7 +8,7 @@ user interface (frontend).
 Key features:
 
     - Path construction for data files
-    - Loading from CSV and Excel formats
+    - Loading from CSV, TXT and Excel formats
     - Variable name extraction from datasets
     - File categorization by type
 
@@ -110,9 +110,9 @@ def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> 
         filter_uncertainty: If True, exclude uncertainty columns from the result
 
     Returns:
-        List of column names as strings
+        List of column names as strings.
 
-    Example:
+    Examples:
         >>> df = pd.DataFrame({'x': [1,2], 'ux': [0.1, 0.1], 'y': [2,4], 'uy': [0.2, 0.2]})
         >>> get_variable_names(df)
         ['x', 'ux', 'y', 'uy']
@@ -124,7 +124,7 @@ def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> 
         return variable_names
 
     filtered: List[str] = []
-    excluded: set = set()
+    excluded: set[str] = set()
 
     for var in variable_names:
         if var in excluded:

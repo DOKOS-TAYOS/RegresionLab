@@ -4,6 +4,9 @@
 
 set -e  # Exit on error
 
+# Change to project root directory (parent of bin)
+cd "$(dirname "$0")/.."
+
 echo "Starting RegressionLab Streamlit Application..."
 echo ""
 

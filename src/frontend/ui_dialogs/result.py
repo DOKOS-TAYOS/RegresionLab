@@ -1,9 +1,9 @@
 """Result window for displaying fitting results and plot."""
 
 from pathlib import Path
-from tkinter import Toplevel, Frame, Label, Button, Text, PhotoImage
+from tkinter import Frame, Toplevel, Text, PhotoImage, ttk
 
-from config import UI_THEME
+from config import UI_STYLE
 from frontend.image_utils import (
     load_image_scaled,
     plot_display_path,
@@ -14,6 +14,9 @@ from i18n import t
 # Max size for result plot image so it fits in the window
 _RESULT_PLOT_MAX_WIDTH = 920
 _RESULT_PLOT_MAX_HEIGHT = 720
+# Thin raised border for result frames
+_RESULT_FRAME_BORDER = 1
+_RESULT_FRAME_RELIEF = 'raised'
 
 
 def create_result_window(
@@ -22,18 +25,21 @@ def create_result_window(
     """
     Create a Tkinter window to display the fitting results.
 
+    Creates a new ``Toplevel`` window showing the fitting results including
+    parameter values, uncertainties, statistics, and the fitted equation plot.
+
     Args:
-        fit_name: Name of the fit for window title
-        text: Formatted text with parameters and uncertainties
-        equation_str: Formatted equation string
-        output_path: Path to the plot image file
+        fit_name: Name of the fit for window title.
+        text: Formatted text with parameters, uncertainties, and statistics.
+        equation_str: Formatted equation string with parameter values.
+        output_path: Path to the plot image file to display.
 
     Returns:
-        The created Toplevel window
+        The created ``Toplevel`` window instance.
     """
     plot_level = Toplevel()
     plot_level.title(fit_name)
-    plot_level.configure(background=UI_THEME['background'])
+    plot_level.configure(background=UI_STYLE['bg'])
 
     display_path = plot_display_path(output_path)
     preview_to_remove = preview_path_to_remove_after_display(display_path, output_path)
@@ -55,18 +61,20 @@ def create_result_window(
         except Exception:
             plot_level.imagen = None
 
-    equation_width = len(equation_str) + 2
+    equation_lines = equation_str.split('\n')
+    equation_height = max(1, len(equation_lines))
+    equation_width = max(len(line) for line in equation_lines) + 2 if equation_lines else 2
     plot_level.equation_text = Text(
         plot_level,
-        relief=UI_THEME['relief'],
-        borderwidth=UI_THEME['border_width'],
-        bg=UI_THEME['background'],
-        fg=UI_THEME['foreground'],
-        font=(UI_THEME['font_family'], UI_THEME['font_size_large'], 'bold'),
-        height=1,
+        relief=_RESULT_FRAME_RELIEF,
+        borderwidth=_RESULT_FRAME_BORDER,
+        bg=UI_STYLE['bg'],
+        fg=UI_STYLE['fg'],
+        font=(UI_STYLE['font_family'], UI_STYLE['font_size_large'], 'bold'),
+        height=equation_height,
         width=equation_width,
         wrap='none',
-        cursor='arrow'
+        cursor='arrow',
     )
     plot_level.equation_text.insert('1.0', equation_str)
     plot_level.equation_text.config(state='disabled')
@@ -75,65 +83,66 @@ def create_result_window(
     num_lines = len(text_lines)
     max_line_length = max(len(line) for line in text_lines) if text_lines else 0
     param_width = max_line_length + 2
-    plot_level.middle_frame = Frame(plot_level, bg=UI_THEME['background'])
+    plot_level.middle_frame = Frame(
+        plot_level,
+        relief=_RESULT_FRAME_RELIEF,
+        borderwidth=_RESULT_FRAME_BORDER,
+        bg=UI_STYLE['bg'],
+    )
     plot_level.label_parameters = Text(
         plot_level.middle_frame,
-        relief=UI_THEME['relief'],
-        borderwidth=UI_THEME['border_width'],
-        bg=UI_THEME['background'],
-        fg=UI_THEME['foreground'],
-        font=(UI_THEME['font_family'], UI_THEME['font_size']),
+        relief=_RESULT_FRAME_RELIEF,
+        borderwidth=_RESULT_FRAME_BORDER,
+        bg=UI_STYLE['bg'],
+        fg=UI_STYLE['fg'],
+        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
         height=num_lines,
         width=param_width,
         wrap='none',
-        cursor='arrow'
+        cursor='arrow',
     )
     plot_level.label_parameters.insert('1.0', text)
     plot_level.label_parameters.config(state='disabled')
 
     if plot_level.imagen is not None:
-        plot_level.image = Label(
+        plot_level.image = ttk.Label(
             plot_level.middle_frame,
             image=plot_level.imagen,
-            relief=UI_THEME['relief'],
-            borderwidth=UI_THEME['border_width'],
-            bg=UI_THEME['background'],
-            fg=UI_THEME['foreground']
         )
+        plot_level.image.image = plot_level.imagen  # keep reference
     else:
-        plot_level.image = Label(
+        plot_level.image = ttk.Label(
             plot_level.middle_frame,
             text=t('dialog.plot_preview_unavailable'),
-            relief=UI_THEME['relief'],
-            borderwidth=UI_THEME['border_width'],
-            bg=UI_THEME['background'],
-            fg=UI_THEME['foreground'],
-            font=(UI_THEME['font_family'], UI_THEME['font_size'])
         )
 
-    plot_level.accept_button = Button(
+    plot_level.accept_button = ttk.Button(
         plot_level,
         text=t('dialog.accept'),
         command=_on_close,
-        width=UI_THEME['button_width'],
-        bg=UI_THEME['background'],
-        fg=UI_THEME['button_fg'],
-        activebackground=UI_THEME['active_bg'],
-        activeforeground=UI_THEME['active_fg'],
-        font=(UI_THEME['font_family'], UI_THEME['font_size'])
+        style='Primary.TButton',
+        width=UI_STYLE['button_width'],
     )
 
-    plot_level.equation_text.pack(padx=UI_THEME['padding_x'], pady=UI_THEME['padding_y'])
-    plot_level.middle_frame.pack(padx=UI_THEME['padding_x'], pady=UI_THEME['padding_y'])
-    _px, _py = UI_THEME['padding_x'], UI_THEME['padding_y']
+    _pad = UI_STYLE['padding']
+    plot_level.equation_text.pack(padx=_pad, pady=_pad)
+    plot_level.middle_frame.pack(padx=_pad, pady=_pad)
     plot_level.label_parameters.pack(
-        in_=plot_level.middle_frame, side='left', padx=_px, pady=_py
+        in_=plot_level.middle_frame, side='left', padx=_pad, pady=_pad
     )
     plot_level.image.pack(
-        in_=plot_level.middle_frame, side='left', padx=_px, pady=_py
+        in_=plot_level.middle_frame, side='left', padx=_pad, pady=_pad
     )
-    plot_level.accept_button.pack(padx=UI_THEME['padding_x'], pady=UI_THEME['padding_y'])
+    plot_level.accept_button.pack(padx=_pad, pady=_pad)
+
+    for w in (plot_level.equation_text, plot_level.label_parameters, plot_level.accept_button):
+        w.bind("<Return>", lambda e: _on_close())
+        w.bind("<KP_Enter>", lambda e: _on_close())
+    plot_level.bind("<Return>", lambda e: _on_close())
+    plot_level.bind("<KP_Enter>", lambda e: _on_close())
+
     plot_level.accept_button.focus_set()
     plot_level.protocol("WM_DELETE_WINDOW", _on_close)
+    plot_level.resizable(False, False)
 
     return plot_level

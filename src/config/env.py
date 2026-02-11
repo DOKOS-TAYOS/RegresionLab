@@ -4,6 +4,9 @@ import os
 from pathlib import Path
 from typing import Any, Type, Union
 
+# Type for env schema cast_type (str, int, float, bool)
+_EnvCastType = Type[Union[str, int, float, bool]]
+
 from config.constants import (
     LANGUAGE_ALIASES,
     SUPPORTED_LANGUAGE_CODES,
@@ -88,10 +91,8 @@ def _validate_env_value(
             
         # Define validation rules for integer fields
         size_fields = {
-            'UI_BORDER_WIDTH', 'UI_PADDING_X', 'UI_PADDING_Y',
-            'UI_BUTTON_WIDTH', 'UI_BUTTON_WIDTH_WIDE',
-            'UI_FONT_SIZE', 'UI_FONT_SIZE_LARGE',
-            'UI_SPINBOX_WIDTH', 'UI_ENTRY_WIDTH',
+            'UI_PADDING', 'UI_BUTTON_WIDTH',
+            'UI_FONT_SIZE', 'UI_SPINBOX_WIDTH', 'UI_ENTRY_WIDTH',
             'PLOT_FIGSIZE_WIDTH', 'PLOT_FIGSIZE_HEIGHT',
             'PLOT_MARKER_SIZE',
             'FONT_AXIS_SIZE', 'FONT_TICK_SIZE'
@@ -147,7 +148,7 @@ def _validate_env_value(
 def _was_value_corrected(
     key: str,
     current_value: Any,
-    cast_type: type,
+    cast_type: _EnvCastType,
     schema_item: dict[str, Any]
 ) -> bool:
     """
@@ -187,53 +188,86 @@ def _was_value_corrected(
 DEFAULT_LOG_LEVEL = 'INFO'
 DEFAULT_LOG_FILE = 'regressionlab.log'
 
+# Order defines display order in config dialog. Within each section (ui, plot, font, etc.)
+# related options are grouped (e.g. all button settings together).
 ENV_SCHEMA: list[dict[str, Any]] = [
+    # --- language ---
     {'key': 'LANGUAGE', 'default': 'es', 'cast_type': str, 'options': SUPPORTED_LANGUAGE_CODES},
-    {'key': 'UI_BACKGROUND', 'default': 'midnight blue', 'cast_type': str},
-    {'key': 'UI_FOREGROUND', 'default': 'snow', 'cast_type': str},
+    # --- ui: general window / background ---
+    {'key': 'UI_BACKGROUND', 'default': '#181818', 'cast_type': str},
+    {'key': 'UI_FOREGROUND', 'default': '#CCCCCC', 'cast_type': str},
+    # --- ui: buttons (all together) ---
+    {'key': 'UI_BUTTON_BG', 'default': '#1F1F1F', 'cast_type': str},
+    {'key': 'UI_BUTTON_WIDTH', 'default': 12, 'cast_type': int},
     {'key': 'UI_BUTTON_FG', 'default': 'lime green', 'cast_type': str},
     {'key': 'UI_BUTTON_FG_CANCEL', 'default': 'red2', 'cast_type': str},
-    {'key': 'UI_BUTTON_FG_CYAN', 'default': 'cyan2', 'cast_type': str},
-    {'key': 'UI_ACTIVE_BG', 'default': 'navy', 'cast_type': str},
-    {'key': 'UI_ACTIVE_FG', 'default': 'snow', 'cast_type': str},
-    {'key': 'UI_BORDER_WIDTH', 'default': 8, 'cast_type': int},
-    {'key': 'UI_RELIEF', 'default': 'ridge', 'cast_type': str, 'options': ('flat', 'raised', 'sunken', 'groove', 'ridge')},
-    {'key': 'UI_PADDING_X', 'default': 8, 'cast_type': int},
-    {'key': 'UI_PADDING_Y', 'default': 8, 'cast_type': int},
-    {'key': 'UI_BUTTON_WIDTH', 'default': 12, 'cast_type': int},
-    {'key': 'UI_BUTTON_WIDTH_WIDE', 'default': 28, 'cast_type': int},
-    {'key': 'UI_FONT_SIZE', 'default': 16, 'cast_type': int},
-    {'key': 'UI_FONT_SIZE_LARGE', 'default': 20, 'cast_type': int},
-    {'key': 'UI_FONT_FAMILY', 'default': 'Menlo', 'cast_type': str},
+    {'key': 'UI_BUTTON_FG_ACCENT2', 'default': 'yellow', 'cast_type': str},
+    # --- ui: text / inputs ---
+    {'key': 'UI_TEXT_SELECT_BG', 'default': 'steel blue', 'cast_type': str},
+    {'key': 'UI_FONT_SIZE', 'default': 18, 'cast_type': int},
+    {'key': 'UI_FONT_FAMILY', 'default': 'Bahnschrift', 'cast_type': str},
+    {'key': 'UI_PADDING', 'default': 8, 'cast_type': int},
     {'key': 'UI_SPINBOX_WIDTH', 'default': 10, 'cast_type': int},
     {'key': 'UI_ENTRY_WIDTH', 'default': 25, 'cast_type': int},
+    # --- plot: size ---
     {'key': 'PLOT_FIGSIZE_WIDTH', 'default': 12, 'cast_type': int},
     {'key': 'PLOT_FIGSIZE_HEIGHT', 'default': 6, 'cast_type': int},
     {'key': 'DPI', 'default': 100, 'cast_type': int},
     {'key': 'PLOT_SHOW_TITLE', 'default': False, 'cast_type': bool},
+    # --- plot: line ---
     {'key': 'PLOT_LINE_COLOR', 'default': 'black', 'cast_type': str},
     {'key': 'PLOT_LINE_WIDTH', 'default': 1.0, 'cast_type': float},
     {'key': 'PLOT_LINE_STYLE', 'default': '-', 'cast_type': str, 'options': ('-', '--', '-.', ':')},
+    # --- plot: markers ---
     {'key': 'PLOT_MARKER_FORMAT', 'default': 'o', 'cast_type': str, 'options': ('o', 's', '^', 'd', '*')},
     {'key': 'PLOT_MARKER_SIZE', 'default': 5, 'cast_type': int},
-    {'key': 'PLOT_ERROR_COLOR', 'default': 'crimson', 'cast_type': str},
     {'key': 'PLOT_MARKER_FACE_COLOR', 'default': 'crimson', 'cast_type': str},
     {'key': 'PLOT_MARKER_EDGE_COLOR', 'default': 'crimson', 'cast_type': str},
+    {'key': 'PLOT_ERROR_COLOR', 'default': 'crimson', 'cast_type': str},
+    # --- font (plots) ---
     {'key': 'FONT_FAMILY', 'default': 'serif', 'cast_type': str, 'options': ('serif', 'sans-serif', 'monospace', 'cursive', 'fantasy')},
     {'key': 'FONT_TITLE_SIZE', 'default': 'xx-large', 'cast_type': str, 'options': ('xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')},
     {'key': 'FONT_TITLE_WEIGHT', 'default': 'semibold', 'cast_type': str, 'options': ('normal', 'bold', 'light', 'semibold', 'heavy')},
     {'key': 'FONT_AXIS_SIZE', 'default': 30, 'cast_type': int},
     {'key': 'FONT_AXIS_STYLE', 'default': 'italic', 'cast_type': str, 'options': ('normal', 'italic', 'oblique')},
     {'key': 'FONT_TICK_SIZE', 'default': 16, 'cast_type': int},
+    # --- paths ---
     {'key': 'FILE_INPUT_DIR', 'default': 'input', 'cast_type': str},
     {'key': 'FILE_OUTPUT_DIR', 'default': 'output', 'cast_type': str},
-    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}.png', 'cast_type': str},
+    {'key': 'FILE_FILENAME_TEMPLATE', 'default': 'fit_{}', 'cast_type': str},
     {'key': 'FILE_PLOT_FORMAT', 'default': 'png', 'cast_type': str, 'options': ('png', 'jpg', 'pdf')},
-    {'key': 'DONATIONS_URL', 'default': '', 'cast_type': str},
+    # --- links ---
+    {'key': 'DONATIONS_URL', 'default': 'https://www.youtube.com/@whenphysics', 'cast_type': str},
+    # --- logging ---
     {'key': 'LOG_LEVEL', 'default': DEFAULT_LOG_LEVEL, 'cast_type': str, 'options': ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')},
     {'key': 'LOG_FILE', 'default': DEFAULT_LOG_FILE, 'cast_type': str},
     {'key': 'LOG_CONSOLE', 'default': False, 'cast_type': bool},
 ]
+
+# O(1) lookup by key for get_env and related functions
+_ENV_SCHEMA_BY_KEY: dict[str, dict[str, Any]] = {item['key']: item for item in ENV_SCHEMA}
+
+
+def get_env_from_schema(key: str) -> Any:
+    """
+    Get environment variable using ENV_SCHEMA: default and cast_type come from
+    the schema. Use this when the key is defined in ENV_SCHEMA to avoid
+    duplicating defaults.
+
+    Args:
+        key: Environment variable name (must exist in ENV_SCHEMA).
+
+    Returns:
+        The validated value from get_env(key, default, cast_type).
+
+    Raises:
+        KeyError: If key is not in ENV_SCHEMA.
+    """
+    item = _ENV_SCHEMA_BY_KEY.get(key)
+    if item is None:
+        raise KeyError(f"Unknown env key: {key}")
+    return get_env(key, item['default'], item['cast_type'])
+
 
 def get_env(
     key: str,
@@ -259,12 +293,7 @@ def get_env(
     if value is None:
         return default
 
-    # Find schema item for this key
-    schema_item = None
-    for item in ENV_SCHEMA:
-        if item['key'] == key:
-            schema_item = item
-            break
+    schema_item = _ENV_SCHEMA_BY_KEY.get(key)
 
     # If no schema found, use basic casting without validation
     if schema_item is None:
@@ -421,4 +450,4 @@ def initialize_and_validate_config() -> None:
             logger.info(f"  {key}: '{original}' -> '{corrected}' (default)")
 
 
-DONATIONS_URL = get_env('DONATIONS_URL', '').strip()
+DONATIONS_URL = get_env('DONATIONS_URL', 'https://www.youtube.com/@whenphysics').strip()

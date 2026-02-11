@@ -83,13 +83,13 @@ Quadratic function: y = ax²
 
 #### `quadratic_function_complete(t: Numeric, a: float, b: float, c: float) -> Numeric`
 
-Complete quadratic function: y = ax² + bx + c
+Complete quadratic function: `y = c x² + b x + a`
 
 **Parameters:**
 - `t`: Independent variable
-- `a`: Quadratic coefficient
+- `a`: Constant term
 - `b`: Linear coefficient
-- `c`: Constant term
+- `c`: Quadratic coefficient
 
 **Returns:**
 - Calculated y values
@@ -231,21 +231,30 @@ Fitting functions perform curve fitting using the corresponding mathematical fun
 ### Common Signature
 
 ```python
-def fit_*(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+def fit_*(
+    data: DataLike,
+    x_name: str,
+    y_name: str,
+    initial_guess_override: Optional[List[Optional[float]]] = None,
+    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+) -> Tuple[str, NDArray, str]:
     """
     Fit equation to data.
     
     Args:
-        data: Dictionary with x, y, and optional uncertainty arrays
-        x_name: Name of independent variable key in data dictionary
-        y_name: Name of dependent variable key in data dictionary
+        data: Data source (dictionary or DataFrame) with x, y and their uncertainties
+        x_name: Name of independent variable column
+        y_name: Name of dependent variable column
+        initial_guess_override: Optional list overriding automatically estimated
+            parameters; None entries keep the estimate
+        bounds_override: Optional pair (lower, upper) with bounds for parameters;
+            None entries keep the estimator bounds
         
     Returns:
         Tuple containing:
-            - parameter_text: Formatted string of parameters with uncertainties
+            - text: Formatted string of parameters with uncertainties, R², and statistics
             - y_fitted: Fitted y values as ndarray
             - equation: Formatted equation string with parameter values
-            - r_squared: Coefficient of determination (R²)
             
     Raises:
         FittingError: If curve fitting fails to converge
@@ -254,9 +263,9 @@ def fit_*(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, floa
 
 ### Available Fitting Functions
 
-#### `fit_linear_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_linear_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit linear function passing through origin: y = mx
+Fit linear function passing through origin: `y = m x`
 
 **Example:**
 ```python
@@ -269,89 +278,178 @@ data = {
     'uy': np.ones(5) * 0.2
 }
 
-param_text, y_fitted, equation, r_squared = fit_linear_function(data, 'x', 'y')
+text, y_fitted, equation = fit_linear_function(data, 'x', 'y')
 ```
 
-#### `fit_linear_function_with_n(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_linear_function_with_n(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit linear function with intercept: y = mx + n
+Fit linear function with intercept: `y = m x + n`
 
 **Example:**
 ```python
 from fitting.fitting_functions import fit_linear_function_with_n
 
-param_text, y_fitted, equation, r_squared = fit_linear_function_with_n(data, 'x', 'y')
+text, y_fitted, equation = fit_linear_function_with_n(data, 'x', 'y')
 ```
 
-#### `fit_quadratic_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_quadratic_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit quadratic function: y = ax²
+Fit quadratic function: `y = a x²`
 
-#### `fit_quadratic_function_complete(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_quadratic_function_complete(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit complete quadratic function: y = ax² + bx + c
+Fit complete quadratic function: `y = c x² + b x + a`
 
-#### `fit_fourth_power(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+**Parameters:**
+- `a`: Constant term
+- `b`: Linear coefficient  
+- `c`: Quadratic coefficient
 
-Fit fourth power function: y = ax⁴
+**Note:** The parameter order in `initial_guess_override` and `bounds_override` is `[a, b, c]` corresponding to the formula `y = c x² + b x + a`.
 
-#### `fit_sin_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_fourth_power(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit sine function: y = a·sin(bx)
+Fit fourth power function: `y = a x⁴`
+
+#### `fit_sin_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit sine function: `y = a sin(b x)`
 
 **Note:** Uses automatic parameter estimation for better convergence.
 
-#### `fit_sin_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_sin_function_with_c(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit sine function with phase shift: y = a·sin(bx + c)
+Fit sine function with phase shift: `y = a sin(b x + c)`
 
 **Note:** Uses automatic parameter estimation for amplitude, frequency, and phase.
 
-#### `fit_cos_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_cos_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit cosine function: y = a·cos(bx)
+Fit cosine function: `y = a cos(b x)`
 
-#### `fit_cos_function_with_c(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_cos_function_with_c(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit cosine function with phase shift: y = a·cos(bx + c)
+Fit cosine function with phase shift: `y = a cos(b x + c)`
 
-#### `fit_sinh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_tan_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit hyperbolic sine function: y = a·sinh(bx)
+Fit tangent function: `y = a tan(b x)`
 
-#### `fit_cosh_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+**Note:** Uses automatic parameter estimation for better convergence.
 
-Fit hyperbolic cosine function: y = a·cosh(bx)
+#### `fit_tan_function_with_c(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-#### `fit_ln_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+Fit tangent function with phase shift: `y = a tan(b x + c)`
 
-Fit natural logarithm function: y = a·ln(x)
+**Note:** Uses automatic parameter estimation for amplitude, frequency, and phase.
+
+#### `fit_sinh_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit hyperbolic sine function: `y = a sinh(b x)`
+
+#### `fit_cosh_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit hyperbolic cosine function: `y = a cosh(b x)`
+
+#### `fit_ln_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit natural logarithm function: `y = a ln(x)`
 
 **Note:** Requires x values to be positive.
 
-#### `fit_inverse_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+#### `fit_inverse_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-Fit inverse function: y = a/x
+Fit inverse function: `y = a / x`
+
+**Note:** Requires x values to be non-zero.
+
+#### `fit_inverse_square_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit inverse square function: `y = a / x²`
 
 **Note:** Requires x values to be non-zero.
 
-#### `fit_inverse_square_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]`
+### Special Functions
 
-Fit inverse square function: y = a/x²
+#### `fit_gaussian_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
 
-**Note:** Requires x values to be non-zero.
+Fit Gaussian (normal) function: `y = A exp(-(x-μ)² / (2σ²))`
+
+**Parameters:**
+- `A`: Amplitude (peak value)
+- `μ` (mu): Center position
+- `σ` (sigma): Standard deviation (width)
+
+**Note:** Uses automatic parameter estimation and applies bounds to ensure A > 0 and σ > 0.
+
+#### `fit_exponential_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit exponential function: `y = a exp(b x)`
+
+**Parameters:**
+- `a`: Amplitude/prefactor
+- `b`: Exponential rate constant
+
+**Note:** Uses automatic parameter estimation and applies bounds to prevent overflow.
+
+#### `fit_binomial_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit logistic (S-shaped, binomial-type) function: `y = a / (1 + exp(-b (x - c)))`
+
+**Parameters:**
+- `a`: Maximum value/asymptote
+- `b`: Growth rate
+- `c`: Inflection point (midpoint of transition)
+
+**Note:** Uses automatic parameter estimation and applies bounds to ensure a > 0 and b > 0.
+
+#### `fit_square_pulse_function(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit smooth square pulse function (approximated using hyperbolic tangents).
+
+**Parameters:**
+- `A`: Amplitude
+- `t0`: Center time/position
+- `w`: Width of the pulse
+
+**Note:** Uses automatic parameter estimation with bounds based on data range.
+
+#### `fit_hermite_polynomial_3(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit Hermite polynomial expansion up to degree 3: `y = c₀ H₀(x) + c₁ H₁(x) + c₂ H₂(x) + c₃ H₃(x)`
+
+Where `H_k` are physicists' Hermite polynomials.
+
+**Parameters:**
+- `c0`, `c1`, `c2`, `c3`: Coefficients for each polynomial term
+
+#### `fit_hermite_polynomial_4(data: DataLike, x_name: str, y_name: str, initial_guess_override: Optional[List[Optional[float]]] = None, bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None) -> Tuple[str, NDArray, str]`
+
+Fit Hermite polynomial expansion up to degree 4: extends `fit_hermite_polynomial_3` with an additional `c₄ H₄(x)` term.
+
+**Parameters:**
+- `c0`, `c1`, `c2`, `c3`, `c4`: Coefficients for each polynomial term
 
 ## Data Format
 
-All fitting functions expect a data dictionary with the following structure:
+All fitting functions expect a `DataLike` object (dictionary or pandas DataFrame) with the following structure:
 
 ```python
+# Dictionary format
 data = {
     'x': np.array([...]),      # Independent variable (required)
     'y': np.array([...]),      # Dependent variable (required)
     'ux': np.array([...]),     # X uncertainties (optional)
     'uy': np.array([...])      # Y uncertainties (optional, used for weighted fitting)
 }
+
+# DataFrame format
+data = pd.DataFrame({
+    'x': [...],
+    'y': [...],
+    'ux': [...],
+    'uy': [...]
+})
 ```
 
 **Requirements:**
@@ -383,11 +481,11 @@ data = {
 }
 
 # Perform fitting
-param_text, y_fitted, equation, r_squared = fit_linear_function_with_n(data, 'x', 'y')
+text, y_fitted, equation = fit_linear_function_with_n(data, 'x', 'y')
 
-print(f"Parameters:\n{param_text}")
+print(f"Parameters:\n{text}")
 print(f"Equation: {equation}")
-print(f"R² = {r_squared:.4f}")
+# R² is included in the text output
 ```
 
 ### Trigonometric Fitting
@@ -406,7 +504,7 @@ data = {
     'uy': np.ones(100) * 0.1
 }
 
-param_text, y_fitted, equation, r_squared = fit_sin_function_with_c(data, 'x', 'y')
+text, y_fitted, equation = fit_sin_function_with_c(data, 'x', 'y')
 ```
 
 ### Using Mathematical Functions Directly
@@ -444,7 +542,13 @@ See [Extending RegressionLab](../extending.md) for a detailed guide on adding ne
 
 2. **Create fitting wrapper** (`fit_*`):
    ```python
-   def fit_my_function(data: dict, x_name: str, y_name: str) -> Tuple[str, NDArray, str, float]:
+   def fit_my_function(
+       data: DataLike,
+       x_name: str,
+       y_name: str,
+       initial_guess_override: Optional[List[Optional[float]]] = None,
+       bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+   ) -> Tuple[str, NDArray, str]:
        """Fit my custom function to data."""
        return generic_fit(
            data, x_name, y_name,
@@ -479,7 +583,7 @@ See [Extending RegressionLab](../extending.md) for a detailed guide on adding ne
    from utils.exceptions import FittingError
    
    try:
-       result = fit_ln_function(data, 'x', 'y')
+       text, y_fitted, equation = fit_ln_function(data, 'x', 'y')
    except FittingError as e:
        print(f"Fitting failed: {e}")
        # Try different equation or check data quality
@@ -503,7 +607,7 @@ See [Extending RegressionLab](../extending.md) for a detailed guide on adding ne
    from utils.validators import validate_fitting_data
    
    validate_fitting_data(data, 'x', 'y')
-   result = fit_linear_function_with_n(data, 'x', 'y')
+   text, y_fitted, equation = fit_linear_function_with_n(data, 'x', 'y')
    ```
 
 2. **Use Appropriate Function**: Choose the function that matches your data pattern
@@ -511,7 +615,7 @@ See [Extending RegressionLab](../extending.md) for a detailed guide on adding ne
    - Periodic data → `fit_sin_function` or `fit_cos_function`
    - Exponential decay → Consider custom function
 
-3. **Check R² Value**: R² indicates fit quality
+3. **Check R² Value**: R² is included in the text output and indicates fit quality
    - R² > 0.95: Excellent fit
    - R² > 0.85: Good fit
    - R² < 0.70: Poor fit, consider different equation
@@ -528,7 +632,8 @@ All fitting functions use `generic_fit()` from `fitting_utils`, which:
 - Wraps `scipy.optimize.curve_fit` for optimization
 - Handles weighted fitting based on uncertainties
 - Calculates covariance matrix for parameter uncertainties
-- Computes R² coefficient of determination
+- Computes R² coefficient of determination (included in text output)
+- Calculates additional statistics (RMSE, chi-squared, reduced chi-squared, degrees of freedom, confidence intervals)
 - Formats output for display
 
 ### Numerical Considerations

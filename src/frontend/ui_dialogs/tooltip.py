@@ -1,14 +1,23 @@
 """Tooltip binding for Tkinter widgets."""
 
 from typing import Any, Optional
-from tkinter import Label, Toplevel
+from tkinter import Toplevel, ttk
 
 from config import UI_STYLE
 
 
-def _bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
+def bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
     """
-    Bind a tooltip to a widget: show after delay on Enter, hide on Leave.
+    Bind a tooltip to a Tkinter widget.
+
+    Shows a tooltip window after a delay when the mouse enters the widget,
+    and hides it when the mouse leaves. Uses a contrasting background and
+    border so the tooltip is visible over the UI.
+
+    Args:
+        widget: Tkinter widget to bind the tooltip to.
+        text: Tooltip text to display when mouse hovers over the widget.
+        delay_ms: Delay in milliseconds before showing the tooltip (default: ``500``).
     """
     tooltip_window: Optional[Toplevel] = None
     after_id: Optional[str] = None
@@ -20,19 +29,13 @@ def _bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
         tooltip_window = Toplevel(widget)
         tooltip_window.wm_overrideredirect(True)
         tooltip_window.wm_geometry("+0+0")
-        label = Label(
+        tooltip_window.configure(background=UI_STYLE['tooltip_border'])
+        label = ttk.Label(
             tooltip_window,
             text=text,
-            justify="left",
-            bg="#ffffcc",
-            fg="black",
-            relief="solid",
-            borderwidth=1,
-            font=(UI_STYLE['font_family'], max(8, UI_STYLE['font_size'] - 2)),
-            padx=6,
-            pady=4,
+            style='Tooltip.TLabel',
         )
-        label.pack()
+        label.pack(padx=1, pady=1)
         widget.update_idletasks()
         x = widget.winfo_rootx() + 20
         y = widget.winfo_rooty() + widget.winfo_height() + 4

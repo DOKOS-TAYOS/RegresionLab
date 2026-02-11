@@ -2,6 +2,9 @@
 REM Streamlit launcher for RegressionLab (Windows)
 REM This script starts the Streamlit web application
 
+REM Change to project root directory (parent of bin)
+cd /d "%~dp0.."
+
 echo Starting RegressionLab Streamlit Application...
 echo.
 

@@ -10,8 +10,12 @@ from fitting.functions._base import (
     DataLike,
     Numeric,
     estimate_binomial_parameters,
+    estimate_exponential_parameters,
     estimate_gaussian_parameters,
+    estimate_square_pulse_parameters,
     generic_fit,
+    get_equation_format_for_function,
+    get_equation_param_names_for_function,
     merge_bounds,
     merge_initial_guess,
 )
@@ -71,8 +75,8 @@ def fit_gaussian_function(
         data: Data source with ``x``, ``y`` and uncertainties.
         x_name: Name of the independent variable column.
         y_name: Name of the dependent variable column.
-        initial_guess_override: Optional overrides for ``[A, mu, sigma]``.
-        bounds_override: Optional bounds for ``[A, mu, sigma]``.
+        initial_guess_override: Optional overrides for ``[A, μ, σ]``.
+        bounds_override: Optional bounds for ``[A, μ, σ]``.
 
     Returns:
         Tuple ``(text, y_fitted, equation)`` from :func:`generic_fit`.
@@ -92,8 +96,8 @@ def fit_gaussian_function(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_gaussian_function,
-        param_names=['A', 'mu', 'sigma'],
-        equation_template='y={A} exp(-(x-{mu})^2/(2*{sigma}^2))',
+        param_names=get_equation_param_names_for_function('fit_gaussian_function'),
+        equation_template=get_equation_format_for_function('fit_gaussian_function'),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -106,25 +110,6 @@ def fit_exponential_function(
     initial_guess_override: Optional[List[Optional[float]]] = None,
     bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
 ) -> Tuple[str, NDArray, str]:
-    x = np.asarray(data[x_name], dtype=float)
-    y = np.asarray(data[y_name], dtype=float)
-    x_range = float(np.ptp(x))
-    if x_range < 1e-12:
-        x_range = 1.0
-    b_max = 700.0 / x_range
-    computed_bounds = ([-np.inf, -b_max], [np.inf, b_max])
-    if np.all(y > 1e-15):
-        log_y = np.log(y)
-        slope, intercept = np.polyfit(x, log_y, 1)
-        b_0 = float(slope)
-        a_0 = float(np.exp(intercept))
-        b_0 = np.clip(b_0, -b_max + 0.01, b_max - 0.01)
-    else:
-        a_0 = float(y[0]) if np.abs(y[0]) > 1e-12 else 1.0
-        b_0 = 0.0 if np.abs(a_0) < 1e-12 else np.clip(
-            np.log(np.abs(y[-1]) / np.abs(y[0]) + 1e-12) / (x[-1] - x[0] + 1e-12),
-            -b_max + 0.01, b_max - 0.01
-        )
     """
     Fit an exponential model :math:`y = a \\exp(b x)`.
 
@@ -138,6 +123,14 @@ def fit_exponential_function(
     Returns:
         Tuple ``(text, y_fitted, equation)`` from :func:`generic_fit`.
     """
+    x = np.asarray(data[x_name], dtype=float)
+    y = np.asarray(data[y_name], dtype=float)
+    x_range = float(np.ptp(x))
+    if x_range < 1e-12:
+        x_range = 1.0
+    b_max = 700.0 / x_range
+    computed_bounds = ([-np.inf, -b_max], [np.inf, b_max])
+    a_0, b_0 = estimate_exponential_parameters(x, y)
     initial_guess = merge_initial_guess([a_0, b_0], initial_guess_override)
     bounds = (
         merge_bounds(computed_bounds, bounds_override[0], bounds_override[1], 2)
@@ -147,8 +140,8 @@ def fit_exponential_function(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_exponential_function,
-        param_names=['a', 'b'],
-        equation_template='y={a} exp({b}x)',
+        param_names=get_equation_param_names_for_function('fit_exponential_function'),
+        equation_template=get_equation_format_for_function('fit_exponential_function'),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -188,8 +181,8 @@ def fit_binomial_function(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_binomial_function,
-        param_names=['a', 'b', 'c'],
-        equation_template='y={a}/(1+exp(-{b}(x-{c})))',
+        param_names=get_equation_param_names_for_function('fit_binomial_function'),
+        equation_template=get_equation_format_for_function('fit_binomial_function'),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -220,10 +213,8 @@ def fit_square_pulse_function(
     """
     x = data[x_name]
     y = data[y_name]
-    A_0 = float(np.max(y) - np.min(y)) or 1.0
-    t0_0 = float(x[np.argmax(y)])
+    A_0, t0_0, w_0 = estimate_square_pulse_parameters(x, y)
     x_range = float(np.ptp(x))
-    w_0 = x_range / 5.0 if x_range > 0 else 1.0
     x_min, x_max = float(np.min(x)), float(np.max(x))
     computed_bounds = (
         [1e-9, x_min - x_range, 1e-9],
@@ -238,8 +229,8 @@ def fit_square_pulse_function(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_square_pulse_function,
-        param_names=['A', 't0', 'w'],
-        equation_template='y=pulso(A={A}, t0={t0}, w={w})',
+        param_names=get_equation_param_names_for_function('fit_square_pulse_function'),
+        equation_template=get_equation_format_for_function('fit_square_pulse_function'),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -282,8 +273,8 @@ def fit_hermite_polynomial_3(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_hermite_polynomial_3,
-        param_names=['c0', 'c1', 'c2', 'c3'],
-        equation_template='y={c0}*H₀(x)+{c1}*H₁(x)+{c2}*H₂(x)+{c3}*H₃(x)',
+        param_names=get_equation_param_names_for_function('fit_hermite_polynomial_3'),
+        equation_template=get_equation_format_for_function('fit_hermite_polynomial_3'),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -296,9 +287,6 @@ def fit_hermite_polynomial_4(
     initial_guess_override: Optional[List[Optional[float]]] = None,
     bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
 ) -> Tuple[str, NDArray, str]:
-    x = data[x_name]
-    y = data[y_name]
-    y_mean = float(np.mean(y))
     """
     Fit a Hermite polynomial expansion up to degree 4.
 
@@ -315,6 +303,9 @@ def fit_hermite_polynomial_4(
     Returns:
         Tuple ``(text, y_fitted, equation)`` from :func:`generic_fit`.
     """
+    x = data[x_name]
+    y = data[y_name]
+    y_mean = float(np.mean(y))
     initial_guess = merge_initial_guess(
         [y_mean, 0.0, 0.0, 0.0, 0.0], initial_guess_override
     )
@@ -326,8 +317,8 @@ def fit_hermite_polynomial_4(
     return generic_fit(
         data, x_name, y_name,
         fit_func=_hermite_polynomial_4,
-        param_names=['c0', 'c1', 'c2', 'c3', 'c4'],
-        equation_template='y={c0}*H₀(x)+{c1}*H₁(x)+{c2}*H₂(x)+{c3}*H₃(x)+{c4}*H₄(x)',
+        param_names=get_equation_param_names_for_function('fit_hermite_polynomial_4'),
+        equation_template=get_equation_format_for_function('fit_hermite_polynomial_4'),
         initial_guess=initial_guess,
         bounds=bounds,
     )

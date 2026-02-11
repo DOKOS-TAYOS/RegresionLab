@@ -331,4 +331,4 @@ if data_result:
 
 ---
 
-*For more information about fitting workflows, see [Usage Guide](../usage.md)*
+*For more information about fitting workflows, see [Usage Guide](../usage.md).*

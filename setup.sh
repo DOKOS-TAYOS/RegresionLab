@@ -7,6 +7,10 @@
 
 set -e  # Exit on error
 
+# Change to project root directory (where this script lives)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # Detect Linux and package manager (for optional auto-install of dependencies)
 is_linux_with_pkg_manager() {
     [ "$(uname -s)" = "Linux" ] || return 1
@@ -91,7 +95,7 @@ if ! command -v python3 &> /dev/null; then
                 fi
             else
                 echo "ERROR: Failed to install Python 3.12 automatically."
-                echo "Please install Python 3.12 manually (Python 3.10+ is required)."
+                echo "Please install Python 3.12 manually."
                 exit 1
             fi
         else
@@ -100,7 +104,7 @@ if ! command -v python3 &> /dev/null; then
         fi
     else
         echo "ERROR: Python 3 is not installed"
-        echo "Please install Python 3.12 (Python 3.10+ is required)"
+        echo "Please install Python 3.12"
         exit 1
     fi
 fi
@@ -108,20 +112,12 @@ fi
 echo "[1/7] Checking Python version..."
 python3 --version
 
-# Check Python version is 3.10 or higher
-python3 -c "import sys; exit(0 if sys.version_info >= (3, 10) else 1)" || {
-    echo "ERROR: Python 3.10 or higher is required"
-    echo "Python 3.12 is recommended for best performance"
+# Check Python version is 3.12 or higher
+python3 -c "import sys; exit(0 if sys.version_info >= (3, 12) else 1)" || {
+    echo "ERROR: Python 3.12 or higher is required"
     exit 1
 }
-
-# Check if Python version is 3.12 or higher (recommended)
-if python3 -c "import sys; exit(0 if sys.version_info >= (3, 12) else 1)" 2>/dev/null; then
-    echo "      Python version OK (recommended version)"
-else
-    echo "WARNING: Python 3.12 or higher is recommended for best performance"
-    echo "      Current version will work, but 3.12+ is preferred"
-fi
+echo "      Python version OK"
 
 echo ""
 echo "[2/7] Creating virtual environment..."
@@ -171,14 +167,20 @@ else
     DESKTOP_DIR="$HOME"
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DESKTOP_FILE="$DESKTOP_DIR/RegressionLab.desktop"
 ICON_PATH="$SCRIPT_DIR/images/RegressionLab_icon_low_res.ico"
+
+# Get version from .env (APP_VERSION) or pyproject.toml, default 1.0
+APP_VER="$(grep -E '^APP_VERSION=' "$SCRIPT_DIR/.env" 2>/dev/null | cut -d '=' -f2 | tr -d '"')"
+if [ -z "$APP_VER" ] && [ -f "$SCRIPT_DIR/pyproject.toml" ]; then
+    APP_VER="$(grep -E '^version[[:space:]]*=' "$SCRIPT_DIR/pyproject.toml" | head -1 | sed -nE 's/^version[[:space:]]*=[[:space:]]*"([^"]*)".*/\1/p')"
+fi
+[ -z "$APP_VER" ] && APP_VER="1.0"
 
 # Create .desktop file
 cat > "$DESKTOP_FILE" << EOF
 [Desktop Entry]
-Version=$(grep -E '^APP_VERSION=' "$SCRIPT_DIR/.env" | cut -d '=' -f2 | tr -d '"')
+Version=$APP_VER
 Type=Application
 Name=RegressionLab
 Comment=RegressionLab - Quick Launch

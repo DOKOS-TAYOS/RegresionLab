@@ -18,12 +18,14 @@ import streamlit as st
 
 # Local imports (lightweight at startup)
 try:
-    from config import initialize_and_validate_config
+    from config import get_env, initialize_and_validate_config
     from i18n import initialize_i18n, t
     from utils import setup_logging, get_logger
+    from streamlit_app.theme import get_main_css, get_streamlit_theme
 
     initialize_and_validate_config()
-    initialize_i18n('es')
+    _initial_language = get_env('LANGUAGE', 'es', str)
+    initialize_i18n(_initial_language)
     setup_logging()
     logger = get_logger(__name__)
 except Exception as e:
@@ -48,6 +50,7 @@ from streamlit_app.sections import (
     mode_multiple_datasets,
     mode_checker_fitting,
     mode_total_fitting,
+    mode_view_data,
 )
 
 
@@ -71,6 +74,10 @@ def main() -> None:
     except Exception as e:
         logger.warning(f"Page config already set: {e}")
 
+    # Apply theme from config (same colors/rules as tkinter app)
+    _theme = get_streamlit_theme()
+    st.markdown(get_main_css(_theme), unsafe_allow_html=True)
+
     try:
         initialize_session_state()
         initialize_i18n(st.session_state.language)
@@ -85,6 +92,7 @@ def main() -> None:
             t('menu.multiple_datasets'): mode_multiple_datasets,
             t('menu.checker_fitting'): mode_checker_fitting,
             t('menu.total_fitting'): mode_total_fitting,
+            t('menu.view_data'): mode_view_data,
         }
 
         mode_handler = mode_map.get(operation_mode)

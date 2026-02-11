@@ -277,7 +277,7 @@ from plotting.plot_utils import create_plot
 fit_func = get_fitting_function('linear_function')
 
 # Perform fit
-text, y_fitted, equation, r_squared = fit_func(data, 'x', 'y')
+text, y_fitted, equation = fit_func(data, 'x', 'y')
 
 # Create plot
 plot_path = create_plot(
@@ -372,4 +372,4 @@ except Exception as e:
 
 ---
 
-*For more information about plotting, see [Usage Guide](../usage.md)*
+*For more information about plotting, see [Usage Guide](../usage.md).*

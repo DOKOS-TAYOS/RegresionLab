@@ -21,7 +21,10 @@ def _get_variable_names(data: Any, filter_uncertainty: bool = True) -> List[str]
 
 def load_uploaded_file(uploaded_file: Any) -> Optional[Any]:
     """
-    Load data from uploaded file.
+    Load data from an uploaded file (CSV, XLSX, or TXT).
+
+    Args:
+        uploaded_file: Streamlit UploadedFile object (e.g. from st.file_uploader).
 
     Returns:
         DataFrame with loaded data, or None if loading fails.
@@ -72,7 +75,7 @@ def show_data_with_pair_plots(data: Any) -> None:
             """,
             unsafe_allow_html=True,
         )
-        if st.button(t('dialog.show_pair_plots'), key='btn_show_pair_plots', use_container_width=True):
+        if st.button(t('dialog.show_pair_plots'), key='btn_show_pair_plots', width='stretch'):
             st.session_state['data_show_pair_plots'] = True
         if st.session_state.get('data_show_pair_plots'):
             variables = _get_variable_names(data, filter_uncertainty=True)
