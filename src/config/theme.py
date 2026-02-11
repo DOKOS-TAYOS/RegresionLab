@@ -560,6 +560,8 @@ def configure_ttk_styles(root: Any) -> None:
         font=font_normal,
         padding=UI_STYLE['padding'],
     )
+    # Copy layout from base style to hover variant
+    style.layout('TEntry.Hover', style.layout('TEntry'))
     style.configure(
         'TEntry.Hover',
         fieldbackground=hover_bg,
@@ -578,6 +580,8 @@ def configure_ttk_styles(root: Any) -> None:
         font=font_normal,
         padding=UI_STYLE['padding'],
     )
+    # Copy layout from base style to hover variant
+    style.layout('TCombobox.Hover', style.layout('TCombobox'))
     style.configure(
         'TCombobox.Hover',
         fieldbackground=hover_bg,
@@ -604,6 +608,8 @@ def configure_ttk_styles(root: Any) -> None:
 
     # Radiobutton and Checkbutton: same font, hover and focus so current option is visible
     style.configure('TRadiobutton', background=bg, foreground=fg, font=font_normal)
+    # Copy layout from base style to hover variant
+    style.layout('TRadiobutton.Hover', style.layout('TRadiobutton'))
     style.configure('TRadiobutton.Hover', background=hover_bg, foreground=fg, font=font_normal)
     style.map(
         'TRadiobutton',
@@ -616,6 +622,8 @@ def configure_ttk_styles(root: Any) -> None:
         foreground=[('active', fg), ('focus', fg)],
     )
     style.configure('TCheckbutton', background=bg, foreground=fg, font=font_normal)
+    # Copy layout from base style to hover variant
+    style.layout('TCheckbutton.Hover', style.layout('TCheckbutton'))
     style.configure('TCheckbutton.Hover', background=hover_bg, foreground=fg, font=font_normal)
     style.map(
         'TCheckbutton',
@@ -660,10 +668,18 @@ def apply_hover_to_children(parent: Any) -> None:
         normal_style = w.cget('style') or cls
 
         def _on_enter(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
-            widget.configure(style=hov)
+            try:
+                widget.configure(style=hov)
+            except tkinter.TclError:
+                # Hover style not available, ignore
+                pass
 
         def _on_leave(ev: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
-            widget.configure(style=norm)
+            try:
+                widget.configure(style=norm)
+            except tkinter.TclError:
+                # Style configuration failed, ignore
+                pass
 
         w.bind('<Enter>', _on_enter)
         w.bind('<Leave>', _on_leave)
