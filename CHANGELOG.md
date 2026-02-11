@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Estimators**: Estimator improvements.
 - **Imports and maintainability**: Improved imports and maintainability. New functions can now be defined more easily.
 - **run.bat / run.sh**: When using `run.bat` and `run.sh`, the command console is no longer shown.
+- **User interface**: Completely modernized UI across the application (layouts, styles, and controls updated).
+- **User experience**: Improved UX with better controls, configuration options, and visualizations for fitting and analysis.
+- **Streamlit app**: Refined Streamlit UI and behavior; current design is considered stable with no further near-term changes planned.
+- **Documentation and docstrings**: Many docstrings updated and expanded; user and API documentation completed and brought in line with the current behavior.
+- **Environment variables**: Improved loading, validation, and defaults when reading environment variables.
+- **Dialogs**: Dialog layout, wording, and behavior improved for a more consistent user experience.
 - **Misc**: Minor changes and optimizations.
 
 ---
