@@ -40,12 +40,16 @@ def _color_name_to_rgb(color: str) -> tuple[int, int, int] | None:
     if not isinstance(color, str) or not color.strip():
         return None
     
-    color = color.strip()
+    # Clean the color string: remove quotes, whitespace
+    color = color.strip().strip('"').strip("'")
+    
+    if not color:
+        return None
     
     # If it's already hex, parse it directly
     if color.startswith('#'):
         try:
-            hex_color = color.lstrip('#')
+            hex_color = color.lstrip('#').strip()
             if len(hex_color) == 6:
                 r = int(hex_color[0:2], 16)
                 g = int(hex_color[2:4], 16)
@@ -85,6 +89,43 @@ def _color_name_to_rgb(color: str) -> tuple[int, int, int] | None:
 # -----------------------------------------------------------------------------
 # Single source: ENV_SCHEMA (env.py) + derived constants (same default look)
 # -----------------------------------------------------------------------------
+
+def _normalize_color_to_hex(color: str, default: str = '#181818') -> str:
+    """Normalize a color value to hex format. Used to ensure UI_STYLE always has valid hex colors.
+    
+    Args:
+        color: Color name or hex string
+        default: Default hex color to return if conversion fails
+        
+    Returns:
+        Hex color string (#rrggbb)
+    """
+    if not isinstance(color, str) or not color.strip():
+        return default
+    
+    color = color.strip().strip('"').strip("'")
+    
+    # If already valid hex, return it
+    if color.startswith('#') and len(color) in (4, 7):
+        try:
+            # Validate hex format
+            hex_part = color.lstrip('#')
+            if len(hex_part) == 6 and all(c in '0123456789abcdefABCDEF' for c in hex_part):
+                return color.lower()
+            elif len(hex_part) == 3 and all(c in '0123456789abcdefABCDEF' for c in hex_part):
+                # Expand 3-digit hex to 6-digit
+                return f'#{hex_part[0]*2}{hex_part[1]*2}{hex_part[2]*2}'.lower()
+        except Exception:
+            pass
+    
+    # Try to convert color name to hex
+    rgb = _color_name_to_rgb(color)
+    if rgb is not None:
+        r, g, b = rgb
+        return f'#{r:02x}{g:02x}{b:02x}'
+    
+    return default
+
 
 def _darken_bg(color: str) -> str:
     """Return a slightly darker shade for backgrounds (button active, widget hover).
@@ -183,13 +224,14 @@ def _lighten_bg_hex(color: str, factor: float = 0.06) -> str:
 
 
 # Colors (only main knobs; rest derived where used)
-_bg = get_env_from_schema('UI_BACKGROUND')
-_fg = get_env_from_schema('UI_FOREGROUND')
-_btn_bg = get_env_from_schema('UI_BUTTON_BG')
-_btn_fg_primary = get_env_from_schema('UI_BUTTON_FG')
-_btn_fg_cancel = get_env_from_schema('UI_BUTTON_FG_CANCEL')
-_btn_fg_accent2 = get_env_from_schema('UI_BUTTON_FG_ACCENT2')
-_text_select_bg = get_env_from_schema('UI_TEXT_SELECT_BG')
+# Normalize all colors to hex format to ensure UI_STYLE always has valid hex values
+_bg = _normalize_color_to_hex(get_env_from_schema('UI_BACKGROUND'), '#181818')
+_fg = _normalize_color_to_hex(get_env_from_schema('UI_FOREGROUND'), '#CCCCCC')
+_btn_bg = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_BG'), '#1F1F1F')
+_btn_fg_primary = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG'), '#32CD32')  # lime green
+_btn_fg_cancel = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG_CANCEL'), '#EE3B3B')  # red2
+_btn_fg_accent2 = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG_ACCENT2'), '#FFFF00')  # yellow
+_text_select_bg = _normalize_color_to_hex(get_env_from_schema('UI_TEXT_SELECT_BG'), '#4682B4')  # steel blue
 
 # Layout and sizes (fixed or derived)
 _border = 8
