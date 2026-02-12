@@ -72,7 +72,8 @@ PLOT_CONFIG = {
     'error_color': 'crimson',     # Error bar color
     'marker_face_color': 'crimson',  # Marker fill color
     'marker_edge_color': 'crimson',  # Marker edge color
-    'show_title': False           # Show plot title
+    'show_title': False,          # Show plot title
+    'show_grid': False            # Show background grid on plot
 }
 ```
 

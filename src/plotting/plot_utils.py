@@ -318,6 +318,9 @@ def create_plot(
         if plot_config.get('show_title', False):
             ax.set_title(fit_name, fontproperties=fontt)
 
+        if plot_config.get('show_grid', False):
+            ax.grid(True, alpha=0.3)
+
         ax.tick_params(axis='both', which='major', labelsize=font_config['tick_size'])
         plt.tight_layout()
 
@@ -390,8 +393,9 @@ def create_residual_plot(
         
         ax.set_xlabel('Point Index', fontproperties=fonta)
         ax.set_ylabel('Residuals (y - y_fitted)', fontproperties=fonta)
-        ax.grid(True, alpha=0.3)
-        
+        if plot_config.get('show_grid', False):
+            ax.grid(True, alpha=0.3)
+
         if plot_config.get('show_title', False):
             ax.set_title(f'{fit_name} - Residuals', fontproperties=fontt)
         
@@ -558,9 +562,12 @@ def create_3d_plot(
         
         if plot_config.get('show_title', False):
             ax.set_title(f'{fit_name}', fontproperties=fontt)
-        
+
+        if plot_config.get('show_grid', False):
+            ax.grid(True, alpha=0.3)
+
         ax.legend()
-        
+
         plt.tight_layout()
         if interactive:
             logger.info("3D plot prepared: %s (interactive, will save on close)", save_path)

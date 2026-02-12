@@ -319,7 +319,7 @@ Show the configuration dialog to edit `.env` settings (same options as in the Co
 **Behavior:**
 - Dialog is modal and grouped by **collapsible sections** derived from `ENV_SCHEMA`: Language, UI, Plot, Font, Paths, Links, Logging. Click a section header to expand or collapse.
 - Each option shows a label and description (from i18n keys `config.label_*`, `config.desc_*`). Values are edited via:
-  - **Checkboxes** for boolean keys (e.g. `PLOT_SHOW_TITLE`, `LOG_CONSOLE`).
+  - **Checkboxes** for boolean keys (e.g. `PLOT_SHOW_TITLE`, `PLOT_SHOW_GRID`, `LOG_CONSOLE`).
   - **Dropdowns** (read-only combobox) for keys with `options` in the schema (e.g. `LANGUAGE`, `FILE_PLOT_FORMAT`, `LOG_LEVEL`).
   - **Text entries** for other keys.
 - **Accept**: Validates and writes all schema keys to `.env` (via `write_env_file`), then closes the dialog and returns `True`. On write error, shows an error message and keeps the dialog open.

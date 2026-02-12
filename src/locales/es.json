@@ -363,6 +363,8 @@
     "desc_DPI": "Puntos por pulgada al guardar la imagen de la gráfica.",
     "label_PLOT_SHOW_TITLE": "Mostrar título en gráfica",
     "desc_PLOT_SHOW_TITLE": "Si está activado, se muestra el título en la gráfica (nombre del ajuste).",
+    "label_PLOT_SHOW_GRID": "Mostrar cuadrícula en gráfica",
+    "desc_PLOT_SHOW_GRID": "Si está activado, se muestra una cuadrícula de fondo en la gráfica.",
     "label_PLOT_LINE_COLOR": "Color de la curva ajustada",
     "desc_PLOT_LINE_COLOR": "Color de la línea del ajuste. Ej.: black.",
     "label_PLOT_LINE_WIDTH": "Grosor de la curva",

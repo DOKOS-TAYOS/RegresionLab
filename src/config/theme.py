@@ -426,6 +426,7 @@ PLOT_CONFIG = {
     ),
     'dpi': get_env_from_schema('DPI'),
     'show_title': get_env_from_schema('PLOT_SHOW_TITLE'),
+    'show_grid': get_env_from_schema('PLOT_SHOW_GRID'),
     'line_color': get_env_from_schema('PLOT_LINE_COLOR'),
     'line_width': get_env_from_schema('PLOT_LINE_WIDTH'),
     'line_style': get_env_from_schema('PLOT_LINE_STYLE'),

@@ -132,6 +132,7 @@ Create a 3D plot with data points and fitted surface mesh for two independent va
 - **X-axis**: Label from `x_name` parameter
 - **Y-axis**: Label from `y_name` parameter
 - **Title**: Optional, from `fit_name` if `plot_config['show_title']` is True
+- **Grid**: Optional, from `plot_config['show_grid']` (default False)
 - **Fonts**: Configured via `font_config`
 
 ## Configuration
@@ -152,7 +153,8 @@ plot_config = {
     'marker_face_color': 'blue',  # Marker fill color
     'marker_edge_color': 'black', # Marker edge color
     'error_color': 'red',        # Error bar color
-    'show_title': False           # Show plot title
+    'show_title': False,          # Show plot title
+    'show_grid': False            # Show background grid on plot
 }
 ```
 

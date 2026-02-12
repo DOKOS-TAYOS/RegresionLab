@@ -214,6 +214,7 @@ ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'PLOT_FIGSIZE_HEIGHT', 'default': 6, 'cast_type': int},
     {'key': 'DPI', 'default': 100, 'cast_type': int},
     {'key': 'PLOT_SHOW_TITLE', 'default': False, 'cast_type': bool},
+    {'key': 'PLOT_SHOW_GRID', 'default': False, 'cast_type': bool},
     # --- plot: line ---
     {'key': 'PLOT_LINE_COLOR', 'default': 'black', 'cast_type': str},
     {'key': 'PLOT_LINE_WIDTH', 'default': 1.0, 'cast_type': float},

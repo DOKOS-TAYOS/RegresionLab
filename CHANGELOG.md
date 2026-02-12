@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Configuration**: New `PLOT_SHOW_GRID` environment variable (default `false`) to enable or disable a background grid on regression plots. Configurable via `.env` or the Tkinter configuration dialog. Applies to 2D fits, residual plots, and 3D plots.
 - **Streamlit**: Checkbox before each fit to toggle plot title visibility (show/hide). Default comes from `PLOT_SHOW_TITLE` environment variable; can be overridden per fit without changing the env.
 - **Multidimensional fitting**: Support for multidimensional regression. With 2 independent variables, an interactive 3D plot is shown; with more than 2 independent variables, a residuals plot is displayed.
 - **Predictions window**: New "Prediction" button in the result window opens a dialog to evaluate the fitted function at user-specified inputs. Supports one or more independent variables; displays the predicted value and propagates parameter uncertainty when available. Works for single/multiple datasets, multiple equations, and "all equations" mode.

@@ -363,6 +363,8 @@
     "desc_DPI": "Dots per inch when saving the plot image.",
     "label_PLOT_SHOW_TITLE": "Show plot title",
     "desc_PLOT_SHOW_TITLE": "If enabled, the plot title (fit name) is shown.",
+    "label_PLOT_SHOW_GRID": "Show grid on plot",
+    "desc_PLOT_SHOW_GRID": "If enabled, a background grid is displayed on the plot.",
     "label_PLOT_LINE_COLOR": "Fitted curve colour",
     "desc_PLOT_LINE_COLOR": "Colour of the fit line. E.g. black.",
     "label_PLOT_LINE_WIDTH": "Curve width",

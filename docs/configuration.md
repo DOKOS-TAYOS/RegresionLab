@@ -10,7 +10,7 @@ If you use the **Tkinter desktop application**, you can change settings without 
 
 - **Language**: Interface language (Spanish, English, German).
 - **UI**: Window and text colors, button colors (normal, cancel, accent), spacing, button width, font family and size, spinbox/entry widths, and data-preview selection color.
-- **Plot**: Figure dimensions, DPI, title visibility, and line/marker style and colors for generated plots.
+- **Plot**: Figure dimensions, DPI, title visibility, grid display, and line/marker style and colors for generated plots.
 - **Font**: Font family and sizes for plot title, axis labels, and tick labels.
 - **Paths**: Default input and output folders, filename template for saved plots, and export format (PNG, JPG, PDF).
 - **Links**: Optional URL for the “Donations” link in the Information dialog.
@@ -245,6 +245,16 @@ PLOT_SHOW_TITLE=false
   - `false`: No title (cleaner look for slides or publications).
 
   In the Streamlit app, a checkbox before each fit overrides this value per fit; the default is loaded from this env var.
+
+### Grid Display
+
+```ini
+PLOT_SHOW_GRID=false
+```
+
+- **PLOT_SHOW_GRID**: Whether to display a background grid on the plot.
+  - `true`: Show grid lines (helps read values from the plot).
+  - `false`: No grid (default; cleaner look for slides or publications).
 
 ### Fitted Curve Style
 

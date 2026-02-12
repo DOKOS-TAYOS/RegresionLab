@@ -363,6 +363,8 @@
     "desc_DPI": "Punkte pro Zoll beim Speichern des Diagrammbildes.",
     "label_PLOT_SHOW_TITLE": "Diagrammtitel anzeigen",
     "desc_PLOT_SHOW_TITLE": "Wenn aktiviert, wird der Diagrammtitel (Anpassungsname) angezeigt.",
+    "label_PLOT_SHOW_GRID": "Gitter im Diagramm anzeigen",
+    "desc_PLOT_SHOW_GRID": "Wenn aktiviert, wird ein Hintergrundgitter im Diagramm angezeigt.",
     "label_PLOT_LINE_COLOR": "Farbe der Anpassungskurve",
     "desc_PLOT_LINE_COLOR": "Farbe der Anpassungslinie. Z. B. black.",
     "label_PLOT_LINE_WIDTH": "Kurvenbreite",
