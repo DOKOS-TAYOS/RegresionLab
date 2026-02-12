@@ -1,5 +1,7 @@
 # Pip-only dependencies for Termux (numpy, scipy, pandas, matplotlib, Pillow from pkg)
 # Streamlit omitted: requires pandas<3.0, which triggers rpds-py build (no ARM wheel). Use Tkinter GUI instead.
+# pyarrow: pkg's pandas 3.0 needs it; system pyarrow may be broken (no __version__)
+pyarrow>=14.0
 openpyxl>=3.1,<4.0
 python-dotenv>=1.0,<2.0
 colorama>=0.4,<1.0
