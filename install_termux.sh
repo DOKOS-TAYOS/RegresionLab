@@ -48,8 +48,7 @@ if [ -d "$REPO_NAME" ]; then
     else
         echo "      Using existing directory..."
         cd "$REPO_NAME"
-        chmod +x setup_termux.sh 2>/dev/null || true
-        ./setup_termux.sh
+        bash setup_termux.sh
         exit 0
     fi
 fi
@@ -73,8 +72,7 @@ cd "$REPO_NAME" || {
 # [3/3] Run Termux setup
 echo ""
 echo "[3/3] Running Termux setup..."
-chmod +x setup_termux.sh
-./setup_termux.sh
+bash setup_termux.sh
 
 echo ""
 echo "===================================="
