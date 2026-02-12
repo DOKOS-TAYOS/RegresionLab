@@ -30,6 +30,8 @@ logger = get_logger(__name__)
 
 # Number of points for smooth 1D fitted curve
 _PLOT_SMOOTH_POINTS = 300
+# Grid size per axis for smooth 3D fitted surface
+_PLOT_3D_GRID_SIZE = 50
 
 # Pair plot styling constants (readability)
 _PAIR_PLOT_FACE = '#f8f9fa'
@@ -420,6 +422,7 @@ def create_3d_plot(
     font_config: Optional[Dict[str, Any]] = None,
     output_path: Optional[Union[str, Path]] = None,
     interactive: bool = False,
+    fit_info: Optional[Dict[str, Any]] = None,
 ) -> Union[str, Tuple[str, Any]]:
     """
     Create a 3D plot for fitting with two independent variables.
@@ -439,6 +442,8 @@ def create_3d_plot(
         font_config: Optional font configuration dict. Defaults to FONT_CONFIG.
         output_path: Optional full path to save the plot. If None, uses get_output_path(fit_name).
         interactive: If True, return (save_path, figure) for embedding in a window (rotatable with mouse).
+        fit_info: Optional dict with 'fit_func' and 'params' to evaluate the surface on a linspace
+            grid for a smooth plot. If None, interpolates z_fitted onto the grid.
     
     Returns:
         If interactive=False: path to the saved plot file (str).
@@ -480,49 +485,59 @@ def create_3d_plot(
             label='Data points',
         )
         
-        # Create mesh for fitted surface
-        # Use a regular grid covering the full bounding box of x_0 and x_1
-        x_unique = np.linspace(x_arr.min(), x_arr.max(), 25)
-        y_unique = np.linspace(y_arr.min(), y_arr.max(), 25)
+        # Create mesh for fitted surface: linspace en x_0 y x_1
+        x_unique = np.linspace(x_arr.min(), x_arr.max(), _PLOT_3D_GRID_SIZE)
+        y_unique = np.linspace(y_arr.min(), y_arr.max(), _PLOT_3D_GRID_SIZE)
         X_mesh, Y_mesh = np.meshgrid(x_unique, y_unique)
 
-        # Interpolate z_fitted values onto the mesh.
-        # Linear interpolation leaves NaN outside the convex hull; fill those with nearest.
+        # Evaluar la función en el grid o interpolar z_fitted si no hay fit_info
         Z_mesh = None
-        if griddata is not None:
-            try:
-                Z_mesh = griddata(
-                    (x_arr, y_arr),
-                    z_fitted_arr,
-                    (X_mesh, Y_mesh),
-                    method='linear',
-                    fill_value=np.nan,
-                )
-                nan_mask = np.isnan(Z_mesh)
-                if np.any(nan_mask):
-                    Z_nearest = griddata(
+        if fit_info is not None:
+            fit_func = fit_info.get('fit_func')
+            params = fit_info.get('params', [])
+            if fit_func is not None and params is not None:
+                x_grid = np.column_stack([X_mesh.ravel(), Y_mesh.ravel()])
+                try:
+                    z_vals = fit_func(x_grid, *params)
+                    Z_mesh = np.asarray(z_vals).reshape(X_mesh.shape)
+                except Exception as e:
+                    logger.warning(f"Error evaluating fit on 3D grid: {e}. Using interpolation.")
+                    Z_mesh = None
+        if Z_mesh is None:
+            # Interpolate z_fitted values onto the mesh
+            if griddata is not None:
+                try:
+                    Z_mesh = griddata(
+                        (x_arr, y_arr),
+                        z_fitted_arr,
+                        (X_mesh, Y_mesh),
+                        method='linear',
+                        fill_value=np.nan,
+                    )
+                    nan_mask = np.isnan(Z_mesh)
+                    if np.any(nan_mask):
+                        Z_nearest = griddata(
+                            (x_arr, y_arr),
+                            z_fitted_arr,
+                            (X_mesh, Y_mesh),
+                            method='nearest',
+                        )
+                        Z_mesh[nan_mask] = Z_nearest[nan_mask]
+                except (QhullError, ValueError) as e:
+                    logger.debug("Linear interpolation failed (%s), using nearest neighbor", type(e).__name__)
+                    Z_mesh = griddata(
                         (x_arr, y_arr),
                         z_fitted_arr,
                         (X_mesh, Y_mesh),
                         method='nearest',
                     )
-                    Z_mesh[nan_mask] = Z_nearest[nan_mask]
-            except (QhullError, ValueError) as e:
-                logger.debug("Linear interpolation failed (%s), using nearest neighbor", type(e).__name__)
-                Z_mesh = griddata(
-                    (x_arr, y_arr),
-                    z_fitted_arr,
-                    (X_mesh, Y_mesh),
-                    method='nearest',
-                )
-        if Z_mesh is None:
-            logger.warning("scipy not available, using simple mesh for 3D plot")
-            # Vectorized nearest-neighbor: all grid points vs all data points
-            X_flat = X_mesh.ravel()
-            Y_flat = Y_mesh.ravel()
-            dists_sq = (X_flat[:, np.newaxis] - x_arr) ** 2 + (Y_flat[:, np.newaxis] - y_arr) ** 2
-            nearest_idx = np.argmin(dists_sq, axis=1)
-            Z_mesh = z_fitted_arr[nearest_idx].reshape(X_mesh.shape)
+            if Z_mesh is None:
+                logger.warning("scipy not available, using simple mesh for 3D plot")
+                X_flat = X_mesh.ravel()
+                Y_flat = Y_mesh.ravel()
+                dists_sq = (X_flat[:, np.newaxis] - x_arr) ** 2 + (Y_flat[:, np.newaxis] - y_arr) ** 2
+                nearest_idx = np.argmin(dists_sq, axis=1)
+                Z_mesh = z_fitted_arr[nearest_idx].reshape(X_mesh.shape)
         
         # Plot surface mesh with colors according to height (z)
         surf = ax.plot_surface(

@@ -187,6 +187,7 @@ def _wrap_with_visualization(base_fit_function: Callable, fit_name: str) -> Call
                     x1, x2, y, y_fitted, filename_base,
                     x_name[0], x_name[1], y_name,
                     interactive=True,
+                    fit_info=fit_info,
                 )
             else:
                 # Multiple variables (>2): residual plot
