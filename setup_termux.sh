@@ -70,7 +70,7 @@ if ! pkg install -y tur-repo 2>/dev/null; then
     echo "      TUR repo not found, trying without..."
 fi
 # Install pre-built numpy, scipy, pandas, pillow, matplotlib - instant, no compilation
-for pkg_name in python-numpy python-scipy python-pandas python-pillow python-matplotlib; do
+for pkg_name in python-numpy python-scipy python-pandas python-pillow matplotlib python-matplotlib; do
     if pkg install -y "$pkg_name" 2>/dev/null; then
         echo "      Installed $pkg_name"
     else
@@ -119,6 +119,9 @@ if ! python -c "import numpy" 2>/dev/null; then
     echo "      numpy not from pkg, installing from TUR..."
     pip install --extra-index-url https://termux-user-repository.github.io/pypi/ numpy scipy pandas matplotlib pillow
 fi
+# pkg has pandas 3.0.0 but streamlit requires pandas<3.0 - install pandas 2.x from TUR (wheel) to avoid build
+echo "      Ensuring pandas 2.x (pkg 3.0 conflicts with streamlit)..."
+pip install --extra-index-url https://termux-user-repository.github.io/pypi/ "pandas>=2.3,<3.0"
 # Install openpyxl, streamlit, etc. - these are fast (pure Python or have wheels)
 pip install -r requirements_termux.txt
 
