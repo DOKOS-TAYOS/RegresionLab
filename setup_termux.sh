@@ -11,6 +11,24 @@ set -e  # Exit on error
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# CRITICAL: Must run from Termux home (~), NOT from Android shared storage.
+# Storage (/storage/emulated/0/, ~/storage/downloads, etc.) blocks symlinks
+# required by Python venv and pkg install.
+REAL_SCRIPT_DIR="$(realpath "$SCRIPT_DIR" 2>/dev/null || readlink -f "$SCRIPT_DIR" 2>/dev/null || echo "$SCRIPT_DIR")"
+# Also check SCRIPT_DIR for ~/storage/* symlink paths (may not resolve on all Termux)
+if [[ "$REAL_SCRIPT_DIR" == /storage/* || "$REAL_SCRIPT_DIR" == /sdcard/* ]] || \
+   [[ "$SCRIPT_DIR" == *"/storage/downloads"* || "$SCRIPT_DIR" == *"/storage/shared"* ]]; then
+    echo "ERROR: RegressionLab cannot run from Android shared storage."
+    echo "       Path: $SCRIPT_DIR"
+    echo ""
+    echo "Clone and run from Termux home instead:"
+    echo "  cd ~"
+    echo "  rm -rf regressionlab"
+    echo "  bash install_termux.sh"
+    echo ""
+    exit 1
+fi
+
 # Paths for Android storage (Downloads folder) - absolute paths
 # /storage/downloads = Downloads (en algunos dispositivos puede ser /storage/emulated/0/Download)
 INPUT_DIR="/storage/downloads/input"
