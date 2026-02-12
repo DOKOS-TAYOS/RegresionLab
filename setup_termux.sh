@@ -96,7 +96,10 @@ python -m pip install --upgrade pip
 
 echo ""
 echo "[6/8] Installing dependencies..."
-pip install -r requirements.txt
+# Use Termux User Repository (TUR) PyPI index for pre-built wheels (numpy, scipy, pandas, pillow).
+# Without this, pip would build from source on ARM, taking 20-60+ minutes at "preparing metadata".
+echo "      Using TUR pre-built wheels for faster installation on ARM..."
+pip install --extra-index-url https://termux-user-repository.github.io/pypi/ -r requirements.txt
 
 echo ""
 echo "[7/8] Setting up environment file..."
