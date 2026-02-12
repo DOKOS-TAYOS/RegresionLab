@@ -97,7 +97,7 @@ fi
 
 echo ""
 echo "[2/3] Cloning repository..."
-if ! git clone "$REPO_URL"; then
+if ! git clone "$REPO_URL" "$REPO_NAME"; then
     echo "ERROR: Failed to clone repository"
     echo "Please check your internet connection and try again"
     exit 1

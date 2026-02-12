@@ -19,6 +19,23 @@ is_linux_with_pkg_manager() {
     command -v pacman &> /dev/null
 }
 
+install_tkinter_linux() {
+    if command -v apt-get &> /dev/null; then
+        PYTHON_VER="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' 2>/dev/null)" || PYTHON_VER="3.12"
+        sudo apt-get install -y "python${PYTHON_VER}-tk" 2>/dev/null || sudo apt-get install -y python3-tk
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y python3-tkinter 2>/dev/null || sudo dnf install -y python3.12-tkinter
+    elif command -v yum &> /dev/null; then
+        sudo yum install -y python3-tkinter 2>/dev/null || sudo yum install -y python3.12-tkinter
+    elif command -v zypper &> /dev/null; then
+        sudo zypper install -y python312-tk 2>/dev/null || sudo zypper install -y python3-tk
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm tk
+    else
+        return 1
+    fi
+}
+
 install_python312_linux() {
     if command -v apt-get &> /dev/null; then
         # Debian/Ubuntu: use deadsnakes PPA for Python 3.12
@@ -27,28 +44,28 @@ install_python312_linux() {
             sudo add-apt-repository -y ppa:deadsnakes/ppa
             sudo apt-get update
         fi
-        sudo apt-get install -y python3.12 python3.12-venv python3.12-pip
+        sudo apt-get install -y python3.12 python3.12-venv python3.12-pip python3.12-tk
         sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 2
         sudo update-alternatives --set python3 /usr/bin/python3.12
     elif command -v dnf &> /dev/null; then
-        sudo dnf install -y python3.12 python3.12-pip
+        sudo dnf install -y python3.12 python3.12-pip python3.12-tkinter
         if command -v python3.12 &> /dev/null; then
             sudo alternatives --set python3 /usr/bin/python3.12 2>/dev/null || true
         fi
     elif command -v yum &> /dev/null; then
-        sudo yum install -y python3.12 python3.12-pip 2>/dev/null || \
+        sudo yum install -y python3.12 python3.12-pip python3.12-tkinter 2>/dev/null || \
         { echo "Python 3.12 may not be in default repos. Try: sudo yum install python3.12"; return 1; }
         if command -v python3.12 &> /dev/null; then
             sudo alternatives --set python3 /usr/bin/python3.12 2>/dev/null || true
         fi
     elif command -v zypper &> /dev/null; then
-        sudo zypper install -y python312 python312-pip python312-venv 2>/dev/null || \
+        sudo zypper install -y python312 python312-pip python312-venv python312-tk 2>/dev/null || \
         sudo zypper install -y python3.12 python3.12-pip 2>/dev/null || return 1
         if command -v python3.12 &> /dev/null; then
             sudo update-alternatives --set python3 /usr/bin/python3.12 2>/dev/null || true
         fi
     elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm python python-pip
+        sudo pacman -S --noconfirm python python-pip tk
         # Arch uses 'python' for latest (3.12+); ensure python3 exists
         if ! command -v python3 &> /dev/null && command -v python &> /dev/null; then
             sudo ln -sf "$(command -v python)" /usr/local/bin/python3 2>/dev/null || true
@@ -109,7 +126,7 @@ if ! command -v python3 &> /dev/null; then
     fi
 fi
 
-echo "[1/7] Checking Python version..."
+echo "[1/8] Checking Python version..."
 python3 --version
 
 # Check Python version is 3.12 or higher
@@ -120,7 +137,28 @@ python3 -c "import sys; exit(0 if sys.version_info >= (3, 12) else 1)" || {
 echo "      Python version OK"
 
 echo ""
-echo "[2/7] Creating virtual environment..."
+echo "[2/8] Ensuring tkinter is available (required for GUI)..."
+if ! python3 -c "import tkinter" 2>/dev/null; then
+    if is_linux_with_pkg_manager; then
+        echo "      Tkinter not found. Installing system package..."
+        if install_tkinter_linux; then
+            echo "      Tkinter installed successfully"
+        else
+            echo "      WARNING: Could not install tkinter automatically."
+            echo "      On Ubuntu/Debian: sudo apt-get install python3.12-tk"
+            echo "      On Fedora: sudo dnf install python3-tkinter"
+            echo "      On Arch: sudo pacman -S tk"
+        fi
+    else
+        echo "      WARNING: Tkinter not found. The GUI requires it."
+        echo "      Please install the tkinter package for your Python version."
+    fi
+else
+    echo "      Tkinter already available"
+fi
+
+echo ""
+echo "[3/8] Creating virtual environment..."
 if [ -d ".venv" ]; then
     echo "      Virtual environment already exists, skipping creation"
 else
@@ -129,19 +167,19 @@ else
 fi
 
 echo ""
-echo "[3/7] Activating virtual environment..."
+echo "[4/8] Activating virtual environment..."
 source .venv/bin/activate
 
 echo ""
-echo "[4/7] Upgrading pip..."
+echo "[5/8] Upgrading pip..."
 python -m pip install --upgrade pip
 
 echo ""
-echo "[5/7] Installing dependencies..."
+echo "[6/8] Installing dependencies..."
 pip install -r requirements.txt
 
 echo ""
-echo "[6/7] Setting up environment file..."
+echo "[7/8] Setting up environment file..."
 if [ -f ".env" ]; then
     echo "      .env file already exists, skipping"
 else
@@ -154,7 +192,7 @@ else
 fi
 
 echo ""
-echo "[7/7] Creating desktop shortcut..."
+echo "[8/8] Creating desktop shortcut..."
 
 # Determine desktop path based on OS
 if [ -d "$HOME/Desktop" ]; then
