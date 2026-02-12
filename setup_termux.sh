@@ -122,6 +122,13 @@ fi
 # Streamlit omitted on Termux (requires pandas<3.0); the Tkinter GUI (main_program.py) works with pandas 3.0
 pip install -r requirements_termux.txt
 
+# Stub pyarrow so pandas skips it: system pyarrow is broken (no __version__), building fails (no ARM wheel).
+# pandas catches ImportError and uses HAS_PYARROW=False; our stub raises ImportError to trigger that.
+PY_SITE=$(python -c "import site; print(site.getsitepackages()[0])")
+mkdir -p "$PY_SITE/pyarrow"
+echo 'raise ImportError("pyarrow disabled for Termux")' > "$PY_SITE/pyarrow/__init__.py"
+echo "      pyarrow stub installed (pandas will use fallback)"
+
 echo ""
 echo "[8/9] Setting up environment file..."
 if [ -f ".env" ]; then
