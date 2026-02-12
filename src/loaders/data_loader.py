@@ -24,7 +24,7 @@ import pandas as pd
 # Local imports
 from config import FILE_CONFIG, get_project_root
 from loaders.loading_utils import csv_reader, excel_reader, txt_reader
-from utils import InvalidFileTypeError, get_logger, validate_file_type
+from utils import get_logger, validate_file_type
 
 logger = get_logger(__name__)
 

@@ -6,9 +6,6 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.special import eval_hermite
 
-# Steepness of tanh edges in smooth square pulse (larger = sharper edges)
-_SQUARE_PULSE_STEEPNESS = 50.0
-
 from fitting.functions._base import (
     DataLike,
     Numeric,
@@ -22,6 +19,9 @@ from fitting.functions._base import (
     merge_bounds,
     merge_initial_guess,
 )
+
+# Steepness of tanh edges in smooth square pulse (larger = sharper edges)
+_SQUARE_PULSE_STEEPNESS = 50.0
 
 
 def _gaussian_function(t: Numeric, A: float, mu: float, sigma: float) -> Numeric:
@@ -263,7 +263,6 @@ def fit_hermite_polynomial_3(
     Returns:
         Tuple ``(text, y_fitted, equation)`` from :func:`generic_fit`.
     """
-    x = data[x_name]
     y = data[y_name]
     y_mean = float(np.mean(y))
     initial_guess = merge_initial_guess(
@@ -307,7 +306,6 @@ def fit_hermite_polynomial_4(
     Returns:
         Tuple ``(text, y_fitted, equation)`` from :func:`generic_fit`.
     """
-    x = data[x_name]
     y = data[y_name]
     y_mean = float(np.mean(y))
     initial_guess = merge_initial_guess(

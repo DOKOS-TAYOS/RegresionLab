@@ -139,17 +139,9 @@ def generic_fit(
     # Extract data as numpy arrays for reliable curve_fit behavior
     if num_indep == 1:
         x = np.asarray(data[x_names[0]], dtype=float)
-        ux = np.asarray(
-            data.get('u%s' % x_names[0], np.zeros_like(x)),
-            dtype=float,
-        )
     else:
         x_arrays = [np.asarray(data[x_n], dtype=float) for x_n in x_names]
         x = np.column_stack(x_arrays)
-        ux = np.asarray(
-            data.get('u%s' % x_names[0], np.zeros(len(x))),
-            dtype=float,
-        )
 
     y = np.asarray(data[y_name], dtype=float)
     uy = np.asarray(

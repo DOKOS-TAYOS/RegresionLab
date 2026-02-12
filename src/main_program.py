@@ -16,11 +16,11 @@ if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
 # Local imports (kept lightweight at startup; heavy modules are loaded lazily)
-from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL, __version__, initialize_and_validate_config
-from i18n import t, initialize_i18n
-from frontend import start_main_menu
-from fitting import get_fitting_function
-from utils import FittingError, setup_logging, get_logger
+from config import AVAILABLE_EQUATION_TYPES, EXIT_SIGNAL, __version__, initialize_and_validate_config  # noqa: E402
+from i18n import t, initialize_i18n  # noqa: E402
+from frontend import start_main_menu  # noqa: E402
+from fitting import get_fitting_function  # noqa: E402
+from utils import FittingError, setup_logging, get_logger  # noqa: E402
 
 # Initialize configuration validation, i18n and logging at module level
 initialize_and_validate_config()

@@ -4,14 +4,14 @@ import os
 from pathlib import Path
 from typing import Any, Type, Union
 
-# Type for env schema cast_type (str, int, float, bool)
-_EnvCastType = Type[Union[str, int, float, bool]]
-
 from config.constants import (
     LANGUAGE_ALIASES,
     SUPPORTED_LANGUAGE_CODES,
     VALID_LANGUAGE_INPUTS,
 )
+
+# Type for env schema cast_type (str, int, float, bool)
+_EnvCastType = Type[Union[str, int, float, bool]]
 
 try:
     from dotenv import load_dotenv
@@ -47,7 +47,7 @@ def _validate_env_value(
         return False, default
 
     # Special validation for LANGUAGE
-    if key == 'LANGUAGE' and cast_type == str:
+    if key == 'LANGUAGE' and cast_type is str:
         try:
             str_value = str(value).strip()
             lang_lower = str_value.lower()
@@ -60,7 +60,7 @@ def _validate_env_value(
             return False, default
 
     # Special validation for LOG_LEVEL
-    if key == 'LOG_LEVEL' and cast_type == str:
+    if key == 'LOG_LEVEL' and cast_type is str:
         try:
             str_value = str(value).strip()
             if str_value.upper() not in ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'):
@@ -73,7 +73,7 @@ def _validate_env_value(
     if 'options' in schema_item:
         options = schema_item['options']
         try:
-            if cast_type == str:
+            if cast_type is str:
                 if str(value).lower() not in [opt.lower() for opt in options]:
                     return False, default
             else:
@@ -83,7 +83,7 @@ def _validate_env_value(
             return False, default
 
     # Validate integer ranges
-    if cast_type == int:
+    if cast_type is int:
         try:
             int_value = int(value)
         except (TypeError, ValueError, OverflowError):
@@ -108,7 +108,7 @@ def _validate_env_value(
                 return False, default
 
     # Validate float ranges
-    elif cast_type == float:
+    elif cast_type is float:
         try:
             float_value = float(value)
         except (TypeError, ValueError, OverflowError):
@@ -120,7 +120,7 @@ def _validate_env_value(
                 return False, default
 
     # Validate strings
-    elif cast_type == str:
+    elif cast_type is str:
         try:
             str_value = str(value).strip()
         except (AttributeError, TypeError):
@@ -162,7 +162,7 @@ def _was_value_corrected(
 
     # Try to cast and validate the original value
     try:
-        if cast_type == bool:
+        if cast_type is bool:
             original_casted = original_value.lower() in ('true', '1', 'yes')
         else:
             original_casted = cast_type(original_value)
@@ -299,7 +299,7 @@ def get_env(
     # If no schema found, use basic casting without validation
     if schema_item is None:
         try:
-            if cast_type == bool:
+            if cast_type is bool:
                 return value.lower() in ('true', '1', 'yes')
             return cast_type(value)
         except (ValueError, TypeError):
@@ -307,7 +307,7 @@ def get_env(
 
     # Cast the value first
     try:
-        if cast_type == bool:
+        if cast_type is bool:
             casted_value = value.lower() in ('true', '1', 'yes')
         else:
             casted_value = cast_type(value)
@@ -379,7 +379,7 @@ def get_current_env_values() -> dict[str, str]:
         default = item['default']
         cast_type = item['cast_type']
         val = get_env(key, default, cast_type)
-        if cast_type == bool:
+        if cast_type is bool:
             result[key] = 'true' if val else 'false'
         else:
             result[key] = str(val)

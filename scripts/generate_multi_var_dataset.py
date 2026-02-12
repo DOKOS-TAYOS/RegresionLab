@@ -87,7 +87,7 @@ def generate_multi_var_dataset(
 
     # Fourth power: y = a*x^4
     a_fourth = 0.05
-    I = a_fourth * (x**4) + noise(n_points)
+    y_fourth = a_fourth * (x**4) + noise(n_points)
 
     # Logistic: y = L/(1+exp(-k*(x-x0)))
     L_log, k_log, x0_log = 1.0, 0.7, 5.0
@@ -119,7 +119,7 @@ def generate_multi_var_dataset(
         'F': F,
         'G': G,
         'H': H,
-        'I': I,
+        'I': y_fourth,
         'J': J,
         'K': K,
         'L': L,

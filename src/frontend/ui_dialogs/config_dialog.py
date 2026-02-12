@@ -216,7 +216,7 @@ def show_config_dialog(parent_window: Any) -> bool:
             config_desc_labels.append(desc_lbl)
             sub_row += 2
 
-            if cast_type == bool:
+            if cast_type is bool:
                 var = BooleanVar(value=current.get(key, 'false').lower() in ('true', '1', 'yes'))
                 cb = ttk.Checkbutton(section_frame, variable=var)
                 cb.grid(row=sub_row, column=0, columnspan=2, sticky='w', padx=4, pady=2)
@@ -314,7 +314,7 @@ def show_config_dialog(parent_window: Any) -> bool:
             w = entries.get(key)
             if w is None:
                 continue
-            if cast_type == bool:
+            if cast_type is bool:
                 _, var = w
                 values[key] = 'true' if var.get() else 'false'
             else:
@@ -324,7 +324,7 @@ def show_config_dialog(parent_window: Any) -> bool:
                     values[key] = str(default)
                 elif cast_type in (int, float):
                     try:
-                        (int if cast_type == int else float)(raw)
+                        (int if cast_type is int else float)(raw)
                         values[key] = raw
                     except ValueError:
                         values[key] = str(default)

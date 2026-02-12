@@ -14,7 +14,7 @@ src_dir = Path(__file__).parent.parent
 if str(src_dir) not in sys.path:
     sys.path.insert(0, str(src_dir))
 
-import streamlit as st
+import streamlit as st  # noqa: E402
 
 # Local imports (lightweight at startup)
 try:
@@ -41,7 +41,7 @@ except Exception as e:
     def initialize_i18n(language: Optional[str] = None) -> None:
         pass
 
-from streamlit_app.sections import (
+from streamlit_app.sections import (  # noqa: E402
     initialize_session_state,
     setup_sidebar,
     show_logo,
