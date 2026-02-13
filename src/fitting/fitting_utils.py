@@ -6,6 +6,7 @@ with the fitting_functions package (initial guesses, bounds, fit execution).
 """
 
 # Standard library
+import re
 from decimal import Decimal
 from typing import Any, Callable, List, Optional, Sequence, Tuple, Union
 
@@ -18,6 +19,49 @@ from i18n import t
 from utils import FittingError, get_logger
 
 logger = get_logger(__name__)
+
+
+# Unicode superscript digits and signs for literal elevated display
+_SUPERS = str.maketrans('0123456789+-', '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻')
+
+
+def _exp_to_superscript(exp_int: int) -> str:
+    """Convert exponent integer to Unicode superscript (e.g. -5 -> ⁻⁵, 3 -> ³)."""
+    return str(exp_int).translate(_SUPERS)
+
+
+def _to_power10_format(s: str) -> str:
+    """
+    Convert scientific notation (E or e) to 10^exp with literal superscript.
+
+    Examples:
+        '1.234e-05' -> '1.234×10⁻⁵'
+        '1.2E+03' -> '1.2×10³'
+    """
+    match = re.match(r'^([+-]?\d+\.?\d*)[eE]([+-]?\d+)$', s.strip())
+    if match:
+        mantissa, exp = match.groups()
+        exp_int = int(exp)
+        return f"{mantissa}×10{_exp_to_superscript(exp_int)}"
+    return s
+
+
+def format_scientific(value: float, fmt: str = ".4g") -> str:
+    """
+    Format a number, using 10^exp with literal superscript instead of E or e.
+
+    Args:
+        value: Number to format.
+        fmt: Format specifier (default '.4g' for general format).
+
+    Returns:
+        Formatted string, e.g. '1.234×10⁻⁵' instead of '1.234e-05'.
+    """
+    if not np.isfinite(value):
+        return '∞' if np.isinf(value) else 'NaN'
+    s = f"{value:{fmt}}"
+    return _to_power10_format(s)
+
 
 def format_parameter(value: float, sigma: float) -> Tuple[float, str]:
     """
@@ -43,26 +87,28 @@ def format_parameter(value: float, sigma: float) -> Tuple[float, str]:
         return round(value, 6), '∞' if np.isinf(sigma) else 'NaN'
     
     try:
-        sigma_str = '%.1E' % Decimal(sigma)
+        sigma_raw = '%.1E' % Decimal(sigma)
         # Try to extract exponent part (format: X.XE+YY or X.XE-YY; %E uses uppercase)
-        if 'E' in sigma_str:
-            exp_part = sigma_str.split('E')[-1]
+        if 'E' in sigma_raw:
+            exp_part = sigma_raw.split('E')[-1]
             if exp_part:  # Check if exp_part is not empty
                 exp_value = int(exp_part)
                 rounded_value = round(value, 1 - exp_value)
             else:
                 # Fallback if no exponent found
-                logger.debug(t('log.no_exponent_found', sigma_str=sigma_str))
+                logger.debug(t('log.no_exponent_found', sigma_str=sigma_raw))
                 rounded_value = round(value, 6)  # Default to 6 decimal places
         else:
             # No exponential notation, use default rounding
-            logger.debug(t('log.no_exponential_notation', sigma_str=sigma_str))
+            logger.debug(t('log.no_exponential_notation', sigma_str=sigma_raw))
             rounded_value = round(value, 6)
+        sigma_str = _to_power10_format(sigma_raw)
         return rounded_value, sigma_str
     except (ValueError, IndexError, OverflowError) as e:
         # If anything goes wrong, return value with default formatting
         logger.warning(t('log.error_formatting_parameter', error=str(e)))
-        return round(value, 6), f"{sigma:.1E}"
+        sigma_str = _to_power10_format(f"{sigma:.1E}")
+        return round(value, 6), sigma_str
 
 
 def generic_fit(
@@ -287,10 +333,10 @@ def generic_fit(
     
     # Generate text output using the fit_stats dictionary
     text_lines.append(f"R\u00B2={fit_stats['r_squared']:.6f}")
-    text_lines.append(t('stats.rmse', value=f"{fit_stats['rmse']:.4g}"))
-    text_lines.append(t('stats.chi_squared', value=f"{fit_stats['chi_squared']:.4g}"))
+    text_lines.append(t('stats.rmse', value=format_scientific(fit_stats['rmse'])))
+    text_lines.append(t('stats.chi_squared', value=format_scientific(fit_stats['chi_squared'])))
     text_lines.append(
-        t('stats.reduced_chi_squared', value=f"{fit_stats['reduced_chi_squared']:.4g}")
+        t('stats.reduced_chi_squared', value=format_scientific(fit_stats['reduced_chi_squared']))
     )
     text_lines.append(t('stats.dof', value=fit_stats['dof']))
     
@@ -302,8 +348,8 @@ def generic_fit(
                 t(
                     'stats.param_ci_95',
                     param=name,
-                    low=f"{ci['low']:.4g}",
-                    high=f"{ci['high']:.4g}"
+                    low=format_scientific(ci['low']),
+                    high=format_scientific(ci['high'])
                 )
             )
         else:

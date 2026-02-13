@@ -39,9 +39,9 @@ class TestFormatParameter:
         assert sigma_str == expected
     
     def test_small_sigma(self) -> None:
-        """Test formatting with very small uncertainty."""
+        """Test formatting with very small uncertainty (literal superscript format)."""
         _, sigma = format_parameter(1.23456789, 1e-8)
-        assert 'E' in sigma or 'e' in sigma
+        assert '×10' in sigma and '⁸' in sigma
 
 
 class TestEstimateTrigonometricParameters:

@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Update check (Tkinter)**: Weekly check for updates when opening the app. If a newer version is available and `CHECK_UPDATES` is enabled (default), a dialog asks whether to update. If confirmed, the app runs `git pull`; `input/`, `output/`, and `.env` are preserved. Configurable via `.env`: `CHECK_UPDATES` (enable/disable), `CHECK_UPDATES_FORCE` (force check every time, for testing), `UPDATE_CHECK_URL` (URL to fetch version from). See [Configuration Guide](docs/configuration.md#7-update-check-tkinter).
 
+### Changed
+
+- **Imports and package structure**: Centralized imports in all `__init__.py` files; `__all__` now follows import order. Cross-package imports use the package root (e.g. `from config import ...`, `from loaders import ...`). Imports within the same package use full module paths (e.g. `config.constants`, `loaders.loading_utils`) to avoid circular references.
+- **config**: Added `config.color_utils` with `lighten_hex`, `muted_from_hex`, `parse_hex_to_rgb`; re-exported from `config`. Added `get_env_from_schema` to config exports. Streamlit theme now uses `config.color_utils` instead of duplicate implementations.
+- **data_analysis**: `transforms` and `cleaning` now use shared `get_numeric_columns` from `data_analysis._utils` (removed duplicate implementations).
+- **main_program**: Extracted `_resolve_multiple_x_variables()` helper to simplify repeated logic in fitting workflows.
+- **Docstrings**: Standardized to Google style; "Example:" → "Examples:" for consistency across modules.
+
 ## [0.9.3] - 2026-02-13
 
 ### Added
@@ -168,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial 0.8.x release. See repository history and documentation for features and changes prior to 0.8.1.
 
-[Unreleased]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.9.3...HEAD
+[1.0.0]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.9.3...v1.0.0
 [0.9.3]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.9.2...v0.9.3
 [0.9.2]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v0.9.0...v0.9.1

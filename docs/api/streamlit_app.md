@@ -17,7 +17,7 @@ The `streamlit_app.app` module is the entry point for the web interface. The mai
 - **`sections/help_section.py`** – `show_help_section`. Uses `config.DONATIONS_URL` for the donations link.
 - **`sections/modes.py`** – `mode_normal_fitting`, `mode_multiple_datasets`, `mode_checker_fitting`, `mode_total_fitting`, `mode_view_data`. Uses `config.DATA_FILE_TYPES`.
 
-**Imports:** `from streamlit_app.app import main`; `from streamlit_app.sections import mode_normal_fitting, perform_fit, load_uploaded_file`, etc. (modes and helpers are in `sections`). The application offers the same functionality as the Tkinter desktop version, with the same configuration sources (env, paths, theme).
+**Imports:** `from streamlit_app import get_streamlit_theme, get_main_css`; `from streamlit_app.sections import mode_normal_fitting, perform_fit, load_uploaded_file`, etc. (modes and helpers are in `sections`). The application offers the same functionality as the Tkinter desktop version, with the same configuration sources (env, paths, theme).
 
 ## Main Application
 
@@ -335,7 +335,7 @@ st.set_page_config(
 
 ### Theme and CSS
 
-- **Source:** `streamlit_app/theme.py`. Theme is built from `config.theme.UI_STYLE` when importable (same env + theme as Tkinter); otherwise from `config.env` only. All colors are converted to hex for CSS (no tkinter at runtime in theme).
+- **Source:** `streamlit_app/theme.py`. Theme is built from `config.theme.UI_STYLE` when importable (same env + theme as Tkinter); otherwise from `config.env` only. Uses `config.color_utils` for `lighten_hex` and `muted_from_hex` (sidebar background, muted text). All colors are converted to hex for CSS (no tkinter at runtime in theme).
 - **Applied in:** `app.py` calls `get_streamlit_theme()` (cached in `st.session_state.streamlit_theme`), then `get_main_css(theme)`, and injects the returned CSS once per run.
 - **Rules:** Main area uses `UI_BACKGROUND` and `UI_FOREGROUND`; sidebar uses a slightly lighter background (`sidebar_bg`); buttons use `UI_BUTTON_BG` and `UI_BUTTON_FG`; headings/accents use primary and accent2; fonts from `UI_FONT_FAMILY` and `UI_FONT_SIZE`.
 - **Sidebar layout:** `sections/sidebar.py` defines layout-only CSS (brand, version badge, section labels); colors come from the global theme CSS.

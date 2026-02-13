@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from config import PLOT_CONFIG, UI_STYLE
+from fitting.fitting_utils import format_scientific
 from frontend.image_utils import (
     load_image_scaled,
     plot_display_path,
@@ -130,9 +131,9 @@ def _show_prediction_dialog(parent: Toplevel, fit_info: Dict[str, Any]) -> None:
             result_var.set(t('dialog.prediction_invalid_input'))
             return
         if sigma_y is not None and np.isfinite(sigma_y):
-            result_var.set(t('dialog.prediction_result_with_uncertainty', y=f"{y_pred:.6g}", uy=f"{sigma_y:.4g}"))
+            result_var.set(t('dialog.prediction_result_with_uncertainty', y=format_scientific(y_pred, ".6g"), uy=format_scientific(sigma_y)))
         else:
-            result_var.set(t('dialog.prediction_result', y=f"{y_pred:.6g}"))
+            result_var.set(t('dialog.prediction_result', y=format_scientific(y_pred, ".6g")))
 
     for var in entry_vars:
         var.trace_add('write', _update_result)

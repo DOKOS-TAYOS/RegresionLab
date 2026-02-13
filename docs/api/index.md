@@ -10,6 +10,7 @@ RegressionLab follows a modular architecture with clear separation of concerns:
 RegressionLab/
 ├── src/
 │   ├── config/                # Configuration package
+│   │   ├── color_utils.py     # Hex color utilities (lighten, muted)
 │   │   ├── env.py             # Environment and .env
 │   │   ├── theme.py           # UI theme and plot style
 │   │   ├── paths.py           # Paths and output
@@ -43,9 +44,15 @@ RegressionLab/
 │   │       ├── result.py
 │   │       └── tooltip.py
 │   │
+│   ├── data_analysis/         # Transforms and cleaning
+│   │   ├── _utils.py          # Shared get_numeric_columns
+│   │   ├── transforms.py
+│   │   └── cleaning.py
+│   │
 │   ├── loaders/               # Data loading
 │   │   ├── data_loader.py
-│   │   └── loading_utils.py
+│   │   ├── loading_utils.py
+│   │   └── saving_utils.py
 │   │
 │   ├── plotting/              # Visualization
 │   │   └── plot_utils.py
@@ -154,9 +161,9 @@ streamlit run src/streamlit_app/app.py
 RegressionLab follows PEP 8 with these conventions:
 
 - **Line length**: 100 characters max
-- **Docstrings**: Google style
+- **Docstrings**: Google style (use "Examples:" for example blocks)
 - **Type hints**: Required for function signatures
-- **Imports**: Sorted alphabetically, grouped by standard/third-party/local
+- **Imports**: Sorted alphabetically, grouped by standard/third-party/local. Cross-package imports use the package root (e.g. `from config import X`, `from loaders import Y`). Imports within the same package use full module paths (e.g. `from config.constants import Z`, `from loaders.loading_utils import csv_reader`) to avoid circular references
 
 Example:
 
