@@ -6,6 +6,7 @@
 # Standard library
 import logging
 import os
+import re
 import sys
 import urllib.parse
 import warnings
@@ -204,10 +205,126 @@ def _rewrite_locale_asset_paths(doctree: nodes.document) -> None:
             node['uri'] = replacement + uri[len(prefix):]
 
 
+# Regex for paragraphs that are only markdown image or link (locale builds sometimes
+# inject translated strings as literal text instead of parsed nodes).
+_IMAGE_MARKDOWN_RE = re.compile(
+    r'^!\s*\[([^\]]*)\]\s*\(\s*(\.\./images/[^)]+)\s*\)\s*$',
+    re.DOTALL,
+)
+_LINK_MARKDOWN_RE = re.compile(
+    r'^\[([^\]]*)\]\s*\(\s*([^)]+)\s*\)\s*$',
+    re.DOTALL,
+)
+# Link inside a paragraph: [text](url)
+_LINK_INLINE_RE = re.compile(
+    r'\[([^\]]*)\]\(\s*([^)]+)\s*\)',
+)
+
+
+def _convert_literal_markdown_paragraphs(app, doctree: nodes.document, docname: str) -> None:
+    """Convert paragraphs that are literal markdown image/link into proper nodes.
+
+    In gettext builds, translated content can be inserted as plain text; the result
+    is raw markdown like ![alt](../images/...) or [text](installation.md) shown
+    on the page. Replace such paragraphs with image and reference nodes.
+    """
+    builder = getattr(app, "builder", None)
+    get_uri = getattr(builder, "get_relative_uri", None) if builder else None
+
+    for node in list(doctree.traverse(nodes.paragraph)):
+        text = node.astext().strip()
+        if not text:
+            continue
+
+        # Whole paragraph is a markdown image: ![alt](../images/...)
+        match = _IMAGE_MARKDOWN_RE.match(text)
+        if match:
+            alt = match.group(1).strip()
+            path = match.group(2).strip()
+            if path.startswith("../images/"):
+                uri = "../../images/" + path[len("../images/") :]
+            else:
+                uri = path
+            img = nodes.image(uri=uri, alt=alt)
+            # Sphinx post_process_images expects image nodes to have 'candidates'
+            img["candidates"] = {"*": uri}
+            node.replace_self(img)
+            continue
+
+        # Whole paragraph is a markdown link: [text](url) or [text](installation.md)
+        match = _LINK_MARKDOWN_RE.match(text)
+        if match:
+            link_text = match.group(1).strip()
+            target = match.group(2).strip()
+            if any(target.startswith(s) for s in ("http://", "https://", "mailto:")):
+                refuri = target
+            elif get_uri:
+                base = _norm_base(target)
+                fragment = _get_fragment(target)
+                html = _DOC_MD_TO_HTML.get(base)
+                if html:
+                    target_doc = _DOC_HTML_TO_DOCNAME.get(html) or html.replace(
+                        ".html", ""
+                    )
+                    refuri = get_uri(docname, target_doc) + fragment
+                else:
+                    refuri = target
+            else:
+                refuri = target
+            # Use raw HTML to avoid Sphinx HTML5 writer assertion on reference+single child
+            from html import escape
+            escaped_text = escape(link_text)
+            escaped_uri = escape(refuri)
+            raw = nodes.raw("", f'<a href="{escaped_uri}">{escaped_text}</a>', format="html")
+            node.replace_self(raw)
+            continue
+
+        # Paragraph contains one markdown link in the middle (e.g. "Consulta la [Guía](installation.md) para...")
+        match_inline = _LINK_INLINE_RE.search(text)
+        if match_inline and _LINK_INLINE_RE.search(text, match_inline.end()) is None:
+            # Exactly one link in the paragraph
+            from html import escape
+            before = text[: match_inline.start()]
+            link_text = match_inline.group(1).strip()
+            target = match_inline.group(2).strip()
+            after = text[match_inline.end() :]
+            if any(target.startswith(s) for s in ("http://", "https://", "mailto:")):
+                refuri = target
+            elif get_uri:
+                base = _norm_base(target)
+                fragment = _get_fragment(target)
+                html = _DOC_MD_TO_HTML.get(base)
+                if html:
+                    target_doc = _DOC_HTML_TO_DOCNAME.get(html) or html.replace(".html", "")
+                    refuri = get_uri(docname, target_doc) + fragment
+                else:
+                    refuri = target
+            else:
+                refuri = target
+            new_children = []
+            if before:
+                new_children.append(nodes.Text(before))
+            new_children.append(
+                nodes.raw(
+                    "",
+                    f'<a href="{escape(refuri)}">{escape(link_text)}</a>',
+                    format="html",
+                )
+            )
+            if after:
+                new_children.append(nodes.Text(after))
+            node.clear()
+            for c in new_children:
+                node += c
+            continue
+
+
 def _rewrite_doc_md_links(app, doctree, docname):
     """Rewrite links to docs/*.md so they point to the built .html (works in both .md and Sphinx)."""
     # Fix image paths for locale builds (content from .po resolves paths from source/)
     _rewrite_locale_asset_paths(doctree)
+    # Convert paragraphs that are literal markdown image/link (gettext can emit raw text)
+    _convert_literal_markdown_paragraphs(app, doctree, docname)
 
     builder = getattr(app, 'builder', None)
     get_uri = getattr(builder, 'get_relative_uri', None) if builder else None
