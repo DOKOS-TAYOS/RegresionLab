@@ -36,7 +36,13 @@ def test_exception_hierarchy(exception_class: type, parent_class: type) -> None:
 @pytest.mark.parametrize("exception_class", [
     RegressionLabError,
     DataLoadError,
+    DataValidationError,
+    FileNotFoundError,
+    InvalidFileTypeError,
     FittingError,
+    EquationError,
+    ConfigurationError,
+    ValidationError,
 ])
 def test_exception_raising(exception_class: type) -> None:
     """Test raising exceptions."""
