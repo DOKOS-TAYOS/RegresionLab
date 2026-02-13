@@ -20,7 +20,7 @@ Usage remains the same: import from `config` (e.g. `from config import PLOT_CONF
 ### Application Metadata
 
 ```python
-__version__ = "0.9.3"
+__version__ = "1.0.0"
 __author__ = "Alejandro Mata Ali"
 __email__ = "alejandro.mata.ali@gmail.com"
 ```
@@ -407,7 +407,7 @@ FILE_CONFIG = {
     'plot_format': 'png'            # Output plot format (png, jpg, or pdf)
 }
 ```
-Values are read from `.env` (`FILE_INPUT_DIR`, `FILE_OUTPUT_DIR`, `FILE_FILENAME_TEMPLATE`, `FILE_PLOT_FORMAT`). The Tkinter **Configure** dialog edits these and all other keys defined in `ENV_SCHEMA` (see [Configuration Guide](../configuration.md)); optional keys such as `DONATIONS_URL` and UI theme/text preview options are also in the schema.
+Values are read from `.env` (`FILE_INPUT_DIR`, `FILE_OUTPUT_DIR`, `FILE_FILENAME_TEMPLATE`, `FILE_PLOT_FORMAT`). The Tkinter **Configure** dialog edits these and all other keys defined in `ENV_SCHEMA` (see [Configuration Guide](../configuration.md)); optional keys such as `DONATIONS_URL`, `CHECK_UPDATES`, `CHECK_UPDATES_FORCE`, `UPDATE_CHECK_URL`, and UI theme/text preview options are also in the schema.
 
 Equation-to-function mapping is provided by the **`function`** field of each entry in **`EQUATIONS`** (loaded from `equations.yaml`). The workflow controller and UI use `EQUATIONS[eq_id]['function']` to resolve the fitting function name.
 

@@ -433,7 +433,7 @@ If you select "Custom Formula":
 2. **Configuration dialog**:
    ![Configuration Dialog](../images/en_documentation/tkinter_docs/configuration.png)
 
-   - **Collapsible sections** (click header to expand/collapse): Language, UI, Plot, Font, Paths, Links, Logging.
+   - **Collapsible sections** (click header to expand/collapse): Language, UI, Plot, Font, Paths, Links, Updates, Logging.
    - Each option has a label and a short description; values are shown in text fields, checkboxes (for booleans), or dropdowns (for fixed options).
    - Use the scroll area and mouse wheel to move through sections.
 

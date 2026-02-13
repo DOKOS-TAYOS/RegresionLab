@@ -392,7 +392,10 @@
     "view_data_clean_remove_outliers_iqr": "• **Eliminar outliers (método IQR)**: Elimina valores fuera de [Q1 − 1,5×IQR, Q3 + 1,5×IQR] por columna. IQR = Q3 − Q1. Regla clásica del diagrama de caja.",
     "view_data_clean_remove_outliers_zscore": "• **Eliminar outliers (z-score)**: Elimina valores con |z| > 3, donde z = (x − μ) / σ por columna. Elimina valores extremos.",
     "view_data_save": "• **Guardar datos actualizados**: Guarda los datos actuales (posiblemente transformados o limpiados) en un archivo. Elige formato CSV, TXT o XLSX.",
-    "view_data_save_body": "Guarda los datos actuales (posiblemente transformados o limpiados) en un archivo. Elige formato CSV, TXT o XLSX."
+    "view_data_save_body": "Guarda los datos actuales (posiblemente transformados o limpiados) en un archivo. Elige formato CSV, TXT o XLSX.",
+    "updates_title": "\n🔄 Actualizaciones",
+    "updates_description": "La aplicación comprueba automáticamente **una vez por semana** si hay una versión más reciente al abrirla. Si la hay, aparece un diálogo preguntando si desea actualizar. Si confirma, se ejecuta git pull para actualizar el código. Sus carpetas input, output y el archivo .env no se modifican.",
+    "updates_configure": "Puede activar o desactivar esta función en **Configurar** → **Actualizaciones**. También puede forzar la comprobación en cada apertura (útil para pruebas) o cambiar la URL desde la que se obtiene la versión."
   },
   "config": {
     "title": "Configuración de la aplicación",

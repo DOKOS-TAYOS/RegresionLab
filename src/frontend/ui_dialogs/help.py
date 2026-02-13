@@ -54,6 +54,7 @@ _HELP_SECTIONS: List[Tuple[str, List[str]]] = [
     ),
     ('data_location', ['data_location', 'data_input', 'data_formats']),
     ('output_location', ['output_location', 'output_plots', 'output_logs']),
+    ('updates', ['updates_title', 'updates_description', 'updates_configure']),
     (
         'stats',
         [

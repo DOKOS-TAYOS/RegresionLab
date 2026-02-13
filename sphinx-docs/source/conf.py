@@ -203,8 +203,8 @@ try:
 except ImportError:
     pass  # dotenv not required for documentation build
 
-release = '0.9.3'
-version = '0.9.3'
+release = '1.0.0'
+version = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

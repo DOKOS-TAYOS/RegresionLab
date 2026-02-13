@@ -392,7 +392,10 @@
     "view_data_clean_remove_outliers_iqr": "• **Remove outliers (IQR method)**: Drops values outside [Q1 − 1.5×IQR, Q3 + 1.5×IQR] per column. IQR = Q3 − Q1. Classic box-plot rule.",
     "view_data_clean_remove_outliers_zscore": "• **Remove outliers (z-score)**: Drops values with |z| > 3, where z = (x − μ) / σ per column. Removes extreme values.",
     "view_data_save": "• **Save updated data**: Saves the current (possibly transformed or cleaned) data to a file. Choose CSV, TXT, or XLSX format.",
-    "view_data_save_body": "Saves the current (possibly transformed or cleaned) data to a file. Choose CSV, TXT, or XLSX format."
+    "view_data_save_body": "Saves the current (possibly transformed or cleaned) data to a file. Choose CSV, TXT, or XLSX format.",
+    "updates_title": "\n🔄 Updates",
+    "updates_description": "The application automatically checks **once a week** for a newer version when you open it. If one is available, a dialog asks whether you want to update. If you confirm, it runs git pull to update the code. Your input, output folders and .env file are not modified.",
+    "updates_configure": "You can enable or disable this in **Configure** → **Updates**. You can also force the check on every launch (useful for testing) or change the URL from which the version is fetched."
   },
   "config": {
     "title": "Application configuration",

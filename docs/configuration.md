@@ -14,6 +14,7 @@ If you use the **Tkinter desktop application**, you can change settings without 
 - **Font**: Font family and sizes for plot title, axis labels, and tick labels.
 - **Paths**: Default input and output folders, filename template for saved plots, and export format (PNG, JPG, PDF).
 - **Links**: Optional URL for the “Donations” link in the Information dialog.
+- **Updates**: Weekly update check (enable/disable), force check for testing, and URL to fetch the latest version.
 - **Logging**: Log level (e.g. DEBUG, INFO), log file path, and whether messages are also printed to the console.
 
 ![Configuration Dialog](../images/en_documentation/tkinter_docs/configuration.png)
@@ -58,7 +59,8 @@ The `.env` file is grouped into sections that match the Tkinter **Configure** di
 4. [Font Configuration](#4-font-configuration)
 5. [File Path Configuration](#5-file-path-configuration)
 6. [Links (Optional)](#6-links-optional)
-7. [Logging Configuration](#7-logging-configuration)
+7. [Update Check (Tkinter)](#7-update-check-tkinter)
+8. [Logging Configuration](#8-logging-configuration)
 
 ---
 
@@ -488,7 +490,52 @@ DONATIONS_URL="https://www.youtube.com/@whenphysics"
 
 ---
 
-## 7. Logging Configuration
+## 7. Update Check (Tkinter)
+
+The Tkinter desktop app can check for updates once a week when you open it. If a newer version is available, a dialog asks whether you want to update. If you confirm, the app runs `git pull` to update the code. Your `input/`, `output/` folders and `.env` file are not modified.
+
+```ini
+CHECK_UPDATES=true
+CHECK_UPDATES_FORCE=false
+UPDATE_CHECK_URL="https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/pyproject.toml"
+```
+
+### Enable or Disable Update Check
+
+```ini
+CHECK_UPDATES=true
+```
+
+- `true`: Check for updates weekly when opening the app (default).
+- `false`: Disable the update check entirely; no dialog will appear.
+
+### Force Check (for Testing)
+
+```ini
+CHECK_UPDATES_FORCE=false
+```
+
+- `true`: Always run the update check when opening the app, ignoring the 7-day interval. Useful for testing.
+- `false`: Use the normal weekly interval (default).
+
+### Version Check URL
+
+```ini
+UPDATE_CHECK_URL="https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/pyproject.toml"
+```
+
+- URL of the remote `pyproject.toml` used to fetch the latest version. Leave empty to use the default (RegressionLab main branch).
+- If you use a fork, set this to your fork's URL.
+
+### How It Works
+
+- The app stores the last check timestamp in `.last_update_check` (project root). The file is empty; only its modification time is used.
+- If at least 7 days have passed (or `CHECK_UPDATES_FORCE=true`), the app fetches the remote version and compares it with the current one.
+- If a newer version exists, a dialog asks whether to update. If you confirm, `git pull` is run. User data in `input/`, `output/`, and `.env` is preserved.
+
+---
+
+## 8. Logging Configuration
 
 Control where and how much RegressionLab logs: level of detail, log file location, and whether messages are also printed to the console.
 

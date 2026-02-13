@@ -321,7 +321,13 @@ Access the hosted version at: [https://regressionlab.streamlit.app/](https://reg
 
 ## Updating RegressionLab
 
-### If Installed via Git
+### In-App Update Check (Tkinter, Git Install)
+
+If you installed RegressionLab via Git and use the **Tkinter desktop app**, the app checks for updates **once a week** when you open it. If a newer version is available, a dialog asks whether you want to update. If you confirm, the app runs `git pull` to update the code. Your `input/`, `output/` folders and `.env` file are not modified.
+
+You can disable this in **Configure** → **Updates** (`CHECK_UPDATES=false` in `.env`) or force a check every time (`CHECK_UPDATES_FORCE=true`). See the [Configuration Guide](configuration.md#7-update-check-tkinter) for details.
+
+### If Installed via Git (Manual Update)
 
 ```bash
 cd RegressionLab

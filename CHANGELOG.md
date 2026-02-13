@@ -5,6 +5,11 @@ All notable changes to RegressionLab are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-02-14
+
+### Added
+
+- **Update check (Tkinter)**: Weekly check for updates when opening the app. If a newer version is available and `CHECK_UPDATES` is enabled (default), a dialog asks whether to update. If confirmed, the app runs `git pull`; `input/`, `output/`, and `.env` are preserved. Configurable via `.env`: `CHECK_UPDATES` (enable/disable), `CHECK_UPDATES_FORCE` (force check every time, for testing), `UPDATE_CHECK_URL` (URL to fetch version from). See [Configuration Guide](docs/configuration.md#7-update-check-tkinter).
 
 ## [0.9.3] - 2026-02-13
 
@@ -31,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.9.2] - 2026-02-11
+## [0.9.2] - 2026-02-12
 
 ### Fixed
 

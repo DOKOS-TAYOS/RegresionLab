@@ -392,7 +392,10 @@
     "view_data_clean_remove_outliers_iqr": "• **Ausreißer entfernen (IQR-Methode)**: Entfernt Werte außerhalb [Q1 − 1,5×IQR, Q3 + 1,5×IQR] pro Spalte. IQR = Q3 − Q1. Klassische Box-Plot-Regel.",
     "view_data_clean_remove_outliers_zscore": "• **Ausreißer entfernen (z-Score)**: Entfernt Werte mit |z| > 3, wobei z = (x − μ) / σ pro Spalte. Entfernt extreme Werte.",
     "view_data_save": "• **Aktualisierte Daten speichern**: Speichert die aktuellen (möglicherweise transformierten oder bereinigten) Daten in einer Datei. Wählen Sie CSV-, TXT- oder XLSX-Format.",
-    "view_data_save_body": "Speichert die aktuellen (möglicherweise transformierten oder bereinigten) Daten in einer Datei. Wählen Sie CSV-, TXT- oder XLSX-Format."
+    "view_data_save_body": "Speichert die aktuellen (möglicherweise transformierten oder bereinigten) Daten in einer Datei. Wählen Sie CSV-, TXT- oder XLSX-Format.",
+    "updates_title": "\n🔄 Aktualisierungen",
+    "updates_description": "Die Anwendung prüft automatisch **einmal pro Woche** beim Öffnen, ob eine neuere Version verfügbar ist. Wenn ja, erscheint ein Dialog mit der Frage, ob Sie aktualisieren möchten. Bei Bestätigung wird git pull ausgeführt. Ihre input-, output-Ordner und die .env-Datei werden nicht geändert.",
+    "updates_configure": "Sie können diese Funktion unter **Konfigurieren** → **Aktualisierungen** aktivieren oder deaktivieren. Sie können auch die Prüfung bei jedem Start erzwingen (nützlich zum Testen) oder die URL ändern, von der die Version abgerufen wird."
   },
   "config": {
     "title": "Anwendungskonfiguration",
