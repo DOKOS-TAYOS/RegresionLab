@@ -127,7 +127,7 @@ def _validate_env_value(
             return False, default
             
         # Optional fields that can be empty
-        optional_fields = {'DONATIONS_URL'}
+        optional_fields = {'DONATIONS_URL', 'UPDATE_CHECK_URL'}
         
         # Require non-empty strings for all other fields
         if not str_value and key not in optional_fields:
@@ -239,6 +239,10 @@ ENV_SCHEMA: list[dict[str, Any]] = [
     {'key': 'FILE_PLOT_FORMAT', 'default': 'png', 'cast_type': str, 'options': ('png', 'jpg', 'pdf')},
     # --- links ---
     {'key': 'DONATIONS_URL', 'default': 'https://www.youtube.com/@whenphysics', 'cast_type': str},
+    # --- updates (tkinter) ---
+    {'key': 'CHECK_UPDATES', 'default': True, 'cast_type': bool},
+    {'key': 'CHECK_UPDATES_FORCE', 'default': False, 'cast_type': bool},
+    {'key': 'UPDATE_CHECK_URL', 'default': 'https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/pyproject.toml', 'cast_type': str},
     # --- logging ---
     {'key': 'LOG_LEVEL', 'default': DEFAULT_LOG_LEVEL, 'cast_type': str, 'options': ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL')},
     {'key': 'LOG_FILE', 'default': DEFAULT_LOG_FILE, 'cast_type': str},

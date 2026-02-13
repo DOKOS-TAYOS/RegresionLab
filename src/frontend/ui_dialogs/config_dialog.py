@@ -51,6 +51,8 @@ def _config_section_for_key(key: str) -> str:
         return 'paths'
     if key == 'DONATIONS_URL':
         return 'links'
+    if key in ('CHECK_UPDATES', 'CHECK_UPDATES_FORCE', 'UPDATE_CHECK_URL'):
+        return 'updates'
     if key.startswith('LOG_'):
         return 'logging'
     return 'other'

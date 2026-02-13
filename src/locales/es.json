@@ -181,6 +181,17 @@
     "must_be_integer": "{name} debe ser un número entero",
     "must_be_positive": "{name} debe ser un número positivo"
   },
+  "update": {
+    "title": "Actualización disponible",
+    "message": "Hay una nueva versión disponible: {latest} (actual: {current}).\n\n¿Desea actualizar ahora? La actualización no modificará sus carpetas input, output ni el archivo .env.",
+    "yes": "Sí, actualizar",
+    "no": "No",
+    "pull_ok": "Actualización completada correctamente. Reinicie la aplicación para usar la nueva versión.",
+    "pull_failed": "No se pudo actualizar. Compruebe su conexión o actualice manualmente con git pull.",
+    "no_git_repo": "No es un repositorio git. Actualice manualmente descargando la nueva versión.",
+    "pull_timeout": "La actualización tardó demasiado. Intente de nuevo más tarde.",
+    "git_not_found": "Git no está instalado. Actualice manualmente."
+  },
   "warning": {
     "title": "Advertencia",
     "log_file_warning": "No se pudo crear el archivo de log {log_file}: {error}",
@@ -391,6 +402,7 @@
     "section_font": "Fuentes de las gráficas",
     "section_paths": "Rutas de archivos",
     "section_links": "Enlaces",
+    "section_updates": "Actualizaciones",
     "section_logging": "Registro (log)",
     "save_error": "No se pudo guardar el archivo de configuración:\n{path}",
     "restart_hint": "Los cambios se aplican al reiniciar la aplicación.",
@@ -470,6 +482,12 @@
     "desc_FILE_PLOT_FORMAT": "Formato para guardar las gráficas: png, jpg o pdf.",
     "label_DONATIONS_URL": "URL de donaciones",
     "desc_DONATIONS_URL": "Si se indica, aparece un botón de donaciones al final de la ventana de Ayuda. Dejar vacío para ocultarlo.",
+    "label_CHECK_UPDATES": "Comprobar actualizaciones",
+    "desc_CHECK_UPDATES": "Si está activado, se comprueba semanalmente si hay una versión más reciente al abrir la aplicación.",
+    "label_CHECK_UPDATES_FORCE": "Forzar comprobación (ignorar 7 días)",
+    "desc_CHECK_UPDATES_FORCE": "Si está activado, siempre se comprueba al abrir (útil para pruebas).",
+    "label_UPDATE_CHECK_URL": "URL para comprobar versión",
+    "desc_UPDATE_CHECK_URL": "URL del pyproject.toml remoto para obtener la última versión. Dejar vacío para usar el valor por defecto.",
     "label_LOG_LEVEL": "Nivel de log",
     "desc_LOG_LEVEL": "Nivel de registro: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
     "label_LOG_FILE": "Archivo de log",

@@ -608,14 +608,61 @@ def show_help() -> None:
 # APPLICATION ENTRY POINT
 # ============================================================================
 
+def _check_for_updates() -> None:
+    """
+    Check for updates once a week. If a newer version is available and
+    CHECK_UPDATES is enabled, show a dialog asking if the user wants to update.
+    If yes, perform git pull (preserves input/, output/, .env).
+    """
+    from utils.update_checker import (
+        is_update_available,
+        perform_git_pull,
+        record_check_done,
+        should_run_check,
+    )
+
+    if not should_run_check():
+        logger.debug("Update check skipped (CHECK_UPDATES disabled or checked recently)")
+        return
+
+    latest = is_update_available(__version__)
+    record_check_done()
+
+    if latest:
+        logger.info("Update available: %s (current: %s)", latest, __version__)
+    else:
+        logger.debug("Update check done: no newer version (current: %s)", __version__)
+
+    if not latest:
+        return
+
+    wants_update = messagebox.askyesno(
+        t('update.title'),
+        t('update.message', latest=latest, current=__version__),
+        default=messagebox.YES,
+    )
+    if not wants_update:
+        return
+
+    success, msg = perform_git_pull()
+    if success:
+        # msg may be git output or i18n key
+        display_msg = t(msg) if msg.startswith('update.') else msg
+        messagebox.showinfo(t('update.title'), display_msg)
+    else:
+        display_msg = t(msg) if msg.startswith('update.') else msg
+        messagebox.showerror(t('update.title'), display_msg)
+
+
 def main() -> None:
     """Main entry point for the application."""
     logger.info("="*60)
     logger.info(t('log.application_starting'))
     logger.info(t('log.version', version=__version__))
     logger.info("="*60)
-    
+
     try:
+        _check_for_updates()
         # Start the main menu
         # The start_main_menu function stores the menu in __main__.menu
         # Callbacks access it via _get_menu_window()

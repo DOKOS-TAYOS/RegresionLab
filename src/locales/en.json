@@ -181,6 +181,17 @@
     "must_be_integer": "{name} must be an integer",
     "must_be_positive": "{name} must be a positive number"
   },
+  "update": {
+    "title": "Update available",
+    "message": "A new version is available: {latest} (current: {current}).\n\nDo you want to update now? The update will not modify your input, output folders or the .env file.",
+    "yes": "Yes, update",
+    "no": "No",
+    "pull_ok": "Update completed successfully. Restart the application to use the new version.",
+    "pull_failed": "Could not update. Check your connection or update manually with git pull.",
+    "no_git_repo": "Not a git repository. Update manually by downloading the new version.",
+    "pull_timeout": "Update took too long. Please try again later.",
+    "git_not_found": "Git is not installed. Update manually."
+  },
   "warning": {
     "title": "Warning",
     "log_file_warning": "Could not create log file {log_file}: {error}",
@@ -391,6 +402,7 @@
     "section_font": "Plot fonts",
     "section_paths": "File paths",
     "section_links": "Links",
+    "section_updates": "Updates",
     "section_logging": "Logging",
     "save_error": "Could not save configuration file:\n{path}",
     "restart_hint": "Changes take effect after restarting the application.",
@@ -470,6 +482,12 @@
     "desc_FILE_PLOT_FORMAT": "Format for saving plots: png, jpg, or pdf.",
     "label_DONATIONS_URL": "Donations URL",
     "desc_DONATIONS_URL": "If set, a donations button appears at the end of the Help window. Leave empty to hide.",
+    "label_CHECK_UPDATES": "Check for updates",
+    "desc_CHECK_UPDATES": "If enabled, checks weekly for a newer version when opening the application.",
+    "label_CHECK_UPDATES_FORCE": "Force check (ignore 7-day interval)",
+    "desc_CHECK_UPDATES_FORCE": "If enabled, always checks when opening (useful for testing).",
+    "label_UPDATE_CHECK_URL": "URL to check version",
+    "desc_UPDATE_CHECK_URL": "URL of remote pyproject.toml to fetch latest version. Leave empty for default.",
     "label_LOG_LEVEL": "Log level",
     "desc_LOG_LEVEL": "Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
     "label_LOG_FILE": "Log file",

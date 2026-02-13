@@ -181,6 +181,17 @@
     "must_be_integer": "{name} muss eine ganze Zahl sein",
     "must_be_positive": "{name} muss eine positive Zahl sein"
   },
+  "update": {
+    "title": "Aktualisierung verfügbar",
+    "message": "Eine neue Version ist verfügbar: {latest} (aktuell: {current}).\n\nMöchten Sie jetzt aktualisieren? Die Aktualisierung ändert Ihre input-, output-Ordner und die .env-Datei nicht.",
+    "yes": "Ja, aktualisieren",
+    "no": "Nein",
+    "pull_ok": "Aktualisierung erfolgreich abgeschlossen. Starten Sie die Anwendung neu, um die neue Version zu verwenden.",
+    "pull_failed": "Aktualisierung fehlgeschlagen. Überprüfen Sie Ihre Verbindung oder aktualisieren Sie manuell mit git pull.",
+    "no_git_repo": "Kein Git-Repository. Aktualisieren Sie manuell durch Herunterladen der neuen Version.",
+    "pull_timeout": "Die Aktualisierung hat zu lange gedauert. Bitte versuchen Sie es später erneut.",
+    "git_not_found": "Git ist nicht installiert. Aktualisieren Sie manuell."
+  },
   "warning": {
     "title": "Warnung",
     "log_file_warning": "Logdatei {log_file} konnte nicht erstellt werden: {error}",
@@ -391,6 +402,7 @@
     "section_font": "Diagrammschriften",
     "section_paths": "Dateipfade",
     "section_links": "Links",
+    "section_updates": "Aktualisierungen",
     "section_logging": "Protokollierung",
     "save_error": "Konfigurationsdatei konnte nicht gespeichert werden:\n{path}",
     "restart_hint": "Änderungen werden nach Neustart der Anwendung wirksam.",
@@ -470,6 +482,12 @@
     "desc_FILE_PLOT_FORMAT": "Format zum Speichern der Diagramme: png, jpg oder pdf.",
     "label_DONATIONS_URL": "Spenden-URL",
     "desc_DONATIONS_URL": "Wenn gesetzt, erscheint ein Spenden-Button am Ende des Hilfe-Fensters. Leer lassen zum Ausblenden.",
+    "label_CHECK_UPDATES": "Nach Aktualisierungen suchen",
+    "desc_CHECK_UPDATES": "Wenn aktiviert, wird wöchentlich beim Öffnen der Anwendung nach einer neueren Version gesucht.",
+    "label_CHECK_UPDATES_FORCE": "Prüfung erzwingen (7-Tage-Intervall ignorieren)",
+    "desc_CHECK_UPDATES_FORCE": "Wenn aktiviert, wird beim Öffnen immer geprüft (nützlich zum Testen).",
+    "label_UPDATE_CHECK_URL": "URL zur Versionsprüfung",
+    "desc_UPDATE_CHECK_URL": "URL der entfernten pyproject.toml zum Abrufen der neuesten Version. Leer lassen für Standard.",
     "label_LOG_LEVEL": "Log-Level",
     "desc_LOG_LEVEL": "Protokollstufe: DEBUG, INFO, WARNING, ERROR, CRITICAL.",
     "label_LOG_FILE": "Logdatei",

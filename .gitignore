@@ -1,6 +1,9 @@
 # Environment variables
 .env
 
+# Update check state (last check timestamp)
+.last_update_check
+
 # Python
 __pycache__/
 *.py[cod]
