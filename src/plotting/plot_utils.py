@@ -250,7 +250,7 @@ def create_plot(
         fig, ax = plt.subplots(figsize=plot_config['figsize'])
         logger.debug(f"Figure created with size: {plot_config['figsize']}")
 
-        # Curva del ajuste: si hay fit_info, evaluar la función en linspace; si no, usar x, y_fitted
+        # Fit curve: if fit_info exists, evaluate the function on linspace; otherwise use x, y_fitted
         x_arr = np.asarray(x)
         x_min, x_max = float(x_arr.min()), float(x_arr.max())
         if fit_info is not None:
@@ -489,12 +489,12 @@ def create_3d_plot(
             label='Data points',
         )
         
-        # Create mesh for fitted surface: linspace en x_0 y x_1
+        # Create mesh for fitted surface: linspace in x_0 and x_1
         x_unique = np.linspace(x_arr.min(), x_arr.max(), _PLOT_3D_GRID_SIZE)
         y_unique = np.linspace(y_arr.min(), y_arr.max(), _PLOT_3D_GRID_SIZE)
         X_mesh, Y_mesh = np.meshgrid(x_unique, y_unique)
 
-        # Evaluar la función en el grid o interpolar z_fitted si no hay fit_info
+        # Evaluate the function on the grid or interpolate z_fitted if no fit_info
         Z_mesh = None
         if fit_info is not None:
             fit_func = fit_info.get('fit_func')

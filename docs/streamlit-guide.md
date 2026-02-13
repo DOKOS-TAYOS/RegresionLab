@@ -286,7 +286,7 @@ If "Custom Formula" is selected:
 
 ### Mode 4: View Data
 
-**Purpose**: View data from a file without performing any fitting.
+**Purpose**: View data from a file without performing any fitting. Includes transform, clean, and download options.
 
 **Steps**:
 
@@ -298,10 +298,22 @@ If "Custom Formula" is selected:
    - Supported formats: CSV, XLSX, TXT.
 
 3. **View Data**:
-   - Expand "Show Data" to see the table and optional pair plots.
-   - No equation selection or fitting is performed.
+   - Expand the data section to see the table.
+   - Click **Show variable pairs** (or equivalent in your language) for scatter matrix (pair plots).
 
-**Use case**: Inspect columns, check data quality, or visualize variable pairs before deciding on a fitting mode.
+4. **Transform Data** (optional):
+   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or normalize [0,1].
+   - Click **Transform** to apply. The table updates immediately.
+
+5. **Clean Data** (optional):
+   - Select a cleaning option: drop NaN rows, drop duplicates, fill NaN (mean/median/zero), or remove outliers (IQR or z-score).
+   - Click **Clean** to apply. The table updates immediately.
+
+6. **Download Updated Data** (optional):
+   - Choose format (CSV, TXT, XLSX) from the dropdown.
+   - Click the download button to save the current (possibly transformed/cleaned) data.
+
+**Use case**: Inspect columns, check data quality, transform or clean data, visualize variable pairs, or download processed data before deciding on a fitting mode.
 
 ### Mode 5: Total Fitting
 
@@ -625,6 +637,7 @@ So changing the theme in `.env` (or in Tkinter’s configuration) affects both t
 - Results layout: three columns (Equation, Parameters, Statistics), plot, then download button.
 - If output format is PDF, the in-app preview is PNG and the download is PDF.
 - **Prediction window** and **multidimensional fitting** (custom formulas with 2+ variables, 3D/residuals plots) are currently available in the Tkinter (desktop) version.
+- **View Data mode** in Streamlit has the same transform, clean, and download options as Tkinter.
 
 **When to use each**:
 - **Streamlit**: Quick analysis, sharing, accessibility.

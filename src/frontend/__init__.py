@@ -5,8 +5,7 @@ Contains all UI-related functionality including dialogs, main menu, and utilitie
 
 from .ui_main_menu import start_main_menu, create_main_menu, show_exit_confirmation
 from .ui_dialogs import (
-    ask_file_type,
-    ask_file_name,
+    open_load_dialog,
     ask_variables,
     ask_multiple_x_variables,
     show_data_dialog,
@@ -32,8 +31,7 @@ __all__ = [
     'create_main_menu',
     'show_exit_confirmation',
     # Dialogs
-    'ask_file_type',
-    'ask_file_name',
+    'open_load_dialog',
     'ask_variables',
     'ask_multiple_x_variables',
     'show_data_dialog',

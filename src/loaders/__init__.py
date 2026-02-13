@@ -11,6 +11,7 @@ from .data_loader import (
     load_data,
 )
 from .loading_utils import get_file_names, csv_reader, excel_reader, txt_reader
+from .saving_utils import get_default_save_directory, save_dataframe
 
 __all__ = [
     # Reader dispatch
@@ -24,5 +25,7 @@ __all__ = [
     'get_file_names',
     'csv_reader',
     'excel_reader',
-    'txt_reader'
+    'txt_reader',
+    'get_default_save_directory',
+    'save_dataframe',
 ]

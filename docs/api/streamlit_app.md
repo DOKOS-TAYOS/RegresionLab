@@ -11,7 +11,7 @@ The `streamlit_app.app` module is the entry point for the web interface. The mai
 - **`app.py`** – Entry point: page config, theme injection, session state, sidebar, mode routing.
 - **`theme.py`** – Theme from config: `get_streamlit_theme()`, `get_main_css()`. Uses `config.theme.UI_STYLE` (env + theme) when importable; fallback to `config.env` only. Sidebar background is slightly lighter than main area. Colors and fonts come from `UI_BACKGROUND`, `UI_FOREGROUND`, `UI_BUTTON_*`, `UI_FONT_*`, etc.
 - **`sections/sidebar.py`** – Sidebar setup, logo (or fallback header with theme colors), language toggle, session state. Initial language from `config.env` (`LANGUAGE`).
-- **`sections/data.py`** – `load_uploaded_file`, `show_data_with_pair_plots`, `get_variable_names`, `get_temp_output_dir`
+- **`sections/data.py`** – `load_uploaded_file`, `show_data_with_pair_plots`, `get_variable_names`, `get_temp_output_dir`. When `key_prefix` is set (e.g. View Data mode), `show_data_with_pair_plots` also renders transform, clean, and download controls.
 - **`sections/fitting.py`** – `perform_fit`, `show_equation_selector`, `select_variables`, `show_plot_title_checkbox`, `create_equation_options`. Uses `config.FILE_CONFIG` for plot format/paths. Includes per-fit checkbox to toggle plot title visibility (default from `PLOT_SHOW_TITLE`).
 - **`sections/results.py`** – `show_results`
 - **`sections/help_section.py`** – `show_help_section`. Uses `config.DONATIONS_URL` for the donations link.
@@ -126,13 +126,16 @@ mode_total_fitting(AVAILABLE_EQUATION_TYPES)
 
 ### View Data
 
-View data from a file without fitting.
+View data from a file without fitting. Includes transform, clean, and download options.
 
 **Function:** `mode_view_data(equation_types: List[str]) -> None`
 
 **Features:**
 - File upload (CSV, XLSX, TXT)
 - Data table and optional pair plots
+- **Transform**: Dropdown (FFT, DCT, log, exp, sqrt, standardize, normalize, etc.) and Apply button. Updates table in place.
+- **Clean**: Dropdown (drop NaN, drop duplicates, fill NaN, remove outliers) and Apply button.
+- **Download**: Format selector (CSV, TXT, XLSX) and download button for the current (possibly transformed/cleaned) data.
 - No equation selection or fitting
 
 **Example Usage:**
@@ -144,7 +147,7 @@ mode_view_data(AVAILABLE_EQUATION_TYPES)
 
 ## Key Functions
 
-### Data Loading
+### Data Loading and Display
 
 #### `load_uploaded_file(uploaded_file) -> pd.DataFrame`
 
@@ -164,6 +167,21 @@ if uploaded_file:
     if data is not None:
         st.dataframe(data)
 ```
+
+#### `show_data_with_pair_plots(data, key_prefix=None, file_id=None) -> None`
+
+Show data in an expander with optional pair plots and data analysis (transform, clean, download).
+
+**Parameters:**
+- `data`: DataFrame or data to display
+- `key_prefix`: Optional. If set (e.g. 'view_data'), enables transform/clean/download and uses session state for the current data. Required for analysis features.
+- `file_id`: Optional. When `key_prefix` is set, used to detect file changes. When `file_id` changes, the displayed data is reset to the new loaded data.
+
+**When `key_prefix` is set:**
+- Renders transform dropdown and Apply button (FFT, DCT, log, etc.).
+- Renders clean dropdown and Apply button (drop NaN, outliers, etc.).
+- Renders format selector and download button for the current data.
+- Pair plots use the current (possibly transformed) data.
 
 ### Fitting
 

@@ -14,10 +14,8 @@ from config import EXIT_SIGNAL
 from i18n import t
 from loaders import (
     FILE_TYPE_READERS,
-    get_file_list_by_type,
     get_variable_names,
-    load_data_workflow,
-    get_file_names,
+    load_data,
 )
 
 from utils import DataLoadError, get_logger
@@ -285,24 +283,21 @@ def apply_all_equations(
 
 def coordinate_data_loading(
     parent_window: Any,
-    ask_file_type_func: Callable,
-    ask_file_name_func: Callable,
+    open_load_func: Callable,
     ask_variables_func: Callable,
 ) -> Tuple[Union[pd.DataFrame, str], str, str, str, str, str]:
     """
     Coordinate the complete data loading workflow.
 
     This function orchestrates the entire data loading process:
-    1. Get available files
-    2. Ask user for file type
-    3. Ask user for specific file
-    4. Load the data
-    5. Ask user for variables to use
+    1. Open native file dialog to select a data file
+    2. Load the data
+    3. Ask user for variables to use
 
     Args:
         parent_window: Parent Tkinter window.
-        ask_file_type_func: Function to ask for file type.
-        ask_file_name_func: Function to ask for file name.
+        open_load_func: Function that opens native file dialog, returns (path, file_type)
+            or (None, None) on cancel. E.g. open_load_dialog from frontend.ui_dialogs.
         ask_variables_func: Function to ask for variables.
 
     Returns:
@@ -312,59 +307,19 @@ def coordinate_data_loading(
     logger.info("Starting data loading workflow")
     empty_result = ('', '', '', '', '', '')
     messagebox = _get_messagebox()
-    
-    try:
-        # Backend: Get available files
-        csv, xlsx, txt = get_file_names()
-        logger.debug(f"Available files - CSV: {len(csv)}, XLSX: {len(xlsx)}, TXT: {len(txt)}")
-    except Exception as e:
-        logger.error(f"Failed to get available files: {str(e)}", exc_info=True)
-        messagebox.showerror(
-            t('error.title'),
-            t('error.file_list_error', error=str(e))
-        )
-        return empty_result
-    
-    # Frontend: Ask for file type
-    file_type = ask_file_type_func(parent_window)
-    logger.debug(f"User selected file type: {file_type}")
-    
-    # Check if user wants to exit
-    if file_type == EXIT_SIGNAL or file_type == '':
-        logger.info("User cancelled file type selection")
-        return empty_result
-    
-    try:
-        # Backend: Get file list for selected type
-        file_list = get_file_list_by_type(file_type, csv, xlsx, txt)
-        
-        # Check if files are available
-        if not file_list:
-            logger.warning(f"No files available for type: {file_type}")
-            messagebox.showwarning(
-                t('warning.title'),
-                t('warning.no_files_found', file_type=file_type)
-            )
-            return empty_result
-    except Exception as e:
-        logger.error(f"Error getting file list: {str(e)}", exc_info=True)
-        messagebox.showerror(t('error.title'), t('error.file_list_error', error=str(e)))
-        return empty_result
-    
-    # Frontend: Ask for specific file
-    file_name = ask_file_name_func(parent_window, file_list)
-    logger.debug(f"User selected file: {file_name}")
-    
-    # Check if user cancelled
-    if not file_name:
+
+    # Frontend: Open native file dialog
+    file_path, file_type = open_load_func(parent_window)
+    logger.debug(f"User selected file: {file_path} (type: {file_type})")
+
+    if not file_path or not file_type:
         logger.info("User cancelled file selection")
         return empty_result
-    
+
     try:
-        # Backend: Load data
-        data, file_path = load_data_workflow(file_name, file_type)
-        
-        # Check if data loaded successfully
+        # Backend: Load data from selected path
+        data = load_data(file_path, file_type)
+
         if data is None or data.empty:
             logger.error("Loaded data is None or empty")
             messagebox.showerror(
@@ -379,28 +334,26 @@ def coordinate_data_loading(
             t('error.data_load_error', error=str(e))
         )
         return empty_result
-    
+
     # Backend: Get variable names
     variables_name = get_variable_names(data)
     logger.debug(f"Available variables: {variables_name}")
-    
+
     # Frontend: Ask for variables
     x_name, y_name, plot_name = ask_variables_func(parent_window, variables_name)
     logger.debug(f"User selected variables: x={x_name}, y={y_name}, plot={plot_name}")
-    
-    # Check if user cancelled
+
     if not x_name or not y_name:
         logger.info("User cancelled variable selection")
         return empty_result
-    
-    logger.info(f"Data loading workflow completed: {file_name}.{file_type}")
+
+    logger.info(f"Data loading workflow completed: {file_path}")
     return data, x_name, y_name, plot_name, file_path, file_type
 
 
 def coordinate_data_viewing(
     parent_window: Any,
-    ask_file_type_func: Callable,
-    ask_file_name_func: Callable,
+    open_load_func: Callable,
     show_data_func: Callable,
 ) -> None:
     """
@@ -411,48 +364,27 @@ def coordinate_data_viewing(
 
     Args:
         parent_window: Parent Tkinter window.
-        ask_file_type_func: Function to ask for file type.
-        ask_file_name_func: Function to ask for file name.
+        open_load_func: Function that opens native file dialog, returns (path, file_type)
+            or (None, None) on cancel.
         show_data_func: Function to display data.
     """
     messagebox = _get_messagebox()
-    try:
-        csv, xlsx, txt = get_file_names()
-    except Exception as e:
-        logger.error(f"Failed to get available files: {str(e)}", exc_info=True)
-        messagebox.showerror(
-            t('error.title'),
-            t('error.file_list_error', error=str(e))
-        )
+
+    # Frontend: Open native file dialog
+    file_path, file_type = open_load_func(parent_window)
+
+    if not file_path or not file_type:
         return
 
-    # Frontend: Ask for file type
-    file_type = ask_file_type_func(parent_window)
-
-    if file_type != EXIT_SIGNAL and file_type != '':
-        # Backend: Get file list for selected type
-        file_list = get_file_list_by_type(file_type, csv, xlsx, txt)
-        
-        # Check if files are available
-        if not file_list:
-            messagebox.showwarning(
-                t('warning.title'),
-                t('warning.no_files_found', file_type=file_type)
-            )
-            return
-        
-        # Frontend: Ask for specific file
-        file_name = ask_file_name_func(parent_window, file_list)
-        
-        # Check if user cancelled
-        if not file_name:
-            return
-        
-        # Backend: Load data
-        data, _ = load_data_workflow(file_name, file_type)
-        
-        # Frontend: Show data
+    try:
+        data = load_data(file_path, file_type)
         show_data_func(parent_window, data)
+    except Exception as e:
+        logger.error(f"Failed to load data: {str(e)}", exc_info=True)
+        messagebox.showerror(
+            t('error.title'),
+            t('error.data_load_error', error=str(e))
+        )
 
 
 # ============================================================================

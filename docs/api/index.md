@@ -84,10 +84,15 @@ RegressionLab/
 - **[fitting.custom_function_evaluator](custom_function_evaluator.md)** - Evaluates user-defined custom formulas
 - **[fitting.estimators](estimators.md)** - Parameter estimation functions for initial guesses
 
-### Data Loading
+### Data Loading and Saving
 
 - **[loaders.data_loader](data_loader.md)** - High-level data loading interface
 - **[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers
+- **[loaders.saving_utils](saving_utils.md)** - Save DataFrame to CSV, TXT, XLSX
+
+### Data Analysis
+
+- **data_analysis** - Transforms (FFT, DCT, log, exp, etc.) and cleaning (drop NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit.
 
 ### Visualization
 
@@ -219,7 +224,7 @@ Quick summary:
 
 1. Create reader function in `loaders/loading_utils.py`
 2. Register it in the `FILE_TYPE_READERS` dict in `loaders/data_loader.py` (key = file type, value = reader function)
-3. Add file type option to `ask_file_type()` in `frontend/ui_dialogs/data_selection.py`
+3. Add file type filter to `open_load_dialog()` in `frontend/ui_dialogs/load_data_dialog.py`
 4. Test with sample data
 
 ### Changing Plot Style

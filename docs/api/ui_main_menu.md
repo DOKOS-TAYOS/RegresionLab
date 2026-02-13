@@ -148,15 +148,14 @@ from frontend.ui_main_menu import start_main_menu
 from frontend.ui_dialogs import show_help_dialog
 from fitting.workflow_controller import coordinate_data_loading
 from frontend.ui_dialogs import (
-    ask_file_type, ask_file_name, ask_variables
+    open_load_dialog, ask_variables
 )
 
 def normal_fitting():
     """Handle normal fitting mode."""
     result = coordinate_data_loading(
         parent_window=root,
-        ask_file_type_func=ask_file_type,
-        ask_file_name_func=ask_file_name,
+        open_load_func=open_load_dialog,
         ask_variables_func=ask_variables
     )
     if result:

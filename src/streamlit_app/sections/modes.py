@@ -32,7 +32,11 @@ def mode_view_data(_equation_types: List[str]) -> None:
     if uploaded_file is not None:
         data = load_uploaded_file(uploaded_file)
         if data is not None:
-            show_data_with_pair_plots(data)
+            show_data_with_pair_plots(
+                data,
+                key_prefix='view_data',
+                file_id=uploaded_file.name,
+            )
 
 
 def mode_normal_fitting(equation_types: List[str]) -> None:

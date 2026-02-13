@@ -4,62 +4,44 @@ UI Dialogs package containing all Tkinter dialog windows for user interaction.
 
 ## Overview
 
-The `frontend.ui_dialogs` package provides all dialog windows used in the Tkinter interface. It is split into submodules; the package re-exports public functions so that `from frontend.ui_dialogs import ask_file_type, show_help_dialog`, etc. continue to work.
+The `frontend.ui_dialogs` package provides all dialog windows used in the Tkinter interface. It is split into submodules; the package re-exports public functions so that `from frontend.ui_dialogs import open_load_dialog, show_help_dialog`, etc. continue to work.
 
 **Package structure:**
-- **`ui_dialogs/data_selection.py`** – `ask_file_type`, `ask_file_name`, `ask_variables`, `ask_multiple_x_variables`, `show_data_dialog`
+- **`ui_dialogs/data_selection.py`** – `ask_variables`, `ask_multiple_x_variables`, `show_data_dialog`
+- **`ui_dialogs/load_data_dialog.py`** – `open_load_dialog` (native file picker for loading CSV, TXT, XLSX)
 - **`ui_dialogs/equation.py`** – `ask_equation_type`, `ask_num_parameters`, `ask_parameter_names`, `ask_custom_formula`, `ask_num_fits`
-- **`ui_dialogs/help.py`** – `show_help_dialog`
+- **`ui_dialogs/help.py`** – `show_help_dialog`, `show_data_view_help_dialog`
 - **`ui_dialogs/config_dialog.py`** – `show_config_dialog`
 - **`ui_dialogs/result.py`** – `create_result_window`
+- **`ui_dialogs/save_data_dialog.py`** – `open_save_dialog` (save DataFrame to file)
 - **`ui_dialogs/tooltip.py`** – `bind_tooltip`
 
 Dialogs cover file selection, variable selection, equation selection, and result display.
 
 ## File Selection Dialogs
 
-#### `ask_file_type(parent_window) -> str`
+#### `open_load_dialog(parent) -> Tuple[Optional[str], Optional[str]]`
 
-Dialog to ask for data file type.
+Opens the native OS file dialog to select a data file (CSV, TXT, or XLSX).
 
-Presents radio buttons with file type options (xlsx, csv, txt, Exit). User can select one option. The "Exit" option text is internationalized based on the current language setting.
+Replaces the previous two-step flow (file type + file name) with a single native dialog. Works on Windows, Linux, and macOS. The default filter shows all supported formats; users can also filter by CSV, TXT, or XLSX only.
 
 **Parameters:**
-- `parent_window`: Parent Tkinter window
+- `parent`: Parent Tkinter window (`Tk` or `Toplevel`)
 
 **Returns:**
-- Selected file type ('csv', 'xlsx', 'txt', EXIT_SIGNAL, or '')
+- `(file_path, file_type)` if user selects a file; `(None, None)` if user cancels
+- `file_type` is one of `'csv'`, `'txt'`, `'xlsx'`
 
 **Example:**
 ```python
-from frontend.ui_dialogs import ask_file_type
+from frontend.ui_dialogs import open_load_dialog
 from tkinter import Tk
 
 root = Tk()
-file_type = ask_file_type(root)
-if file_type and file_type != EXIT_SIGNAL:
-    print(f"Selected: {file_type}")
-```
-
-#### `ask_file_name(parent_window, file_list: list) -> str`
-
-Dialog to select a specific file from the list.
-
-**Parameters:**
-- `parent_window`: Parent Tkinter window
-- `file_list`: List of available file names
-
-**Returns:**
-- Selected file name (without extension)
-
-**Example:**
-```python
-from frontend.ui_dialogs import ask_file_name
-
-file_list = ['data1', 'data2', 'experiment1']
-selected = ask_file_name(root, file_list)
-if selected:
-    print(f"Selected file: {selected}")
+path, file_type = open_load_dialog(root)
+if path and file_type:
+    print(f"Selected: {path} (type: {file_type})")
 ```
 
 ## Variable Selection Dialog
@@ -118,7 +100,7 @@ x_names = ask_multiple_x_variables(root, ['temp', 'pressure', 'y'], num_vars=2, 
 
 #### `show_data_dialog(parent_window, data) -> None`
 
-Dialog to display loaded data.
+Dialog to display loaded data with optional transform, clean, and save options.
 
 **Parameters:**
 - `parent_window`: Parent Tkinter window
@@ -134,10 +116,37 @@ show_data_dialog(root, data)
 ```
 
 **Features:**
-- Scrollable text widget.
+- Scrollable text widget with table display.
 - Monospaced font for alignment.
 - Read-only display.
-- Terminal-style appearance (dark background, green text).
+- **Pair plots**: Button to open scatter matrix of variable pairs; auto-updates when data is transformed or cleaned (if already open).
+- **Save updated data**: Button opens file save dialog (CSV, TXT, XLSX).
+- **Help**: Button opens `show_data_view_help_dialog` with detailed info about every option and mode (pair plots, transforms, cleaning, save). Content available in Spanish, English, and German.
+- **Transform**: Dropdown (FFT, DCT, log, exp, sqrt, standardize, normalize, etc.) and Transform button (same style as equation buttons). Applies to all numeric columns.
+- **Clean**: Dropdown (drop NaN, drop duplicates, fill NaN, remove outliers) and Clean button (same style as equation buttons).
+
+## Save Data Dialog
+
+#### `open_save_dialog(parent, data, on_focus_data) -> None`
+
+Open a save file dialog for the current DataFrame.
+
+**Parameters:**
+- `parent`: Parent Toplevel window
+- `data`: DataFrame to save
+- `on_focus_data`: Callback to restore focus to the data window after save/cancel
+
+**Example:**
+```python
+from frontend.ui_dialogs import open_save_dialog
+
+open_save_dialog(parent_window, data_df, on_focus_data=parent_window.focus_set)
+```
+
+**Behavior:**
+- Uses native file picker for save path.
+- Supports CSV, TXT, XLSX formats.
+- Saves via `loaders.saving_utils.save_dataframe`.
 
 ## Equation Selection Dialog
 
@@ -272,6 +281,22 @@ print(f"Number of fits: {num_fits}")
 
 ## Help Dialog
 
+#### `show_data_view_help_dialog(parent_window: Tk | Toplevel) -> None`
+
+Display help dialog for the Watch Data window (transform, clean, save options).
+
+Shows a dialog with **collapsible sections**: Pair plots, Transform (with each option detailed), Clean (with each option detailed), and Save. Content is localized (Spanish, English, German). Window size: up to 900×650 px; **Accept** button fixed at bottom.
+
+**Parameters:**
+- `parent_window`: Parent Tkinter window (the data view Toplevel)
+
+**Example:**
+```python
+from frontend.ui_dialogs import show_data_view_help_dialog
+
+show_data_view_help_dialog(watch_data_window)
+```
+
 #### `show_help_dialog(parent_window: Tk | Toplevel) -> None`
 
 Display help and information dialog about the application.
@@ -282,11 +307,12 @@ Display help and information dialog about the application.
 **Content (collapsible sections):**
 - **Objective**: What RegressionLab does
 - **Advantages**: Key benefits (9 points)
-- **Fitting Modes**: Normal, Multiple Datasets, Checker, Total, Loop mode
+- **Fitting Modes**: Normal, Multiple Datasets, Checker, Total, View Data, Loop mode
 - **Custom Functions**: How to define custom formulas
 - **Data Format**: Column names, uncertainty prefix (`u`), non-negative uncertainties
 - **Data Location**: Input directory, supported file formats
 - **Output Location**: Where plots and logs are saved
+- **View Data Options**: Pair plots, transforms, cleaning, save (detailed reference)
 - **Statistics**: R², RMSE, χ², reduced χ², DoF, 95% parameter confidence intervals
 
 **Features:**
@@ -385,29 +411,23 @@ result_window = create_result_window(
 
 ```python
 from frontend.ui_dialogs import (
-    ask_file_type, ask_file_name, ask_variables,
+    open_load_dialog, ask_variables,
     ask_equation_type, ask_num_parameters,
     ask_parameter_names, ask_custom_formula
 )
 
-# 1. Select file type
-file_type = ask_file_type(root)
-if file_type == EXIT_SIGNAL:
+# 1. Select file (native file picker)
+path, file_type = open_load_dialog(root)
+if not path or not file_type:
     return
 
-# 2. Select file
-file_list = ['data1', 'data2']
-file_name = ask_file_name(root, file_list)
-if not file_name:
-    return
-
-# 3. Select variables
+# 2. Load data (e.g. via loaders.load_data(path, file_type)), then select variables
 variables = ['x', 'y', 'ux', 'uy']
 x_name, y_name, plot_name = ask_variables(root, variables)
 if not x_name or not y_name:
     return
 
-# 4. Select equation
+# 3. Select equation
 eq_type = ask_equation_type(root)
 if eq_type == 'custom':
     num_params = ask_num_parameters(root)
@@ -436,8 +456,8 @@ result_window = create_result_window(
 
 1. **Error Handling**: Always check return values
    ```python
-   file_type = ask_file_type(root)
-   if not file_type or file_type == EXIT_SIGNAL:
+   path, file_type = open_load_dialog(root)
+   if not path or not file_type:
        return  # User cancelled
    ```
 
@@ -474,8 +494,8 @@ All dialog text is translated using the `i18n` module:
 
 ### Widget Types
 
-- **RadioButtons**: File type selection.
-- **Combobox**: File and variable selection.
+- **Native file dialog**: File selection (via `open_load_dialog`).
+- **Combobox**: Variable selection.
 - **Entry**: Text input (plot name, formula, parameters).
 - **Spinbox**: Numeric input (number of parameters, fits).
 - **Text**: Multi-line display (data, help, results).

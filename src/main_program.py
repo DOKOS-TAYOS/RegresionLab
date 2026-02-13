@@ -249,8 +249,7 @@ def normal_fitting() -> None:
         coordinate_equation_selection,
     )
     from frontend import (
-        ask_file_type,
-        ask_file_name,
+        open_load_dialog,
         ask_variables,
         ask_equation_type,
         ask_num_parameters,
@@ -296,8 +295,7 @@ def normal_fitting() -> None:
         data, x_name, y_name, plot_name, data_file_path, data_file_type
     ) = coordinate_data_loading(
         parent_window=menu,
-        ask_file_type_func=ask_file_type,
-        ask_file_name_func=ask_file_name,
+        open_load_func=open_load_dialog,
         ask_variables_func=ask_variables
     )
     
@@ -364,8 +362,7 @@ def single_fit_multiple_datasets() -> None:
         coordinate_equation_selection,
     )
     from frontend import (
-        ask_file_type,
-        ask_file_name,
+        open_load_dialog,
         ask_variables,
         ask_equation_type,
         ask_num_parameters,
@@ -412,8 +409,7 @@ def single_fit_multiple_datasets() -> None:
             data, x_name, y_name, plot_name, data_file_path, data_file_type
         ) = coordinate_data_loading(
             parent_window=menu,
-            ask_file_type_func=ask_file_type,
-            ask_file_name_func=ask_file_name,
+            open_load_func=open_load_dialog,
             ask_variables_func=ask_variables
         )
         if isinstance(data, str):
@@ -465,8 +461,7 @@ def multiple_fits_single_dataset() -> None:
     # Lazy imports to avoid loading heavy dependencies at application startup
     from fitting import coordinate_data_loading, coordinate_equation_selection
     from frontend import (
-        ask_file_type,
-        ask_file_name,
+        open_load_dialog,
         ask_variables,
         ask_equation_type,
         ask_num_parameters,
@@ -482,8 +477,7 @@ def multiple_fits_single_dataset() -> None:
         data, x_name, y_name, plot_name, data_file_path, data_file_type
     ) = coordinate_data_loading(
         parent_window=menu,
-        ask_file_type_func=ask_file_type,
-        ask_file_name_func=ask_file_name,
+        open_load_func=open_load_dialog,
         ask_variables_func=ask_variables
     )
     
@@ -545,8 +539,7 @@ def all_fits_single_dataset() -> None:
     # Lazy imports to avoid loading heavy dependencies at application startup
     from fitting import apply_all_equations, coordinate_data_loading
     from frontend import (
-        ask_file_type,
-        ask_file_name,
+        open_load_dialog,
         ask_variables,
     )
 
@@ -557,8 +550,7 @@ def all_fits_single_dataset() -> None:
         data, x_name, y_name, plot_name, data_file_path, data_file_type
     ) = coordinate_data_loading(
         parent_window=menu,
-        ask_file_type_func=ask_file_type,
-        ask_file_name_func=ask_file_name,
+        open_load_func=open_load_dialog,
         ask_variables_func=ask_variables
     )
     
@@ -586,8 +578,7 @@ def watch_data() -> None:
     # Lazy imports to avoid loading heavy dependencies at application startup
     from fitting import coordinate_data_viewing
     from frontend import (
-        ask_file_type,
-        ask_file_name,
+        open_load_dialog,
         show_data_dialog,
     )
 
@@ -595,8 +586,7 @@ def watch_data() -> None:
     
     coordinate_data_viewing(
         parent_window=menu,
-        ask_file_type_func=ask_file_type,
-        ask_file_name_func=ask_file_name,
+        open_load_func=open_load_dialog,
         show_data_func=show_data_dialog
     )
 

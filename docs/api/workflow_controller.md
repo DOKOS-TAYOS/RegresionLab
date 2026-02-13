@@ -139,21 +139,18 @@ apply_all_equations(
 
 ### Data Loading Coordination
 
-#### `coordinate_data_loading(parent_window, ask_file_type_func, ask_file_name_func, ask_variables_func) -> Tuple`
+#### `coordinate_data_loading(parent_window, open_load_func, ask_variables_func) -> Tuple`
 
 Coordinate the complete data loading workflow.
 
 This function orchestrates the entire data loading process:
-1. Get available files
-2. Ask user for file type
-3. Ask user for specific file
-4. Load the data
-5. Ask user for variables to use
+1. Open native file dialog to select a data file (CSV, TXT, XLSX)
+2. Load the data
+3. Ask user for variables to use
 
 **Parameters:**
 - `parent_window`: Parent Tkinter window
-- `ask_file_type_func`: Function to ask for file type
-- `ask_file_name_func`: Function to ask for file name
+- `open_load_func`: Function that opens native file dialog, returns `(path, file_type)` or `(None, None)` on cancel (e.g. `open_load_dialog`)
 - `ask_variables_func`: Function to ask for variables
 
 **Returns:**
@@ -162,13 +159,12 @@ This function orchestrates the entire data loading process:
 
 **Example:**
 ```python
-from frontend.ui_dialogs import ask_file_type, ask_file_name, ask_variables
+from frontend.ui_dialogs import open_load_dialog, ask_variables
 from fitting.workflow_controller import coordinate_data_loading
 
 result = coordinate_data_loading(
     parent_window=root,
-    ask_file_type_func=ask_file_type,
-    ask_file_name_func=ask_file_name,
+    open_load_func=open_load_dialog,
     ask_variables_func=ask_variables
 )
 
@@ -176,7 +172,7 @@ if result:
     data, x_name, y_name, plot_name, file_path, file_type = result
 ```
 
-#### `coordinate_data_viewing(parent_window, ask_file_type_func, ask_file_name_func, show_data_func) -> None`
+#### `coordinate_data_viewing(parent_window, open_load_func, show_data_func) -> None`
 
 Coordinate the data viewing workflow.
 
@@ -184,8 +180,7 @@ This function orchestrates the process of selecting and displaying data from fil
 
 **Parameters:**
 - `parent_window`: Parent Tkinter window
-- `ask_file_type_func`: Function to ask for file type
-- `ask_file_name_func`: Function to ask for file name
+- `open_load_func`: Function that opens native file dialog, returns `(path, file_type)` or `(None, None)` on cancel
 - `show_data_func`: Function to display data
 
 ### Equation Selection Coordination
@@ -291,7 +286,7 @@ from fitting.workflow_controller import (
     coordinate_equation_selection
 )
 from frontend.ui_dialogs import (
-    ask_file_type, ask_file_name, ask_variables,
+    open_load_dialog, ask_variables,
     ask_equation_type, ask_num_parameters, ask_parameter_names, ask_custom_formula
 )
 from fitting.fitting_utils import get_fitting_function
@@ -299,8 +294,7 @@ from fitting.fitting_utils import get_fitting_function
 # Load data
 data_result = coordinate_data_loading(
     parent_window=root,
-    ask_file_type_func=ask_file_type,
-    ask_file_name_func=ask_file_name,
+    open_load_func=open_load_dialog,
     ask_variables_func=ask_variables
 )
 

@@ -423,18 +423,22 @@ def ask_multiple_x_variables(
     return result if all(result) else []
 
 
-def _show_image_toplevel(parent: Tk | Toplevel, image_path: str, title: str) -> None:
+def _show_image_toplevel(
+    parent: Tk | Toplevel,
+    image_path: str,
+    title: str,
+    *,
+    existing_win: Toplevel | None = None,
+    existing_label: ttk.Label | None = None,
+) -> tuple[Toplevel | None, ttk.Label | None]:
     """
-    Open a Toplevel window showing an image from file.
+    Open or update a Toplevel window showing an image from file.
 
-    Displays an image (e.g. pair plot) in a new window, scaled to fit within
-    maximum dimensions. Handles preview PNG files for PDFs and cleans them up
-    when the window is closed.
+    If existing_win/existing_label are provided and the window still exists,
+    updates the image in place. Otherwise creates a new window.
 
-    Args:
-        parent: Parent Tkinter window (``Tk`` or ``Toplevel``).
-        image_path: Path to the image file to display (e.g., pair plot).
-        title: Window title for the image display window.
+    Returns:
+        Tuple (window, label) for the displayed image, or (None, None) on failure.
     """
     from pathlib import Path
 
@@ -450,7 +454,19 @@ def _show_image_toplevel(parent: Tk | Toplevel, image_path: str, title: str) -> 
         display_path, _PAIR_PLOT_MAX_WIDTH, _PAIR_PLOT_MAX_HEIGHT
     )
     if not photo:
-        return
+        return (existing_win, existing_label)
+
+    # Update existing window if it still exists
+    if (
+        existing_win is not None
+        and existing_label is not None
+        and existing_win.winfo_exists()
+    ):
+        existing_label.configure(image=photo)
+        existing_label.image = photo
+        return (existing_win, existing_label)
+
+    # Create new window
     win = Toplevel(parent)
     win.title(title)
     win.configure(background=UI_STYLE['bg'])
@@ -478,30 +494,56 @@ def _show_image_toplevel(parent: Tk | Toplevel, image_path: str, title: str) -> 
     close_btn.focus_set()
     bind_enter_to_accept([close_btn, win], _on_close)
     win.protocol("WM_DELETE_WINDOW", _on_close)
+    return (win, label)
 
 
 def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
     """
     Dialog to display loaded data.
 
+    Provides transform, cleaning, save, and pair-plot options. Transform/clean
+    dialogs are non-modal so focus stays on the data window for multiple ops.
+    Pair plots auto-update when data is transformed (if already open).
+
     Args:
         parent_window: Parent Tkinter window (``Tk`` or ``Toplevel``).
         data: DataFrame to display (or string). If DataFrame, converted to
             string for display using ``to_string()`` method.
     """
-    if hasattr(data, 'to_string'):
-        content = data.to_string()
-    else:
-        content = str(data)
+    import pandas as pd
+
+    from config import get_output_path
+    from loaders import get_variable_names
+    from plotting import create_pair_plots
+
+    from data_analysis import (
+        CLEAN_OPTIONS,
+        TRANSFORM_OPTIONS,
+        apply_cleaning,
+        apply_transform,
+    )
+    from frontend.ui_dialogs import open_save_dialog, show_data_view_help_dialog
+
+    # Mutable container so transforms/cleaning can update the displayed data
+    current_data: list[Any] = [data]
+
+    def _content_from(d: Any) -> str:
+        if hasattr(d, 'to_string'):
+            return d.to_string()
+        return str(d)
 
     watch_data_level = Toplevel()
     watch_data_level.title(t('dialog.show_data_title'))
     watch_data_level.configure(background=UI_STYLE['bg'])
-    watch_data_level.minsize(800, 400)
+    watch_data_level.minsize(800, 260)
     watch_data_level.resizable(False, False)
 
-    # Data display area: fixed height in lines so only this part is limited; scroll for the rest
-    _data_display_lines = 22
+    # Pair plot window reference for auto-refresh when data changes
+    watch_data_level._pair_plot_win: Toplevel | None = None
+    watch_data_level._pair_plot_label: ttk.Label | None = None
+
+    # Data display area: reduced height for compact window
+    _data_display_lines = 12
     text_frame = ttk.Frame(watch_data_level)
     text_frame.pack(padx=UI_STYLE['padding'], pady=6, fill='both')
 
@@ -530,35 +572,177 @@ def show_data_dialog(parent_window: Tk | Toplevel, data: Any) -> None:
     text_widget.pack(side='left', fill='both', expand=True)
     scrollbar_y.config(command=text_widget.yview)
     scrollbar_x.config(command=text_widget.xview)
-    text_widget.insert('1.0', content)
+    text_widget.insert('1.0', _content_from(current_data[0]))
     text_widget.config(state='disabled')
 
-    def _open_pair_plots_window() -> None:
-        from config import get_output_path
-        from loaders import get_variable_names
-        from plotting import create_pair_plots
+    def _refresh_display() -> None:
+        text_widget.config(state='normal')
+        text_widget.delete('1.0', 'end')
+        text_widget.insert('1.0', _content_from(current_data[0]))
+        text_widget.config(state='disabled')
+
+    def _refresh_pair_plot_if_open() -> None:
+        if not isinstance(current_data[0], pd.DataFrame):
+            return
+        pw = watch_data_level._pair_plot_win
+        pl = watch_data_level._pair_plot_label
+        if pw is None or pl is None or not pw.winfo_exists():
+            return
         try:
-            variables = get_variable_names(data, filter_uncertainty=True)
+            variables = get_variable_names(current_data[0], filter_uncertainty=True)
             if not variables:
                 return
             output_path = get_output_path('pair_plot')
-            create_pair_plots(data, variables, output_path=output_path)
-            _show_image_toplevel(watch_data_level, output_path, t('dialog.pair_plots_title'))
+            create_pair_plots(current_data[0], variables, output_path=output_path)
+            _show_image_toplevel(
+                watch_data_level,
+                output_path,
+                t('dialog.pair_plots_title'),
+                existing_win=pw,
+                existing_label=pl,
+            )
         except Exception:
             pass
 
+    def _on_data_updated(new_data: Any) -> None:
+        current_data[0] = new_data
+        _refresh_display()
+        _refresh_pair_plot_if_open()
+        watch_data_level.focus_set()
+
+    def _open_pair_plots_window() -> None:
+        try:
+            variables = get_variable_names(current_data[0], filter_uncertainty=True)
+            if not variables:
+                return
+            output_path = get_output_path('pair_plot')
+            create_pair_plots(current_data[0], variables, output_path=output_path)
+            win, label = _show_image_toplevel(
+                watch_data_level, output_path, t('dialog.pair_plots_title')
+            )
+            if win is not None and label is not None:
+                watch_data_level._pair_plot_win = win
+                watch_data_level._pair_plot_label = label
+        except Exception:
+            pass
+
+    def _apply_transform() -> None:
+        if not isinstance(current_data[0], pd.DataFrame):
+            return
+        label = transform_var.get()
+        tid = next((k for k, v in translated_transforms.items() if v == label), None)
+        if not tid:
+            return
+        try:
+            new_data = apply_transform(current_data[0], tid)
+            _on_data_updated(new_data)
+        except Exception as e:
+            from tkinter import messagebox
+            messagebox.showerror(t('dialog.data'), str(e))
+
+    def _apply_clean() -> None:
+        if not isinstance(current_data[0], pd.DataFrame):
+            return
+        label = clean_var.get()
+        cid = next((k for k, v in translated_cleans.items() if v == label), None)
+        if not cid:
+            return
+        try:
+            new_data = apply_cleaning(current_data[0], cid)
+            _on_data_updated(new_data)
+        except Exception as e:
+            from tkinter import messagebox
+            messagebox.showerror(t('dialog.data'), str(e))
+
+    def _open_save() -> None:
+        if not isinstance(current_data[0], pd.DataFrame):
+            return
+        open_save_dialog(
+            watch_data_level,
+            current_data[0],
+            on_focus_data=watch_data_level.focus_set,
+        )
+
     opts_frame = ttk.Frame(watch_data_level)
     opts_frame.pack(padx=UI_STYLE['padding'], pady=4, fill='x')
-    can_show_pairs = hasattr(data, 'columns') and len(getattr(data, 'columns', [])) > 0
+    is_dataframe = isinstance(current_data[0], pd.DataFrame)
+    can_show_pairs = is_dataframe and len(getattr(current_data[0], 'columns', [])) > 0
+
+    transform_var = StringVar()
+    clean_var = StringVar()
+    translated_transforms = {tid: t(f'data_analysis.transform_label_{tid}') for tid in TRANSFORM_OPTIONS}
+    translated_cleans = {cid: t(f'data_analysis.clean_label_{cid}') for cid in CLEAN_OPTIONS}
+    transform_values = list(translated_transforms.values())
+    clean_values = list(translated_cleans.values())
+    if transform_values:
+        transform_var.set(transform_values[0])
+    if clean_values:
+        clean_var.set(clean_values[0])
+
+    # Row 1: Show pair plots | Save updated data | Help
+    row1 = ttk.Frame(opts_frame)
+    row1.pack(anchor='w')
     if can_show_pairs:
-        pair_btn = ttk.Button(
-            opts_frame,
+        ttk.Button(
+            row1,
             text=t('dialog.show_pair_plots'),
             command=_open_pair_plots_window,
             style='Primary.TButton',
             width=min(42, max(36, UI_STYLE['button_width_wide'] + 10)),
-        )
-        pair_btn.pack(anchor='w', pady=4)
+        ).pack(side='left', padx=(0, 4), pady=2)
+    if is_dataframe:
+        ttk.Button(
+            row1,
+            text=t('data_analysis.save_updated'),
+            command=_open_save,
+            width=26,
+        ).pack(side='left', padx=2, pady=2)
+    ttk.Button(
+        row1,
+        text=t('dialog.help_title'),
+        command=lambda: show_data_view_help_dialog(watch_data_level),
+        width=10,
+    ).pack(side='left', padx=2, pady=2)
+
+    # Row 2: Transform combobox | Transformar
+    if is_dataframe:
+        row2 = ttk.Frame(opts_frame)
+        row2.pack(anchor='w')
+        ttk.Combobox(
+            row2,
+            textvariable=transform_var,
+            values=transform_values,
+            state='readonly',
+            width=28,
+            font=get_entry_font(),
+        ).pack(side='left', padx=(0, 4), pady=2)
+        ttk.Button(
+            row2,
+            text=t('data_analysis.transform'),
+            command=_apply_transform,
+            style='Equation.TButton',
+            width=12,
+        ).pack(side='left', padx=2, pady=2)
+
+    # Row 3: Clean combobox | Limpiar
+    if is_dataframe:
+        row3 = ttk.Frame(opts_frame)
+        row3.pack(anchor='w')
+        ttk.Combobox(
+            row3,
+            textvariable=clean_var,
+            values=clean_values,
+            state='readonly',
+            width=28,
+            font=get_entry_font(),
+        ).pack(side='left', padx=(0, 4), pady=2)
+        ttk.Button(
+            row3,
+            text=t('data_analysis.clean'),
+            command=_apply_clean,
+            style='Equation.TButton',
+            width=12,
+        ).pack(side='left', padx=2, pady=2)
 
     watch_data_level.accept_button = ttk.Button(
         watch_data_level,

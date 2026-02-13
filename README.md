@@ -8,7 +8,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.9.2-blue.svg?style=for-the-badge)](https://github.com/DOKOS-TAYOS/RegressionLab)
+[![Version](https://img.shields.io/badge/version-0.9.3-blue.svg?style=for-the-badge)](https://github.com/DOKOS-TAYOS/RegressionLab)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://regressionlab.streamlit.app/)
 [![SciPy](https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white)](https://scipy.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
@@ -37,7 +37,7 @@
 - **📈 Multiple Fitting Functions**: Linear, polynomial, trigonometric, logarithmic, inverse, hyperbolic, and custom functions
 - **📐 Multidimensional Fitting**: Support for regression with 2+ independent variables via custom formulas; 3D interactive plot for 2 variables, residuals plot for 3+
 - **🔮 Prediction Window**: Evaluate fitted functions at user-specified inputs with uncertainty propagation (desktop version)
-- **⚙️ Multiple Operation Modes**: Normal fitting, multiple datasets, checker mode, and total fitting
+- **⚙️ Multiple Operation Modes**: Normal fitting, multiple datasets, checker mode, total fitting, and view data (with transform, clean, save)
 - **📊 Professional Visualization**: Publication-ready plots with error bars and customizable styles
 - **📏 Uncertainty Handling**: Automatic detection and visualization of measurement uncertainties
 - **🔄 Batch Processing**: Fit multiple datasets or test all equations simultaneously
@@ -212,7 +212,7 @@ For information about third-party libraries and their licenses, see
 
 <div align="center">
 
-**Version**: 0.9.2 • **Last Updated**: February 2026
+**Version**: 0.9.3 • **Last Updated**: February 2026
 
 Made with ❤️ by [Alejandro Mata Ali](https://github.com/DOKOS-TAYOS)
 

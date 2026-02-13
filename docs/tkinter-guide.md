@@ -55,7 +55,7 @@ When you launch the application, you see the main menu with buttons for each ope
 
 ```
 ┌─────────────────────────────────────┐
-│       RegressionLab v0.9.2         │
+│       RegressionLab v0.9.3         │
 ├─────────────────────────────────────┤
 │                                     │
 │   [ Normal Fitting ]                │
@@ -120,19 +120,14 @@ You can also use aliases (e.g. `spanish`, `english`, `deutsch`). Change requires
    - **No**: Single fit, then return to main menu.
    - Loop mode recommended for iterative data refinement.
 
-4. **Select File Type**:
-   - Dialog asks for file type.
-   - Options: CSV, Excel (XLSX), TXT.
-   - Click appropriate button.
-
-5. **Select Data File**:
-   - File browser opens.
+4. **Select Data File**:
+   - Native file picker opens.
    ![File Selection](../images/en_documentation/tkinter_docs/files.png)
-   - Navigate to your data file.
+   - Default filter: all data files (CSV, TXT, XLSX). You can also filter by type.
    - Default location: `input/` directory.
-   - Select file and click "Open".
+   - Navigate to your data file and click "Open".
 
-6. **Select Variables**:
+5. **Select Variables**:
    - Dialog shows available columns.
    ![Variable Selection](../images/en_documentation/tkinter_docs/names.png)
    - **Select X (independent variable)**:
@@ -148,7 +143,7 @@ You can also use aliases (e.g. `spanish`, `english`, `deutsch`). Change requires
      - Example: "experiment_2026".
    - Click "Accept".
 
-7. **View Results**:
+6. **View Results**:
    - New window opens showing:
      ![Results Window](../images/en_documentation/tkinter_docs/result.png)
      - **Plot**: Your data with fitted curve. For 2 independent variables: interactive 3D plot (rotatable with mouse). For 3+ variables: residuals plot.
@@ -158,7 +153,7 @@ You can also use aliases (e.g. `spanish`, `english`, `deutsch`). Change requires
      - **Prediction** button: Opens a dialog to evaluate the fitted function at user-specified x values; shows predicted y with uncertainty propagation when available.
    - Plot automatically saved to `output/` directory.
 
-8. **Loop Mode** (if enabled):
+7. **Loop Mode** (if enabled):
    - After viewing results, dialog asks: "Continue with this dataset?"
    - **Yes**: 
      - Modify your data file (in Excel, text editor, etc.).
@@ -230,8 +225,7 @@ If you select "Custom Formula":
    - Asked once for all datasets.
 
 5. **For Each Dataset**:
-   - Select file type.
-   - Select file.
+   - Select file (native file picker).
    - Select X and Y variables.
    - Enter plot name.
    - Repeat for all datasets.
@@ -282,8 +276,7 @@ If you select "Custom Formula":
 1. **Click "Checker Fitting"** from the main menu.
 
 2. **Load Dataset**:
-   - Select file type.
-   - Select file.
+   - Select file (native file picker).
    - Select X and Y variables.
    - Enter plot name (used for all results).
 
@@ -332,8 +325,7 @@ If you select "Custom Formula":
 1. **Click "Total Fitting"** from the main menu.
 
 2. **Load Dataset**:
-   - Select file type.
-   - Select file.
+   - Select file (native file picker).
    - Select X and Y variables.
    - Enter plot name.
 
@@ -372,32 +364,47 @@ If you select "Custom Formula":
 
 ### Mode 5: Watch Data
 
-**Purpose**: View data file contents without fitting.
+**Purpose**: View data file contents without fitting. Includes transform, clean, and save options.
 
 **Steps**:
 
 1. **Click "Watch Data"** from the main menu.
 
 2. **Select File**:
-   - Choose file type.
-   - Select file.
+   - Native file picker opens (default filter: all data files). Browse and select a CSV, TXT, or XLSX file.
 
 3. **View Data**:
 
    ![Data View](../images/en_documentation/tkinter_docs/variable_pair.png)
 
    - Dialog shows:
-     - All columns.
-     - All rows.
-     - Data in table format.
-   - Use scrollbar to navigate.
-   - Click "Close" when done.
+     - All columns and rows in table format.
+     - **Row 1**: Pair plots button | Save updated data | **Help** (opens a dialog with detailed info about every option and mode, in the current language).
+     - **Row 2**: Transform dropdown | Transform button (same accent color as equation buttons).
+     - **Row 3**: Clean dropdown | Clean button (same accent color as equation buttons).
+   - Use scrollbar to navigate the table.
+   - Click **Help** for a reference with collapsible sections (pair plots, transform options, clean options, save). Each transform and clean option has a detailed description. Available in Spanish, English, and German.
+   - Click **Accept** when done.
+
+4. **Transform Data** (optional):
+   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or normalize [0,1].
+   - Click **Transform** to apply. The table updates immediately.
+   - If the pair plots window is open, it updates automatically.
+
+5. **Clean Data** (optional):
+   - Select a cleaning option: drop NaN rows, drop duplicates, fill NaN (mean/median/zero), or remove outliers (IQR or z-score).
+   - Click **Clean** to apply. The table updates immediately.
+
+6. **Save Updated Data** (optional):
+   - Click **Save updated data** to save the current (possibly transformed/cleaned) data to CSV, TXT, or XLSX.
 
 **Use Cases**:
 - Verify data loaded correctly.
 - Check column names.
 - Inspect data values.
 - Preview before fitting.
+- Transform data (e.g. FFT, log) for analysis.
+- Clean data (remove outliers, fill NaN) before fitting.
 
 ### Mode 6: Information (Help)
 
@@ -606,7 +613,7 @@ R² is the fraction of variance in the data explained by the model (e.g. R² = 0
 ### Workflow
 
 1. **Test with small data first**: Verify setup before big analysis.
-2. **Use Watch Data**: Preview before fitting.
+2. **Use Watch Data**: Preview, transform, clean, and save data before fitting.
 3. **Start simple**: Try Normal Fitting before complex modes.
 4. **Save important plots**: Copy from `output/` to safe location.
 
@@ -761,6 +768,7 @@ See [Configuration Guide](configuration.md) for extensive customization:
 - ✓ Native desktop performance.
 - ✓ Prediction window (evaluate fitted function at user inputs; uncertainty propagation).
 - ✓ Multidimensional fitting (custom formulas with 2+ variables; 3D/residuals plots).
+- ✓ Data view with transform, clean, and save (FFT, DCT, log, outliers, etc.).
 
 **Tkinter lacks**:
 - ✗ Modern web UI.

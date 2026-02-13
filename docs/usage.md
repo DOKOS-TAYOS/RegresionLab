@@ -39,7 +39,7 @@ Both versions share the same core functionality but have different user interfac
    - Navigate to: [https://regressionlab.streamlit.app/](https://regressionlab.streamlit.app/).
    - If the app is sleeping, click "Start" and wait a moment for it to wake up.
 
-2. **Upload Your Data** (or choose "View Data" in the sidebar to only inspect data without fitting)
+2. **Upload Your Data** (or choose "View Data" in the sidebar to inspect, transform, clean, and download data without fitting)
    - Click "Browse files" or drag and drop your file.
    - Supported formats: CSV, XLSX, TXT.
 
