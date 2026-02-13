@@ -188,8 +188,27 @@ def _get_fragment(raw: str) -> str:
 _DOC_HTML_TO_DOCNAME = {v: v.replace('.html', '') for v in _DOC_MD_TO_HTML.values()}
 
 
+def _rewrite_locale_asset_paths(doctree: nodes.document) -> None:
+    """Rewrite image paths so they work in both normal and gettext (locale) builds.
+
+    In locale builds, content comes from .po files; relative paths like ../images/...
+    are then resolved from the document dir (source/), so ../images points to
+    sphinx-docs/images instead of project root. Fix by rewriting ../images/ to
+    ../../images/ (relative to source/ = project root images/).
+    """
+    prefix = '../images/'
+    replacement = '../../images/'
+    for node in doctree.traverse(nodes.image):
+        uri = node.get('uri', '')
+        if uri.startswith(prefix):
+            node['uri'] = replacement + uri[len(prefix):]
+
+
 def _rewrite_doc_md_links(app, doctree, docname):
     """Rewrite links to docs/*.md so they point to the built .html (works in both .md and Sphinx)."""
+    # Fix image paths for locale builds (content from .po resolves paths from source/)
+    _rewrite_locale_asset_paths(doctree)
+
     builder = getattr(app, 'builder', None)
     get_uri = getattr(builder, 'get_relative_uri', None) if builder else None
 
