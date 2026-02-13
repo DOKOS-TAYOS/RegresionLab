@@ -75,6 +75,7 @@ RegressionLab Documentation
    modules/core
    modules/fitting
    modules/loaders
+   modules/data_analysis
    modules/plotting
    modules/frontend
    modules/streamlit_app

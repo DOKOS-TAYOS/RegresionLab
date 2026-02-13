@@ -9,6 +9,11 @@ Main Application
 
 .. automodule:: streamlit_app.app
 
+Theme Configuration
+====================
+
+.. automodule:: streamlit_app.theme
+
 Application Sections
 ====================
 

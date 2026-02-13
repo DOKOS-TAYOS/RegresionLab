@@ -26,6 +26,16 @@ Main dialogs package (re-exports from ui_dialogs submodules).
 
 .. automodule:: frontend.ui_dialogs
 
+Load Data Dialog
+-----------------
+
+.. automodule:: frontend.ui_dialogs.load_data_dialog
+
+Save Data Dialog
+-----------------
+
+.. automodule:: frontend.ui_dialogs.save_data_dialog
+
 Data Selection Dialog
 ---------------------
 

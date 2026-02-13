@@ -96,6 +96,8 @@ _API_MD_TO_MODULE_HTML = {
     'estimators.md': 'modules/fitting.html',
     'data_loader.md': 'modules/loaders.html',
     'loading_utils.md': 'modules/loaders.html',
+    'saving_utils.md': 'modules/loaders.html',
+    'data_analysis.md': 'modules/data_analysis.html',
     'plot_utils.md': 'modules/plotting.html',
     'ui_main_menu.md': 'modules/frontend.html',
     'ui_dialogs.md': 'modules/frontend.html',

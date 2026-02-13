@@ -19,6 +19,11 @@ Main Configuration Package
 
 .. automodule:: config
 
+Color Utilities
+----------------
+
+.. automodule:: config.color_utils
+
 Environment Configuration
 -------------------------
 

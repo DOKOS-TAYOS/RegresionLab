@@ -18,3 +18,8 @@ Validators
 ===========
 
 .. automodule:: utils.validators
+
+Update Checker
+==============
+
+.. automodule:: utils.update_checker
