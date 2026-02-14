@@ -220,6 +220,14 @@ def _rewrite_locale_asset_paths(doctree: nodes.document, language: str = "en") -
             node['uri'] = new_uri
         if 'candidates' in node:
             node['candidates'] = {'*': node['uri']}
+    # Also fix nodes.raw with <img src="..."> (from _convert_literal_markdown_paragraphs)
+    if use_es_images:
+        for node in list(doctree.traverse(nodes.raw)):
+            if node.get('format') == 'html':
+                text = node.astext()
+                if 'en_documentation' in text:
+                    new_text = text.replace('en_documentation', 'es_documentation')
+                    node.replace_self(nodes.raw('', new_text, format='html'))
 
 
 # Regex for paragraphs that are only markdown image or link (locale builds sometimes
@@ -416,6 +424,8 @@ def _rewrite_doc_md_links(app, doctree, docname):
     _rewrite_locale_asset_paths(doctree, language)
     # Convert paragraphs that are literal markdown image/link (gettext can emit raw text)
     _convert_literal_markdown_paragraphs(app, doctree, docname)
+    # Second pass: new image/raw nodes created above need en→es path fix too
+    _rewrite_locale_asset_paths(doctree, language)
 
     builder = getattr(app, 'builder', None)
     get_uri = getattr(builder, 'get_relative_uri', None) if builder else None
