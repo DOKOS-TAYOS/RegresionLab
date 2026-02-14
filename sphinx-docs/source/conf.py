@@ -701,5 +701,5 @@ autodoc_typehints = 'none'
 # Only link to source for directly documented modules (faster viewcode)
 viewcode_follow_imported_members = False
 
-# Todo extension
-todo_include_todos = True
+# Todo extension: hide TODOs on ReadTheDocs (cleaner production docs, slightly faster)
+todo_include_todos = not os.environ.get('READTHEDOCS', '')

@@ -6,23 +6,30 @@ version: 2
 
 # Set the version of Python and other tools you might need
 build:
-  os: ubuntu-22.04
+  os: ubuntu-24.04
   tools:
     python: "3.12"
   jobs:
-    # Compile .po to .mo so Sphinx can use translations (required for Spanish build)
+    # Compile .po to .mo only for non-English builds (Spanish uses gettext)
     pre_build:
-      - sphinx-intl build -d sphinx-docs/locale
+      - |
+        if [ "${READTHEDOCS_LANGUAGE:-en}" != "en" ]; then
+          sphinx-intl build -d sphinx-docs/locale
+        fi
+    # Parallel Sphinx build (-j auto) for faster compilation; both en/es work
+    build:
+      html:
+        - sphinx-build -j auto -b html -D language=${READTHEDOCS_LANGUAGE:-en} sphinx-docs/source $READTHEDOCS_OUTPUT/html
 
 # Build documentation in the sphinx-docs/ directory with Sphinx
 sphinx:
   configuration: sphinx-docs/source/conf.py
   fail_on_warning: false
 
-# Optionally build your docs in additional formats such as PDF and ePub
+# PDF and ePub add build time; remove if not needed
 formats:
   - pdf
-  - epub
+  # - epub
 
 # Optional but recommended, declare the Python requirements required
 # to build your documentation
