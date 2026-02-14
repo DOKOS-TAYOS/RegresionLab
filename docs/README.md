@@ -223,7 +223,9 @@ Documentation supports English and Spanish via Sphinx i18n (gettext). ReadTheDoc
 1. Regenerate `.pot` files: `python -m sphinx -b gettext sphinx-docs/source sphinx-docs/build/gettext`
 2. Update Spanish `.po` files: `sphinx-intl update -p sphinx-docs/build/gettext -l es -d sphinx-docs/locale`
 3. Edit `sphinx-docs/locale/es/LC_MESSAGES/*.po` (fill `msgstr` with translations).
-4. Commit and push; ReadTheDocs will rebuild automatically.
+4. **Compile `.po` to `.mo`** (required for Sphinx to use translations): `sphinx-intl build -d sphinx-docs/locale`
+5. Rebuild HTML with Spanish: `make -C sphinx-docs html-es` (or `sphinx-build -b html -D language=es sphinx-docs/source sphinx-docs/build/html-es`).
+6. Commit and push; ReadTheDocs will run step 4 automatically before building.
 
 ## Feedback
 
