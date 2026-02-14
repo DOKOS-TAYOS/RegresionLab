@@ -27,6 +27,14 @@ _VIEW_DATA_TRANSFORM_HELP_KEYS: List[str] = [
     'view_data_transform_square',
     'view_data_transform_standardize',
     'view_data_transform_normalize',
+    'view_data_transform_hilbert',
+    'view_data_transform_ihilbert',
+    'view_data_transform_envelope',
+    'view_data_transform_laplace',
+    'view_data_transform_ilaplace',
+    'view_data_transform_cepstrum',
+    'view_data_transform_hadamard',
+    'view_data_transform_ihadamard',
 ]
 _VIEW_DATA_CLEAN_HELP_KEYS: List[str] = [
     'view_data_clean_drop_na',

@@ -99,7 +99,7 @@ RegressionLab/
 
 ### Data Analysis
 
-- **[data_analysis](data_analysis.md)** - Transforms (FFT, DCT, log, exp, etc.) and cleaning (drop NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit.
+- **[data_analysis](data_analysis.md)** - Transforms (FFT, DCT, Hilbert, Laplace, cepstrum, Hadamard, log, exp, etc.) and cleaning (drop NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit.
 
 ### Visualization
 

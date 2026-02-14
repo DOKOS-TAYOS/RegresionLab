@@ -26,13 +26,14 @@ msgstr "Módulo de análisis de datos"
 
 #: ../../source/modules/data_analysis.rst:5 a3522eacc93e4743b0c8d00081dfddad
 msgid ""
-"The ``data_analysis`` module provides transforms (FFT, DCT, log, exp, "
-"etc.) and cleaning utilities (drop NaN, outliers, etc.). Used by the View"
-" Data window in Tkinter and Streamlit."
+"The ``data_analysis`` module provides transforms (FFT, DCT, Hilbert, "
+"Laplace, cepstrum, Hadamard, log, exp, etc.) and cleaning utilities (drop "
+"NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit."
 msgstr ""
-"El módulo ``data_analysis`` proporciona transformaciones (FFT, DCT, log, "
-"exp, etc.) y utilidades de limpieza (eliminar NaN, valores atípicos, etc.). "
-"Usado por la ventana Ver datos en Tkinter y Streamlit."
+"El módulo ``data_analysis`` proporciona transformaciones (FFT, DCT, "
+"Hilbert, Laplace, cepstrum, Hadamard, log, exp, etc.) y utilidades de "
+"limpieza (eliminar NaN, valores atípicos, etc.). Usado por la ventana Ver "
+"datos en Tkinter y Streamlit."
 
 #: ../../source/modules/data_analysis.rst:8 4aafde9ef3f344b5a7478adb6588dc7f
 msgid "Main Package"

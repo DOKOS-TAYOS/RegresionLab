@@ -945,12 +945,15 @@ msgstr "**Transformar datos** (opcional):"
 #: ../../../docs/tkinter-guide.md:390 49c29b9b90ca4930bb8f31a7229096aa
 msgid ""
 "Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, "
-"inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or "
-"normalize [0,1]."
+"inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), normalize "
+"[0,1], Hilbert, inverse Hilbert, envelope (Hilbert), Laplace (discrete), "
+"inverse Laplace, cepstrum (real), Hadamard (Walsh), inverse Hadamard."
 msgstr ""
 "Seleccione una transformación del menú desplegable: FFT, magnitud FFT, FFT "
 "inversa, DCT, DCT inversa, log, log10, exp, sqrt, cuadrado, estandarizar "
-"(puntuación z) o normalizar [0,1]."
+"(puntuación z), normalizar [0,1], Hilbert, Hilbert inversa, envolvente "
+"(Hilbert), Laplace (discreta), Laplace inversa, cepstrum (real), Hadamard "
+"(Walsh), Hadamard inversa."
 
 #: ../../../docs/tkinter-guide.md:391 100e62e763104baea59328af147d5e85
 msgid "Click **Transform** to apply. The table updates immediately."
@@ -1011,8 +1014,8 @@ msgid "Preview before fitting."
 msgstr "Vista previa antes del montaje."
 
 #: ../../../docs/tkinter-guide.md:406 6b743fd623d944cdb5ce094781295750
-msgid "Transform data (e.g. FFT, log) for analysis."
-msgstr "Transforme datos (por ejemplo, FFT, log) para su análisis."
+msgid "Transform data (e.g. FFT, Hilbert, Laplace, log) for analysis."
+msgstr "Transforme datos (por ejemplo, FFT, Hilbert, Laplace, log) para su análisis."
 
 #: ../../../docs/tkinter-guide.md:407 b67de1161fad4c78984a475dd637bcf1
 msgid "Clean data (remove outliers, fill NaN) before fitting."
@@ -1947,10 +1950,11 @@ msgstr ""
 
 #: ../../../docs/tkinter-guide.md:771 150179cad4ce482693a650d3cb37fc16
 msgid ""
-"✓ Data view with transform, clean, and save (FFT, DCT, log, outliers, etc.)."
+"✓ Data view with transform, clean, and save (FFT, Hilbert, Laplace, DCT, "
+"log, outliers, etc.)."
 msgstr ""
-"✓ Vista de datos con transformación, limpieza y guardado (FFT, DCT, "
-"registro, valores atípicos, etc.)."
+"✓ Vista de datos con transformación, limpieza y guardado (FFT, Hilbert, "
+"Laplace, DCT, log, valores atípicos, etc.)."
 
 #: ../../../docs/tkinter-guide.md:773 49941bdf720c473786908fe2b0012a80
 msgid "**Tkinter lacks**:"

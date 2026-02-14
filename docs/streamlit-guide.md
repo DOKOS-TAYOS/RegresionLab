@@ -302,7 +302,7 @@ If "Custom Formula" is selected:
    - Click **Show variable pairs** (or equivalent in your language) for scatter matrix (pair plots).
 
 4. **Transform Data** (optional):
-   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or normalize [0,1].
+   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), normalize [0,1], Hilbert, inverse Hilbert, envelope (Hilbert), Laplace (discrete), inverse Laplace, cepstrum (real), Hadamard (Walsh), inverse Hadamard.
    - Click **Transform** to apply. The table updates immediately.
 
 5. **Clean Data** (optional):

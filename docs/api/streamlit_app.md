@@ -133,7 +133,7 @@ View data from a file without fitting. Includes transform, clean, and download o
 **Features:**
 - File upload (CSV, XLSX, TXT)
 - Data table and optional pair plots
-- **Transform**: Dropdown (FFT, DCT, log, exp, sqrt, standardize, normalize, etc.) and Apply button. Updates table in place.
+- **Transform**: Dropdown (FFT, DCT, Hilbert, Laplace, cepstrum, Hadamard, envelope, log, exp, sqrt, standardize, normalize, etc., plus inverses) and Apply button. Updates table in place.
 - **Clean**: Dropdown (drop NaN, drop duplicates, fill NaN, remove outliers) and Apply button.
 - **Download**: Format selector (CSV, TXT, XLSX) and download button for the current (possibly transformed/cleaned) data.
 - No equation selection or fitting
@@ -178,7 +178,7 @@ Show data in an expander with optional pair plots and data analysis (transform, 
 - `file_id`: Optional. When `key_prefix` is set, used to detect file changes. When `file_id` changes, the displayed data is reset to the new loaded data.
 
 **When `key_prefix` is set:**
-- Renders transform dropdown and Apply button (FFT, DCT, log, etc.).
+- Renders transform dropdown and Apply button (FFT, DCT, Hilbert, Laplace, log, etc.).
 - Renders clean dropdown and Apply button (drop NaN, outliers, etc.).
 - Renders format selector and download button for the current data.
 - Pair plots use the current (possibly transformed) data.

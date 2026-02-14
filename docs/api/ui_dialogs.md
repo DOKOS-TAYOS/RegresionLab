@@ -122,7 +122,7 @@ show_data_dialog(root, data)
 - **Pair plots**: Button to open scatter matrix of variable pairs; auto-updates when data is transformed or cleaned (if already open).
 - **Save updated data**: Button opens file save dialog (CSV, TXT, XLSX).
 - **Help**: Button opens `show_data_view_help_dialog` with detailed info about every option and mode (pair plots, transforms, cleaning, save). Content available in Spanish, English, and German.
-- **Transform**: Dropdown (FFT, DCT, log, exp, sqrt, standardize, normalize, etc.) and Transform button (same style as equation buttons). Applies to all numeric columns.
+- **Transform**: Dropdown (FFT, DCT, Hilbert, Laplace, cepstrum, Hadamard, envelope, log, exp, sqrt, standardize, normalize, etc., plus inverses) and Transform button (same style as equation buttons). Applies to all numeric columns.
 - **Clean**: Dropdown (drop NaN, drop duplicates, fill NaN, remove outliers) and Clean button (same style as equation buttons).
 
 ## Save Data Dialog

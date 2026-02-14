@@ -294,12 +294,13 @@ msgstr ""
 #: ../../../docs/introduction.md:52 98b43aba32c14290b0d8feff49f4738e
 msgid ""
 "**View data**: Inspect data from a file (table and pair plots) without "
-"performing any fitting. Transform (FFT, DCT, log, etc.), clean (drop NaN,"
-" outliers, etc.), and save (or download) the processed data."
+"performing any fitting. Transform (FFT, DCT, Hilbert, Laplace, log, etc.), "
+"clean (drop NaN, outliers, etc.), and save (or download) the processed data."
 msgstr ""
 "**Ver datos**: Inspecciona datos de un archivo (tabla y gráficos de pares) "
-"sin realizar ajustes. Transforma (FFT, DCT, log, etc.), limpia (eliminar NaN, "
-"valores atípicos, etc.) y guarda (o descarga) los datos procesados."
+"sin realizar ajustes. Transforma (FFT, DCT, Hilbert, Laplace, log, etc.), "
+"limpia (eliminar NaN, valores atípicos, etc.) y guarda (o descarga) los datos "
+"procesados."
 
 #: ../../../docs/introduction.md:54 137df1546d91436c97a77e629f36f5ca
 msgid "4. **Wide Range of Fitting Functions**"

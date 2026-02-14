@@ -2,7 +2,7 @@
 Data Analysis Module
 ============================
 
-The ``data_analysis`` module provides transforms (FFT, DCT, log, exp, etc.) and cleaning utilities (drop NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit.
+The ``data_analysis`` module provides transforms (FFT, DCT, Hilbert, Laplace, cepstrum, Hadamard, log, exp, etc.) and cleaning utilities (drop NaN, outliers, etc.). Used by the View Data window in Tkinter and Streamlit.
 
 Main Package
 ============

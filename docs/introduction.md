@@ -49,7 +49,7 @@ RegressionLab offers five operation modes so you can match the workflow to your 
 - **Fit multiple datasets**: Applies the *same* equation to several datasets at once. Use it when you want to test the same hypothesis on different data series (e.g., the same experiment on different days) and compare results systematically.
 - **Fit multiple functions**: Tests *different* equations on the *same* dataset. Lets you explore which model (e.g., linear vs. quadratic vs. exponential) best describes your data.
 - **Fit all functions**: Applies every available equation to one dataset. Use it for hypothesis exploration when you want to see which built-in or custom function fits best in one go.
-- **View data**: Inspect data from a file (table and pair plots) without performing any fitting. Transform (FFT, DCT, log, etc.), clean (drop NaN, outliers, etc.), and save (or download) the processed data.
+- **View data**: Inspect data from a file (table and pair plots) without performing any fitting. Transform (FFT, DCT, Hilbert, Laplace, log, etc.), clean (drop NaN, outliers, etc.), and save (or download) the processed data.
 
 ### 4. **Wide Range of Fitting Functions**
 Built-in support for:

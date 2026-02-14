@@ -888,12 +888,15 @@ msgstr "**Transformar datos** (opcional):"
 #: ../../../docs/streamlit-guide.md:305 5f4bcec3ad10411d88217870079bb544
 msgid ""
 "Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, "
-"inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or "
-"normalize [0,1]."
+"inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), normalize "
+"[0,1], Hilbert, inverse Hilbert, envelope (Hilbert), Laplace (discrete), "
+"inverse Laplace, cepstrum (real), Hadamard (Walsh), inverse Hadamard."
 msgstr ""
 "Seleccione una transformación del menú desplegable: FFT, magnitud FFT, FFT "
 "inversa, DCT, DCT inversa, log, log10, exp, sqrt, cuadrado, estandarizar "
-"(puntuación z) o normalizar [0,1]."
+"(puntuación z), normalizar [0,1], Hilbert, Hilbert inversa, envolvente "
+"(Hilbert), Laplace (discreta), Laplace inversa, cepstrum (real), Hadamard "
+"(Walsh), Hadamard inversa."
 
 #: ../../../docs/streamlit-guide.md:306 c08e93e5864f4875ac09eb9bc99b33df
 msgid "Click **Transform** to apply. The table updates immediately."

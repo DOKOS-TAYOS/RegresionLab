@@ -387,7 +387,7 @@ If you select "Custom Formula":
    - Click **Accept** when done.
 
 4. **Transform Data** (optional):
-   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), or normalize [0,1].
+   - Select a transform from the dropdown: FFT, FFT magnitude, inverse FFT, DCT, inverse DCT, log, log10, exp, sqrt, square, standardize (z-score), normalize [0,1], Hilbert, inverse Hilbert, envelope (Hilbert), Laplace (discrete), inverse Laplace, cepstrum (real), Hadamard (Walsh), inverse Hadamard.
    - Click **Transform** to apply. The table updates immediately.
    - If the pair plots window is open, it updates automatically.
 
@@ -403,7 +403,7 @@ If you select "Custom Formula":
 - Check column names.
 - Inspect data values.
 - Preview before fitting.
-- Transform data (e.g. FFT, log) for analysis.
+- Transform data (e.g. FFT, Hilbert, Laplace, log) for analysis.
 - Clean data (remove outliers, fill NaN) before fitting.
 
 ### Mode 6: Information (Help)
@@ -768,7 +768,7 @@ See [Configuration Guide](configuration.md) for extensive customization:
 - ✓ Native desktop performance.
 - ✓ Prediction window (evaluate fitted function at user inputs; uncertainty propagation).
 - ✓ Multidimensional fitting (custom formulas with 2+ variables; 3D/residuals plots).
-- ✓ Data view with transform, clean, and save (FFT, DCT, log, outliers, etc.).
+- ✓ Data view with transform, clean, and save (FFT, Hilbert, Laplace, DCT, log, outliers, etc.).
 
 **Tkinter lacks**:
 - ✗ Modern web UI.
