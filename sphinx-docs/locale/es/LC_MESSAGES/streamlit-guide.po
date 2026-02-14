@@ -1789,7 +1789,7 @@ msgstr "Diferencias con la versión Tkinter"
 
 #: ../../../docs/streamlit-guide.md:629 54c9144053dc40879ae312f0c281a627
 msgid "**Streamlit has**:"
-msgstr "** Streamlit tiene **:"
+msgstr "**Streamlit tiene**:"
 
 #: ../../../docs/streamlit-guide.md:630 03f8a529bd8b4de6af42c6b3f9f7b792
 msgid "✓ Modern, web-based interface."

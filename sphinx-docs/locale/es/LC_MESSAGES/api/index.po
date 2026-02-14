@@ -9,22 +9,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RegressionLab 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-13 19:57+0100\n"
+"POT-Creation-Date: 2026-02-14 14:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: es <LL@li.org>\n"
 "Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: ../../../docs/api/index.md:1 b3c7ec53a58e45fbae1543e4ba3c945c
+#: ../../../docs/api/index.md:1 fb2210c3bbcd434fb44fe15890fc5343
 msgid "API Documentation"
 msgstr "Documentación de la API"
 
-#: ../../../docs/api/index.md:3 2d877af828b24a60801e93e2f646accc
+#: ../../../docs/api/index.md:3 e0e71658b0814cf5a84379c65fdc8c79
 msgid ""
 "This section provides technical documentation for RegressionLab's Python "
 "API. It's intended for developers who want to understand the codebase, "
@@ -33,14 +33,14 @@ msgid ""
 msgstr ""
 "Esta sección proporciona documentación técnica para la API Python de "
 "RegressionLab. Está destinado a desarrolladores que desean comprender el "
-"código base, contribuir al proyecto o integrar RegressionLab en sus propias "
-"aplicaciones."
+"código base, contribuir al proyecto o integrar RegressionLab en sus "
+"propias aplicaciones."
 
-#: ../../../docs/api/index.md:5 e37b3b95a53a4482ae1775a1f142810b
+#: ../../../docs/api/index.md:5 0076a0d9e7814fc7b8d0aaefdd533a1d
 msgid "Architecture Overview"
 msgstr "Resumen de la arquitectura"
 
-#: ../../../docs/api/index.md:7 44b9b4d859044a4393eeb7657f70ca7b
+#: ../../../docs/api/index.md:7 5f5baa2011414ce9916b1da541af51b9
 msgid ""
 "RegressionLab follows a modular architecture with clear separation of "
 "concerns:"
@@ -48,30 +48,31 @@ msgstr ""
 "RegressionLab sigue una arquitectura modular con una clara separación de "
 "preocupaciones:"
 
-#: ../../../docs/api/index.md:79 447a81fcf67e4bf59cfcf1bac689e16f
+#: ../../../docs/api/index.md:79 5f424bb05c92489a85a39fdbdd8ce6b5
 msgid "Module Reference"
 msgstr "Referencia de módulos"
 
-#: ../../../docs/api/index.md:81 ad1e8224045d41ae8b2fe031f91ccee6
+#: ../../../docs/api/index.md:81 6bf1672db0334666928ab5b7812c4d34
 msgid "Core Modules"
 msgstr "Módulos principales"
 
-#: ../../../docs/api/index.md:83 cbfcc5ac05dd473bbfaba8f06bb62f0d
+#: ../../../docs/api/index.md:83 88f45e3829cf4bf790946cdf72b79684
 msgid ""
-"**[config](config.md)** - Configuration management and application constants"
+"**[config](config.md)** - Configuration management and application "
+"constants"
 msgstr ""
 "**[config](config.md)** - Gestión de configuración y constantes de "
 "aplicación"
 
-#: ../../../docs/api/index.md:84 c1d3959b2aad42d09983f08a08ecded2
+#: ../../../docs/api/index.md:84 4674929200e84af38d168bad6ba5fe71
 msgid "**[i18n](i18n.md)** - Internationalization and translation system"
 msgstr "**[i18n](i18n.md)** - Sistema de internacionalización y traducción"
 
-#: ../../../docs/api/index.md:86 7023f1f0d89d41d7a7f8451ac1be1030
+#: ../../../docs/api/index.md:86 1e5e720cd34347daa7ebec2fa8935177
 msgid "Fitting Modules"
 msgstr "Módulos de ajuste"
 
-#: ../../../docs/api/index.md:88 402b9f36e60f413db66f05d11af7aa86
+#: ../../../docs/api/index.md:88 54581ea5d4f545ae8695e917520a9df5
 msgid ""
 "**[fitting.fitting_functions](fitting_functions.md)** - Mathematical "
 "functions and curve fitting implementations"
@@ -79,23 +80,23 @@ msgstr ""
 "**[fitting.fitting_functions](fitting_functions.md)** - Funciones "
 "matemáticas e implementaciones de ajuste de curvas"
 
-#: ../../../docs/api/index.md:89 a4defb07b9e7464b8bc25849f509e029
+#: ../../../docs/api/index.md:89 bee978a115cd4efea10bc571d5c4819e
 msgid ""
-"**[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities "
-"and helpers"
+"**[fitting.fitting_utils](fitting_utils.md)** - Generic fitting utilities"
+" and helpers"
 msgstr ""
 "**[fitting.fitting_utils](fitting_utils.md)** - Utilidades y ayudas de "
 "adaptación genéricas"
 
-#: ../../../docs/api/index.md:90 0e91f3718c1f4317af7270a0710e34dd
+#: ../../../docs/api/index.md:90 fc2d278d75b4407aadecd2848281ab87
 msgid ""
 "**[fitting.workflow_controller](workflow_controller.md)** - Orchestrates "
 "fitting workflows and modes"
 msgstr ""
-"**[fitting.workflow_controller](workflow_controller.md)** - Orquesta modos y"
-" flujos de trabajo adecuados"
+"**[fitting.workflow_controller](workflow_controller.md)** - Orquesta "
+"modos y flujos de trabajo adecuados"
 
-#: ../../../docs/api/index.md:91 3f9b751f26d84ec7a4ead47b9206ae9b
+#: ../../../docs/api/index.md:91 de17f2afefa64679a9c0d6ac68006b32
 msgid ""
 "**[fitting.custom_function_evaluator](custom_function_evaluator.md)** - "
 "Evaluates user-defined custom formulas"
@@ -103,237 +104,238 @@ msgstr ""
 "**[fitting.custom_function_evaluator](custom_function_evaluator.md)** - "
 "Evalúa fórmulas personalizadas definidas por el usuario"
 
-#: ../../../docs/api/index.md:92 d05ee2d7c2a34cfa92699a28188a61b4
+#: ../../../docs/api/index.md:92 1f7fa98397704433bb5b18e40c57d85f
 msgid ""
-"**[fitting.estimators](estimators.md)** - Parameter estimation functions for"
-" initial guesses"
+"**[fitting.estimators](estimators.md)** - Parameter estimation functions "
+"for initial guesses"
 msgstr ""
 "**[fitting.estimators](estimators.md)** - Funciones de estimación de "
 "parámetros para conjeturas iniciales"
 
-#: ../../../docs/api/index.md:94 42fcc20ad42e44cc8debbcc8658ca158
+#: ../../../docs/api/index.md:94 d266196ae3c34db1b8ae299cf30953e4
 msgid "Data Loading and Saving"
 msgstr "Carga y guardado de datos"
 
-#: ../../../docs/api/index.md:96 bc82e54e92474315ac8cd5c79250c6d0
+#: ../../../docs/api/index.md:96 a1e9762d4cb84ac08a1a78a11db56bdd
 msgid ""
 "**[loaders.data_loader](data_loader.md)** - High-level data loading "
 "interface"
 msgstr ""
-"**[loaders.data_loader](data_loader.md)** - Interfaz de carga de datos de "
-"alto nivel"
+"**[loaders.data_loader](data_loader.md)** - Interfaz de carga de datos de"
+" alto nivel"
 
-#: ../../../docs/api/index.md:97 659961597ab34ba59e57b0cbb671dd0b
-msgid ""
-"**[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers"
+#: ../../../docs/api/index.md:97 e8ca4815207041908237a16cc849cc74
+msgid "**[loaders.loading_utils](loading_utils.md)** - CSV and Excel file readers"
 msgstr ""
-"**[loaders.loading_utils](loading_utils.md)** - Lectores de archivos CSV y "
-"Excel"
+"**[loaders.loading_utils](loading_utils.md)** - Lectores de archivos CSV "
+"y Excel"
 
-#: ../../../docs/api/index.md:98 9cdd24755e6b4cf4a77a7f937ac2961e
+#: ../../../docs/api/index.md:98 acc9af97a16c4856b7160d55bd38747d
 msgid ""
-"**[loaders.saving_utils](saving_utils.md)** - Save DataFrame to CSV, TXT, "
-"XLSX"
+"**[loaders.saving_utils](saving_utils.md)** - Save DataFrame to CSV, TXT,"
+" XLSX"
 msgstr ""
-"**[loaders.saving_utils](saving_utils.md)** - Guardar DataFrame en CSV, TXT, XLSX"
+"**[loaders.saving_utils](saving_utils.md)** - Guardar DataFrame en CSV, "
+"TXT, XLSX"
 
-#: ../../../docs/api/index.md:100 cb0374e6ca5a4a22a314e284315d8457
+#: ../../../docs/api/index.md:100 e66421e34b0b4c7d9cbeee952f680aa6
 msgid "Data Analysis"
 msgstr "Análisis de datos"
 
-#: ../../../docs/api/index.md:102 c6bb2c0c9f33485aaaaad5459a51119a
+#: ../../../docs/api/index.md:102 d019847b55de40658de7334a37ad2e19
+#, fuzzy
 msgid ""
-"**data_analysis** - Transforms (FFT, DCT, log, exp, etc.) and cleaning (drop"
-" NaN, outliers, etc.). Used by the View Data window in Tkinter and "
-"Streamlit."
+"**[data_analysis](data_analysis.md)** - Transforms (FFT, DCT, log, exp, "
+"etc.) and cleaning (drop NaN, outliers, etc.). Used by the View Data "
+"window in Tkinter and Streamlit."
 msgstr ""
-"**data_analysis** - Transformaciones (FFT, DCT, log, exp, etc.) y limpieza "
-"(eliminar NaN, valores atípicos, etc.). Usado por la ventana Ver datos en "
-"Tkinter y Streamlit."
+"**data_analysis** - Transformaciones (FFT, DCT, log, exp, etc.) y "
+"limpieza (eliminar NaN, valores atípicos, etc.). Usado por la ventana Ver"
+" datos en Tkinter y Streamlit."
 
-#: ../../../docs/api/index.md:104 bc87d417bee74a9788a9a16b92a83870
+#: ../../../docs/api/index.md:104 2c530c2f19c54e80a7f8ac36d579d68e
 msgid "Visualization"
 msgstr "Visualización"
 
-#: ../../../docs/api/index.md:106 9a08c11437184958be069b894a6cd916
+#: ../../../docs/api/index.md:106 38108ec4e67d47679cebd2c2fd2930ee
 msgid ""
-"**[plotting.plot_utils](plot_utils.md)** - Plot generation and styling (2D "
-"fit, pair, residual, 3D)"
+"**[plotting.plot_utils](plot_utils.md)** - Plot generation and styling "
+"(2D fit, pair, residual, 3D)"
 msgstr ""
-"**[plotting.plot_utils](plot_utils.md)** - Generación y estilo de trazado "
-"(ajuste 2D, par, residual, 3D)"
+"**[plotting.plot_utils](plot_utils.md)** - Generación y estilo de trazado"
+" (ajuste 2D, par, residual, 3D)"
 
-#: ../../../docs/api/index.md:108 18e2444a098e4ca1a94975a9eff333dd
+#: ../../../docs/api/index.md:108 35d1b109d37a44d995817d83825fb56f
 msgid "User Interface"
 msgstr "Interfaz de usuario"
 
-#: ../../../docs/api/index.md:110 f941d2ad286441d393b06d13bd744c53
+#: ../../../docs/api/index.md:110 18fb5e182d4f4e9a8679bd958b70d694
 msgid ""
 "**[frontend.ui_main_menu](ui_main_menu.md)** - Main menu and navigation "
 "(Tkinter)"
 msgstr ""
-"**[frontend.ui_main_menu](ui_main_menu.md)** - Menú principal y navegación "
-"(Tkinter)"
+"**[frontend.ui_main_menu](ui_main_menu.md)** - Menú principal y "
+"navegación (Tkinter)"
 
-#: ../../../docs/api/index.md:111 d1385d7cce6e43a886763bee1c738396
+#: ../../../docs/api/index.md:111 1bd61f386de54c0a99028e4ee5174c4a
 msgid ""
 "**[frontend.ui_dialogs](ui_dialogs.md)** - Dialog windows and user input "
 "(Tkinter)"
 msgstr ""
-"**[frontend.ui_dialogs](ui_dialogs.md)** - Ventanas de diálogo y entrada del"
-" usuario (Tkinter)"
+"**[frontend.ui_dialogs](ui_dialogs.md)** - Ventanas de diálogo y entrada "
+"del usuario (Tkinter)"
 
-#: ../../../docs/api/index.md:112 d228c0cdfba142119b85b1ac492b4fa2
+#: ../../../docs/api/index.md:112 014383cf265d49e3b103cb2a94707e4c
 msgid ""
 "**[frontend.image_utils](image_utils.md)** - Image loading and scaling "
 "utilities"
 msgstr ""
-"**[frontend.image_utils](image_utils.md)** - Utilidades de carga y escalado "
-"de imágenes"
+"**[frontend.image_utils](image_utils.md)** - Utilidades de carga y "
+"escalado de imágenes"
 
-#: ../../../docs/api/index.md:113 f57084bb3c4d41f39e9339afec663653
+#: ../../../docs/api/index.md:113 ce76750c6e4d4aa59d4d10d511cc7058
 msgid ""
-"**[frontend.keyboard_nav](keyboard_nav.md)** - Keyboard navigation utilities"
+"**[frontend.keyboard_nav](keyboard_nav.md)** - Keyboard navigation "
+"utilities"
 msgstr ""
-"**[frontend.keyboard_nav](keyboard_nav.md)** - Utilidades de navegación por "
-"teclado"
+"**[frontend.keyboard_nav](keyboard_nav.md)** - Utilidades de navegación "
+"por teclado"
 
-#: ../../../docs/api/index.md:114 8cabdc18dffd4617a5bb19d1b5d97a22
+#: ../../../docs/api/index.md:114 ab0e6398720d421aaebae64725705749
 msgid "**[streamlit_app.app](streamlit_app.md)** - Web interface (Streamlit)"
 msgstr "**[streamlit_app.app](streamlit_app.md)** - Interfaz web (Streamlit)"
 
-#: ../../../docs/api/index.md:116 fd2bce5b088c4ef59cd2d322d5a2ed06
+#: ../../../docs/api/index.md:116 518706d25a4a4cbfa53103de0d65ae80
 msgid "Utilities"
 msgstr "Utilidades"
 
-#: ../../../docs/api/index.md:118 e744326b48cf44bfbf76a6c991655224
+#: ../../../docs/api/index.md:118 4defe90afe0e479fa8b8bf2c996951eb
 msgid "**[utils.exceptions](exceptions.md)** - Custom exception classes"
-msgstr ""
-"**[utils.exceptions](exceptions.md)** - Clases de excepción personalizadas"
+msgstr "**[utils.exceptions](exceptions.md)** - Clases de excepción personalizadas"
 
-#: ../../../docs/api/index.md:119 38fc0cdf77d14ca5935653b4dcca774b
+#: ../../../docs/api/index.md:119 8f6e5264fab944f9b1e1210f539ba671
 msgid "**[utils.logger](logger.md)** - Logging configuration and utilities"
-msgstr ""
-"**[utils.logger](logger.md)** - Configuración de registro y utilidades"
+msgstr "**[utils.logger](logger.md)** - Configuración de registro y utilidades"
 
-#: ../../../docs/api/index.md:120 4e1dea317611422f937b03c21ca51f56
+#: ../../../docs/api/index.md:120 cf41b9015dec4762a29bc3c5aee95fc1
 msgid "**[utils.validators](validators.md)** - Data validation functions"
-msgstr ""
-"**[utils.validators](validators.md)** - Funciones de validación de datos"
+msgstr "**[utils.validators](validators.md)** - Funciones de validación de datos"
 
-#: ../../../docs/api/index.md:122 830168c201c043368ee0b63201e68bf9
+#: ../../../docs/api/index.md:122 e2ec228d9f4f44d5a02ed820c0aacc4a
 msgid "Quick Start for Developers"
 msgstr "Inicio rápido para desarrolladores"
 
-#: ../../../docs/api/index.md:124 285ceec7f67d4e1d9589aef660f2b1bb
+#: ../../../docs/api/index.md:124 f09d8d7104294cd5b62d06190d845efe
 msgid "Setting Up Development Environment"
 msgstr "Configuración del entorno de desarrollo"
 
-#: ../../../docs/api/index.md:145 84aa228cd5c9417f80fd2aff471e92cb
+#: ../../../docs/api/index.md:145 a616e904700243e79fddae9b695763ad
 msgid "Running the Application"
 msgstr "Ejecutar la aplicación"
 
-#: ../../../docs/api/index.md:159 e3bfa7ceef514c279a86d6da424affeb
+#: ../../../docs/api/index.md:159 6931c979e1b0431abcb6464401ebcf44
 msgid "Code Style"
 msgstr "Estilo de código"
 
-#: ../../../docs/api/index.md:161 1105c50bdfbf4448b753c924b5fdfa34
+#: ../../../docs/api/index.md:161 1b7fa92af4d843e983d57f28a8a6f250
 msgid "RegressionLab follows PEP 8 with these conventions:"
 msgstr "RegressionLab sigue PEP 8 con estas convenciones:"
 
-#: ../../../docs/api/index.md:163 16bb785b8c8c4628bc0a8e503f7762b2
+#: ../../../docs/api/index.md:163 ef3d419519d748259b4ebc01647f9438
 msgid "**Line length**: 100 characters max"
 msgstr "**Longitud de línea**: 100 caracteres máximo"
 
-#: ../../../docs/api/index.md:164 e27b0d59bb7d44eb8ab9314cad234995
+#: ../../../docs/api/index.md:164 bd87ae6a1c874aacaff390051b5acfc4
 msgid "**Docstrings**: Google style (use \"Examples:\" for example blocks)"
 msgstr ""
-"**Docstrings**: estilo de Google (use \"Ejemplos:\" para bloques de ejemplo)"
+"**Docstrings**: estilo de Google (use \"Ejemplos:\" para bloques de "
+"ejemplo)"
 
-#: ../../../docs/api/index.md:165 5a486a0693194a898db4776e78771d9c
+#: ../../../docs/api/index.md:165 e87b4f065cec4cd297a9cad63b8911a6
 msgid "**Type hints**: Required for function signatures"
 msgstr "**Sugerencias de tipo**: Requerido para firmas de funciones"
 
-#: ../../../docs/api/index.md:166 3ac6bce7aaeb40049c3643cf55390d44
+#: ../../../docs/api/index.md:166 57e8298a8ff541c1b45d60a95287a854
 msgid ""
-"**Imports**: Sorted alphabetically, grouped by standard/third-party/local. "
-"Cross-package imports use the package root (e.g. `from config import X`, "
-"`from loaders import Y`). Imports within the same package use full module "
-"paths (e.g. `from config.constants import Z`, `from loaders.loading_utils "
-"import csv_reader`) to avoid circular references"
+"**Imports**: Sorted alphabetically, grouped by standard/third-"
+"party/local. Cross-package imports use the package root (e.g. `from "
+"config import X`, `from loaders import Y`). Imports within the same "
+"package use full module paths (e.g. `from config.constants import Z`, "
+"`from loaders.loading_utils import csv_reader`) to avoid circular "
+"references"
 msgstr ""
 "**Importaciones**: ordenados alfabéticamente, agrupados por estándar/de "
 "terceros/local. Las importaciones entre paquetes utilizan la raíz del "
-"paquete (por ejemplo, `desde la importación de configuración X`, `desde la "
-"importación de cargadores Y`). Las importaciones dentro del mismo paquete "
-"utilizan rutas de módulo completas (por ejemplo, `from config.constants "
-"import Z`, `from loaders.loading_utils import csv_reader`) para evitar "
-"referencias circulares"
+"paquete (por ejemplo, `desde la importación de configuración X`, `desde "
+"la importación de cargadores Y`). Las importaciones dentro del mismo "
+"paquete utilizan rutas de módulo completas (por ejemplo, `from "
+"config.constants import Z`, `from loaders.loading_utils import "
+"csv_reader`) para evitar referencias circulares"
 
 #: ../../../docs/api/index.md:168 ../../../docs/api/index.md:370
-#: 3a314dcf75134b87b9972057ccf4b2cd 7fd4f085582b4b3fad2914deeca58fe6
+#: 6aeed341e823475a87b7ce3760174f54 e1f5fc40c5604d75be84ddc3dc6d8597
 msgid "Example:"
 msgstr "Ejemplo:"
 
-#: ../../../docs/api/index.md:203 1ecf89ef8379459599313d7ce83856a3
+#: ../../../docs/api/index.md:203 4a390e7973ef49e283d7d0e9cb5d8e70
 msgid "Common Development Tasks"
 msgstr "Tareas comunes de desarrollo"
 
-#: ../../../docs/api/index.md:205 325162480f434267a723e6624ff2621d
+#: ../../../docs/api/index.md:205 f64fb68425b747b49150296fa6a050d0
 msgid "Adding a New Fitting Function"
 msgstr "Agregar una nueva función de adaptación"
 
-#: ../../../docs/api/index.md:207 4039763830be42bd9468d8cffb8d7186
-msgid ""
-"See [Extending RegressionLab](../extending.md) for detailed instructions."
+#: ../../../docs/api/index.md:207 d5a0d43889ce447593dace496fc4bf7a
+msgid "See [Extending RegressionLab](../extending.md) for detailed instructions."
 msgstr ""
 "Consulte [Extending RegressionLab](../extending.md) para obtener "
 "instrucciones detalladas."
 
-#: ../../../docs/api/index.md:209 b55f9599dce14d3bb788f32128c5de59
+#: ../../../docs/api/index.md:209 b52ee39248604aa58c57b50e5070f883
 msgid "Quick summary:"
 msgstr "Resumen rápido:"
 
-#: ../../../docs/api/index.md:210 868af19ead9e416b9691f16345acbc4e
+#: ../../../docs/api/index.md:210 971d0361e0154c858e70e3c830b2b550
 msgid ""
-"Add mathematical function in `fitting/functions/` (e.g. `polynomials.py`, "
-"`special.py`)"
+"Add mathematical function in `fitting/functions/` (e.g. `polynomials.py`,"
+" `special.py`)"
 msgstr ""
 "Agregue una función matemática en `fitting/functions/` (por ejemplo, "
 "`polynomials.py`, `special.py`)"
 
-#: ../../../docs/api/index.md:211 05e88761505e4034bb0ae66d2979571b
+#: ../../../docs/api/index.md:211 8ed28d31cc5c40ec8df1c0e32713b5d7
 msgid "Create fitting wrapper function"
 msgstr "Crear función contenedora adecuada"
 
-#: ../../../docs/api/index.md:212 ebb721c055ff41ac8fd4fe96252d71ef
+#: ../../../docs/api/index.md:212 fcd0b8792d3945b08581634004c2fe4a
 msgid ""
 "Export the fit function from `src/fitting/functions/__init__.py`, then "
-"register in `config/equations.yaml` (add entry with `function`, `formula`, "
-"`format`, `param_names`) and add translations in `src/locales/`"
+"register in `config/equations.yaml` (add entry with `function`, "
+"`formula`, `format`, `param_names`) and add translations in "
+"`src/locales/`"
 msgstr ""
 "Exporte la función de ajuste desde `src/fitting/functions/__init__.py`, "
 "luego regístrela en `config/equations.yaml` (agregue una entrada con "
-"`function`, `formula`, `format`, `param_names`) y agregue traducciones en "
-"`src/locales/`"
+"`function`, `formula`, `format`, `param_names`) y agregue traducciones en"
+" `src/locales/`"
 
-#: ../../../docs/api/index.md:213 7d04b265348d4244a37834f755630988
+#: ../../../docs/api/index.md:213 de940b81faa34b948fde375a7af7a35c
 msgid "Test thoroughly"
 msgstr "Pruebe a fondo"
 
-#: ../../../docs/api/index.md:215 dcc13a7093a3434194bbc30f3ffc51b7
+#: ../../../docs/api/index.md:215 951bc269343249d093be0b19ea36851d
 msgid "Modifying the UI"
 msgstr "Modificar la interfaz de usuario"
 
-#: ../../../docs/api/index.md:217 ac461b5062e34d45bd7fce18e1533d52
+#: ../../../docs/api/index.md:217 325c29165a564676937ad91359826081
 msgid "**Tkinter**:"
 msgstr "**Tkinter**:"
 
-#: ../../../docs/api/index.md:218 c889fea7669e4127bc5083bae31209b8
+#: ../../../docs/api/index.md:218 cd5a857db64945ce8a94a5ebcbfadb09
 msgid "Main menu: Edit `frontend/ui_main_menu.py`"
 msgstr "Menú principal: Editar `frontend/ui_main_menu.py`"
 
-#: ../../../docs/api/index.md:219 e48722c024d848929ffb5f876608c2a8
+#: ../../../docs/api/index.md:219 0caae41a9a2b4a12aa28ae38427ff5be
 msgid ""
 "Keyboard navigation: Edit `frontend/keyboard_nav.py` (see "
 "[keyboard_nav](keyboard_nav.md))"
@@ -341,7 +343,7 @@ msgstr ""
 "Navegación con teclado: edite `frontend/keyboard_nav.py` (consulte "
 "[keyboard_nav](keyboard_nav.md))"
 
-#: ../../../docs/api/index.md:220 c7fbecf4fba44bf09b495f2850e6c015
+#: ../../../docs/api/index.md:220 fa50777bd9f246799feb4576168db3fe
 msgid ""
 "Image utilities: Edit `frontend/image_utils.py` (see "
 "[image_utils](image_utils.md))"
@@ -349,58 +351,58 @@ msgstr ""
 "Utilidades de imagen: edite `frontend/image_utils.py` (consulte "
 "[image_utils](image_utils.md))"
 
-#: ../../../docs/api/index.md:221 d1856ddbb66c41289d0a413d69338819
+#: ../../../docs/api/index.md:221 1974a5d94a1144e6b9cc1d10d77f10fd
 msgid ""
-"Dialogs: Edit modules in `frontend/ui_dialogs/` (e.g. `data_selection.py`, "
-"`equation.py`)"
+"Dialogs: Edit modules in `frontend/ui_dialogs/` (e.g. "
+"`data_selection.py`, `equation.py`)"
 msgstr ""
 "Diálogos: editar módulos en `frontend/ui_dialogs/` (por ejemplo, "
 "`data_selection.py`, `equation.py`)"
 
-#: ../../../docs/api/index.md:222 1774830d000d45f288964a893e63ae65
+#: ../../../docs/api/index.md:222 8f21551ec7924072b8733662d2c5d380
 msgid "Styling: Configure in `.env` file"
 msgstr "Estilo: configurar en el archivo `.env`"
 
-#: ../../../docs/api/index.md:224 2d8e262cf0894d31a5eb659f1197c4f1
+#: ../../../docs/api/index.md:224 d0d04d7cca674e21a35a60b8cbe2694d
 msgid "**Streamlit**:"
 msgstr "**Iluminado**:"
 
-#: ../../../docs/api/index.md:225 8ad104b5e0634c988269547fbd4980d2
-msgid ""
-"Entry point: `streamlit_app/app.py`; UI logic in `streamlit_app/sections/`"
+#: ../../../docs/api/index.md:225 3bffd7a7cfe648939fecd299fb7b5a10
+msgid "Entry point: `streamlit_app/app.py`; UI logic in `streamlit_app/sections/`"
 msgstr ""
-"Punto de entrada: `streamlit_app/app.py`; Lógica de la interfaz de usuario "
-"en `streamlit_app/sections/`"
+"Punto de entrada: `streamlit_app/app.py`; Lógica de la interfaz de "
+"usuario en `streamlit_app/sections/`"
 
-#: ../../../docs/api/index.md:226 2edced056c3e460f9d7cef6a3734bd28
+#: ../../../docs/api/index.md:226 131c883b23df41d88df4175ac11631d9
 msgid "Theme: `streamlit_app/theme.py`"
 msgstr "Tema: `streamlit_app/theme.py`"
 
-#: ../../../docs/api/index.md:227 e2a9f430c8464f0eb0a55dfbbc1ef8ac
+#: ../../../docs/api/index.md:227 e6c15e2f8318435aa73c95ce1f426114
 msgid "CSS in `SIDEBAR_CSS` in `sections/sidebar.py`"
 msgstr "CSS en `SIDEBAR_CSS` en `secciones/sidebar.py`"
 
-#: ../../../docs/api/index.md:228 acd5103e988a4aeb94d4b460a1ed9823
+#: ../../../docs/api/index.md:228 6fbc0ab37c3a4889837931329cf4b04e
 msgid "Add new modes in `sections/modes.py`"
 msgstr "Agregar nuevos modos en `sections/modes.py`"
 
-#: ../../../docs/api/index.md:230 d6d7b23af3d742368e320ef24de39dd1
+#: ../../../docs/api/index.md:230 00f0aaf2a9b44ce08c0a388564b5857e
 msgid "Adding a New Data Format"
 msgstr "Agregar un nuevo formato de datos"
 
-#: ../../../docs/api/index.md:232 a74ec4402e644f5fb2c7ef7bd62b4248
+#: ../../../docs/api/index.md:232 0dc00ef2c717438eaeda1d84694a88f7
 msgid "Create reader function in `loaders/loading_utils.py`"
 msgstr "Crear función de lector en `loaders/loading_utils.py`"
 
-#: ../../../docs/api/index.md:233 04dc3a2b482c474994860031ef63227c
+#: ../../../docs/api/index.md:233 d7ee22a5dba6465f8ce861e0f8aa0dad
 msgid ""
-"Register it in the `FILE_TYPE_READERS` dict in `loaders/data_loader.py` (key"
-" = file type, value = reader function)"
+"Register it in the `FILE_TYPE_READERS` dict in `loaders/data_loader.py` "
+"(key = file type, value = reader function)"
 msgstr ""
-"Regístrelo en el diccionario `FILE_TYPE_READERS` en `loaders/data_loader.py`"
-" (clave = tipo de archivo, valor = función de lectura)"
+"Regístrelo en el diccionario `FILE_TYPE_READERS` en "
+"`loaders/data_loader.py` (clave = tipo de archivo, valor = función de "
+"lectura)"
 
-#: ../../../docs/api/index.md:234 af64b9540e244a2880590a989f082515
+#: ../../../docs/api/index.md:234 fb2d8ded6ee2495ca485250f5e4bf3da
 msgid ""
 "Add file type filter to `open_load_dialog()` in "
 "`frontend/ui_dialogs/load_data_dialog.py`"
@@ -408,26 +410,27 @@ msgstr ""
 "Agregue filtro de tipo de archivo a `open_load_dialog()` en "
 "`frontend/ui_dialogs/load_data_dialog.py`"
 
-#: ../../../docs/api/index.md:235 b1ea3495a0194ee190a752af97d2ab37
+#: ../../../docs/api/index.md:235 1ecf51e1a970486085f7a5d26a1c9b68
 msgid "Test with sample data"
 msgstr "Prueba con datos de muestra"
 
-#: ../../../docs/api/index.md:237 21185ba6284a40d7a55d7154a88775c9
+#: ../../../docs/api/index.md:237 c6f23276d7744839ac220083a29424cf
 msgid "Changing Plot Style"
 msgstr "Cambiar el estilo de la trama"
 
-#: ../../../docs/api/index.md:239 235ade4c8adf42b188417275253552dc
+#: ../../../docs/api/index.md:239 01417eddd6e6418da7aa0e1e06768a07
 msgid ""
-"**Per-plot**: Pass parameters to `create_plot()` in `plotting/plot_utils.py`"
+"**Per-plot**: Pass parameters to `create_plot()` in "
+"`plotting/plot_utils.py`"
 msgstr ""
 "**Por trazado**: pase parámetros a `create_plot()` en "
 "`plotting/plot_utils.py`"
 
-#: ../../../docs/api/index.md:240 af8201b88cdf4ff9af50fe1f30027802
+#: ../../../docs/api/index.md:240 e8c9eb1aa229422a8b5c7fe9eaf69d8c
 msgid "**Globally**: Configure in `.env` file"
 msgstr "**Globalmente**: Configurar en el archivo `.env`"
 
-#: ../../../docs/api/index.md:241 c89c601b29504f0c8995265aed386f28
+#: ../../../docs/api/index.md:241 44f8ad66cbd64a84818756f498a86737
 msgid ""
 "**Programmatically**: Modify `PLOT_CONFIG` and related settings in "
 "`config/theme.py`"
@@ -435,46 +438,46 @@ msgstr ""
 "**Programáticamente**: modifique `PLOT_CONFIG` y las configuraciones "
 "relacionadas en `config/theme.py`"
 
-#: ../../../docs/api/index.md:243 999f5e74bff541af92043bdb8358327b
+#: ../../../docs/api/index.md:243 b430328a239e44b58c9be4bfeb31155f
 msgid "Testing"
 msgstr "Pruebas"
 
-#: ../../../docs/api/index.md:245 36a972ed46314c689459b7f9c7eb69a7
+#: ../../../docs/api/index.md:245 d96e4782cfb84d209930616d834a5079
 msgid "Test Structure"
 msgstr "Estructura de prueba"
 
-#: ../../../docs/api/index.md:265 d7d14453f0c545d28678db03ae701727
+#: ../../../docs/api/index.md:265 c9b6c126595345d3baa1a99a56c84904
 msgid ""
 "Run tests via `pytest tests/` or `python tests/run_tests.py`, or use "
-"`bin/run_tests.bat` (Windows) / `bin/run_tests.sh` (Linux/macOS). The bin "
-"test launchers require `.venv` (run setup first)."
+"`bin/run_tests.bat` (Windows) / `bin/run_tests.sh` (Linux/macOS). The bin"
+" test launchers require `.venv` (run setup first)."
 msgstr ""
-"Ejecute pruebas a través de `pytest tests/` o `python tests/run_tests.py`, o"
-" use `bin/run_tests.bat` (Windows) / `bin/run_tests.sh` (Linux/macOS). Los "
-"lanzadores de pruebas bin requieren `.venv` (ejecute primero la "
-"configuración)."
+"Ejecute pruebas a través de `pytest tests/` o `python "
+"tests/run_tests.py`, o use `bin/run_tests.bat` (Windows) / "
+"`bin/run_tests.sh` (Linux/macOS). Los lanzadores de pruebas bin requieren"
+" `.venv` (ejecute primero la configuración)."
 
-#: ../../../docs/api/index.md:267 34e3c2a0b64947fcb311ec3010bca32d
+#: ../../../docs/api/index.md:267 4f4e382b1d354cf3b03251a5d7c376b8
 msgid "Running Tests"
 msgstr "Ejecución de pruebas"
 
-#: ../../../docs/api/index.md:289 2cb89d817f8e41d59f230889847ddc6d
+#: ../../../docs/api/index.md:289 070acb8092a94f098f0f3b23ce9ce1a1
 msgid "Writing Tests"
 msgstr "Pruebas de escritura"
 
-#: ../../../docs/api/index.md:291 87c003181c514d62a6df567281f22bd2
+#: ../../../docs/api/index.md:291 33760aa7e22c4127a2e2fd9ee557787f
 msgid "Example test:"
 msgstr "Prueba de ejemplo:"
 
-#: ../../../docs/api/index.md:349 d15ededd8eb744e797fcfb9365401c3b
+#: ../../../docs/api/index.md:349 c417aab7f2c34d36bfc6ac3b27445659
 msgid "API Conventions"
 msgstr "Convenciones API"
 
-#: ../../../docs/api/index.md:351 15e9affd9453426d9a4e4331bc4bedd2
+#: ../../../docs/api/index.md:351 e0216a3c217240ec92b01fe72f4c305f
 msgid "Return Values"
 msgstr "Valores de retorno"
 
-#: ../../../docs/api/index.md:353 ba6826f651fd4730bc3ecdfcf5cc69ce
+#: ../../../docs/api/index.md:353 f952358797af4105acf33e328e1093e6
 msgid ""
 "**Fitting functions** return a 4-tuple from `generic_fit` (and from "
 "`get_fitting_function` / custom evaluator):"
@@ -482,125 +485,128 @@ msgstr ""
 "**Funciones de ajuste** devuelven una tupla de 4 desde `generic_fit` (y "
 "desde `get_fitting_function`/evaluador personalizado):"
 
-#: ../../../docs/api/index.md:357 c6a4edb4cf6a47b481a0781f7066ffbb
+#: ../../../docs/api/index.md:357 299cfdfadfa641cab26229ba0481b6e9
 msgid ""
-"Callers that only need the main result use the first three; `fit_info` holds"
-" fit metadata. `text` contains formatted parameters, uncertainties, R², and "
-"statistics."
+"Callers that only need the main result use the first three; `fit_info` "
+"holds fit metadata. `text` contains formatted parameters, uncertainties, "
+"R², and statistics."
 msgstr ""
-"Las personas que llaman y que sólo necesitan el resultado principal utilizan"
-" los tres primeros; `fit_info` contiene metadatos de ajuste. El \"texto\" "
-"contiene parámetros formateados, incertidumbres, R² y estadísticas."
+"Las personas que llaman y que sólo necesitan el resultado principal "
+"utilizan los tres primeros; `fit_info` contiene metadatos de ajuste. El "
+"\"texto\" contiene parámetros formateados, incertidumbres, R² y "
+"estadísticas."
 
-#: ../../../docs/api/index.md:359 ee8059b7447d4c6ca46715ad679fb0b0
+#: ../../../docs/api/index.md:359 ce8c43f7f19f4793852d0c5666768858
 msgid "**Data loaders** return pandas DataFrame"
 msgstr "**Cargadores de datos** devuelven pandas DataFrame"
 
-#: ../../../docs/api/index.md:361 8f0273ba72bf47cd90b4987d9201e57f
+#: ../../../docs/api/index.md:361 fe70cf06f3954907ae569389d68ef83c
 msgid "**Plot functions** return path to saved plot (str or Path)"
 msgstr ""
-"**Funciones de trazado** ruta de retorno al trazado guardado (cadena o ruta)"
+"**Funciones de trazado** ruta de retorno al trazado guardado (cadena o "
+"ruta)"
 
-#: ../../../docs/api/index.md:363 6942b788fa98447e9bf0719a01372e62
+#: ../../../docs/api/index.md:363 c05226ca82414c728aedb79182150f37
 msgid "Error Handling"
 msgstr "Manejo de errores"
 
-#: ../../../docs/api/index.md:365 372f77c8aa4c4b1e9bd38bb5660c09ea
+#: ../../../docs/api/index.md:365 acfaae6927494272bc8892712d04d05a
 msgid "Use `FittingError` for curve fitting failures"
 msgstr "Utilice `FittingError` para fallas en el ajuste de curvas"
 
-#: ../../../docs/api/index.md:366 346e689977164c30a730c2045c072dfb
+#: ../../../docs/api/index.md:366 997c2b0610274128af93ae98cdd9e7ab
 msgid "Use `DataLoadError` for data loading problems"
 msgstr "Utilice `DataLoadError` para problemas de carga de datos"
 
-#: ../../../docs/api/index.md:367 217abf46759041cd8bf36fee0dad672c
+#: ../../../docs/api/index.md:367 ff93a52866154c2483f2b8c82bacbb59
 msgid "Use standard Python exceptions for other errors"
 msgstr "Utilice excepciones estándar de Python para otros errores"
 
-#: ../../../docs/api/index.md:368 bc3e7c6eac614a82b8188d16b2ba1f86
+#: ../../../docs/api/index.md:368 71b700562d574af69d2d99ff4d66091a
 msgid "Always log errors before raising"
 msgstr "Registra siempre los errores antes de generarlos."
 
-#: ../../../docs/api/index.md:386 4b3c694561b44813b8757cf874140d00
+#: ../../../docs/api/index.md:386 9dd4865a713a4c87b36756b25e41e614
 msgid "Logging"
 msgstr "Explotación florestal"
 
-#: ../../../docs/api/index.md:388 7a4935166d034ade80229e318ecbbdfd
+#: ../../../docs/api/index.md:388 f3fd9d8b4e0645589ea81aaa1c7c08fb
 msgid "Use the logger from `utils.logger`:"
 msgstr "Utilice el registrador de `utils.logger`:"
 
-#: ../../../docs/api/index.md:402 9dd8315b6a6245c0b6de6b84a777365f
+#: ../../../docs/api/index.md:402 b8354310597344c5bf4d44c58e9660ca
 msgid "Type Hints"
 msgstr "Consejos de tipo"
 
-#: ../../../docs/api/index.md:404 4976bac9e6124ec3b5150493bd6b5aea
+#: ../../../docs/api/index.md:404 6d6807b24411411e9df0ca050dd61a18
 msgid "Always include type hints:"
 msgstr "Incluya siempre sugerencias de tipo:"
 
-#: ../../../docs/api/index.md:420 b007499cb589457d9716cab0a5a1c88a
+#: ../../../docs/api/index.md:420 5e1b2f004d4f4c3e96490c843ce0c0f3
 msgid "Performance Considerations"
 msgstr "Consideraciones de rendimiento"
 
-#: ../../../docs/api/index.md:422 652828f955aa414b9ba679d78b72fbd0
+#: ../../../docs/api/index.md:422 7a63812948e24341b29bb2d9e65e2969
 msgid "NumPy Best Practices"
 msgstr "Mejores prácticas de NumPy"
 
-#: ../../../docs/api/index.md:424 d02084a1bd2840cf9c33e0619106354f
+#: ../../../docs/api/index.md:424 94ed5a8d45e64972b0eebcd5cbe031d0
 msgid "Use vectorized operations instead of loops"
 msgstr "Utilice operaciones vectorizadas en lugar de bucles"
 
-#: ../../../docs/api/index.md:425 eaaf7bef1ff3467284bcb829b8759036
+#: ../../../docs/api/index.md:425 fd08dfc128504d5cb05186948e507c4d
 msgid "Pre-allocate arrays when possible"
 msgstr "Preasignar matrices cuando sea posible"
 
-#: ../../../docs/api/index.md:426 6618a34734344c5aac09ee4d1060d2dc
+#: ../../../docs/api/index.md:426 f787fcea67d448d8a07910505ffa63d9
 msgid "Use in-place operations to reduce memory"
 msgstr "Utilice operaciones in situ para reducir la memoria"
 
-#: ../../../docs/api/index.md:445 5b2998fc019f4b6f973b64ac903effb6
+#: ../../../docs/api/index.md:445 25d4c9f038f6447cbcb1ae3264bec8d3
 msgid "Caching"
 msgstr "Almacenamiento en caché"
 
-#: ../../../docs/api/index.md:447 f9d981551f95484ea95ed8cf4a04ac79
+#: ../../../docs/api/index.md:447 195e57f21f164b34bede71a372527cab
 msgid "Use `functools.lru_cache` for expensive computations:"
 msgstr "Utilice `functools.lru_cache` para cálculos costosos:"
 
-#: ../../../docs/api/index.md:458 7553da957de346d2853e6fe0515b90ae
+#: ../../../docs/api/index.md:458 8d6e5aadc2354eaeb8f56e81d8ccaa37
 msgid "Lazy Imports"
 msgstr "Importaciones perezosas"
 
-#: ../../../docs/api/index.md:460 9d78b48ff35f4df585482143f68ae8b2
+#: ../../../docs/api/index.md:460 65e83489cad04faf9780edf1a6126f31
 msgid "Import heavy libraries only when needed:"
 msgstr "Importe bibliotecas pesadas solo cuando sea necesario:"
 
-#: ../../../docs/api/index.md:472 b31f1bf8b59b4212ae5d4919d09cd91c
+#: ../../../docs/api/index.md:472 1ecdc569844440e4b9a1d6f53c17dbbd
 msgid "Documentation"
 msgstr "Documentación"
 
-#: ../../../docs/api/index.md:474 dd957f2170db4201aa685d5120de530c
+#: ../../../docs/api/index.md:474 cbe473d8b2154148beecab1689cf0b43
 msgid "Docstring Format"
 msgstr "Formato de cadena de documentos"
 
-#: ../../../docs/api/index.md:476 d016bc4348644828bbb06040bf657a7b
+#: ../../../docs/api/index.md:476 471b904a95d34f659c3ff7f3dfca3733
 msgid "Use Google-style docstrings:"
 msgstr "Utilice cadenas de documentación al estilo de Google:"
 
-#: ../../../docs/api/index.md:510 c17b498a38794dbcb91c9b5598bc6145
+#: ../../../docs/api/index.md:510 0818b6cc9afe497faa272668ad58ee54
 msgid "Module Details"
 msgstr "Detalles del módulo"
 
-#: ../../../docs/api/index.md:512 966fd77d0b5246bb89bf8a9eb1574a12
+#: ../../../docs/api/index.md:512 37ac5c4d9baf459bb2fcf347bf48878d
 msgid ""
-"For detailed documentation of each module, see the individual module pages:"
+"For detailed documentation of each module, see the individual module "
+"pages:"
 msgstr ""
-"Para obtener documentación detallada de cada módulo, consulte las páginas de"
-" los módulos individuales:"
+"Para obtener documentación detallada de cada módulo, consulte las páginas"
+" de los módulos individuales:"
 
-#: ../../../docs/api/index.md:514 a92fa10b8e3d41029ca60b26da9925e5
+#: ../../../docs/api/index.md:514 aa600bd17a96477d87576338950b1800
 msgid "**Core**: [config](config.md), [i18n](i18n.md)"
 msgstr "**Núcleo**: [config](config.md), [i18n](i18n.md)"
 
-#: ../../../docs/api/index.md:515 184201e17f294feaa88ea16393e0bf19
+#: ../../../docs/api/index.md:515 eef07077e2834a059836346b9af6b69b
 msgid ""
 "**Fitting**: [fitting_functions](fitting_functions.md), "
 "[fitting_utils](fitting_utils.md), "
@@ -614,29 +620,34 @@ msgstr ""
 "[custom_function_evaluator](custom_function_evaluator.md), "
 "[estimadores](estimators.md)"
 
-#: ../../../docs/api/index.md:516 99195152816d4d4fbc0c52c704f1c088
+#: ../../../docs/api/index.md:516 7a6b62d8d058460f8fe12d8731e9792e
+#, fuzzy
 msgid ""
 "**Loaders**: [data_loader](data_loader.md), "
-"[loading_utils](loading_utils.md)"
+"[loading_utils](loading_utils.md), [saving_utils](saving_utils.md)"
 msgstr ""
 "**Cargadores**: [data_loader](data_loader.md), "
 "[loading_utils](loading_utils.md)"
 
-#: ../../../docs/api/index.md:517 528eae707e204851971a354e732d5a69
+#: ../../../docs/api/index.md:517 d9595e2bab774558af1e5df967ec4a4e
+msgid "**Data Analysis**: [data_analysis](data_analysis.md)"
+msgstr ""
+
+#: ../../../docs/api/index.md:518 8516913f30664667adff1e33e1c9d4cf
 msgid "**Plotting**: [plot_utils](plot_utils.md)"
 msgstr "**Trazado**: [plot_utils](plot_utils.md)"
 
-#: ../../../docs/api/index.md:518 6c44a49c0b2243d5aefba2d273f123b4
+#: ../../../docs/api/index.md:519 e451f6af2c944df2adc2ab54b1a75e8e
 msgid ""
-"**Frontend**: [ui_main_menu](ui_main_menu.md), [ui_dialogs](ui_dialogs.md), "
-"[image_utils](image_utils.md), [keyboard_nav](keyboard_nav.md), "
-"[streamlit_app](streamlit_app.md)"
+"**Frontend**: [ui_main_menu](ui_main_menu.md), "
+"[ui_dialogs](ui_dialogs.md), [image_utils](image_utils.md), "
+"[keyboard_nav](keyboard_nav.md), [streamlit_app](streamlit_app.md)"
 msgstr ""
-"**Frontend**: [ui_main_menu](ui_main_menu.md), [ui_dialogs](ui_dialogs.md), "
-"[image_utils](image_utils.md), [keyboard_nav](keyboard_nav.md), "
-"[streamlit_app](streamlit_app.md)"
+"**Frontend**: [ui_main_menu](ui_main_menu.md), "
+"[ui_dialogs](ui_dialogs.md), [image_utils](image_utils.md), "
+"[keyboard_nav](keyboard_nav.md), [streamlit_app](streamlit_app.md)"
 
-#: ../../../docs/api/index.md:519 614ba9818c944cf39912ec1d5a3e30e8
+#: ../../../docs/api/index.md:520 4f86ca98d5d44d6f8b25503db377c6eb
 msgid ""
 "**Utils**: [exceptions](exceptions.md), [logger](logger.md), "
 "[validators](validators.md)"
@@ -644,30 +655,31 @@ msgstr ""
 "**Utilidades**: [excepciones](exceptions.md), [logger](logger.md), "
 "[validadores](validators.md)"
 
-#: ../../../docs/api/index.md:521 68a04f04472a482995fa9655e005cbc2
+#: ../../../docs/api/index.md:522 0758566ab3ad4db490c5c613abda2b20
 msgid "Contributing"
 msgstr "Contribuir"
 
-#: ../../../docs/api/index.md:523 e2b9cb8703d44329bb5809559a811842
+#: ../../../docs/api/index.md:524 8021776f8b09456482ddee7dc07bddcc
 msgid "See [Contributing Guide](../contributing.md) for:"
 msgstr "Consulte la [Guía de contribución](../contributing.md) para:"
 
-#: ../../../docs/api/index.md:524 d3868ae4a4824eb4ac3d551ff3339be2
+#: ../../../docs/api/index.md:525 16d91466ea884c3794f7c76f09332b3d
 msgid "Code style guidelines"
 msgstr "Pautas de estilo de código"
 
-#: ../../../docs/api/index.md:525 bfdce03bdabb420eb4baa087ecc22834
+#: ../../../docs/api/index.md:526 23583649a8a048c2b26115d72a100b9a
 msgid "Pull request process"
 msgstr "Proceso de solicitud de extracción"
 
-#: ../../../docs/api/index.md:526 9cb4849a52c84d54b10a9fbab7fe801b
+#: ../../../docs/api/index.md:527 989564b9ec9f4a30b7ce84a660f23cd8
 msgid "Development workflow"
 msgstr "Flujo de trabajo de desarrollo"
 
-#: ../../../docs/api/index.md:527 9ebb3b42b76e4f4d95601de746513622
+#: ../../../docs/api/index.md:528 de6bff2c94a64c2da98e77a89d3dc5f4
 msgid "Testing requirements"
 msgstr "Requisitos de prueba"
 
-#: ../../../docs/api/index.md:531 8d10550286d744aeb13e340f90b7ae18
+#: ../../../docs/api/index.md:532 fa907e56befd4e6eb0c394676e34c8b5
 msgid "*Last updated: February 2026.*"
 msgstr "*Última actualización: febrero de 2026.*"
+

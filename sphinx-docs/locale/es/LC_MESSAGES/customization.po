@@ -290,7 +290,7 @@ msgstr "`'soft_l1'`: Robusto a valores atípicos, transición suave"
 
 #: ../../../docs/customization.md:275 aa0756a863774aceb229308d1aaa7d63
 msgid "`'huber'`: Robust to outliers, less aggressive"
-msgstr "``huber'': Robusto ante valores atípicos, menos agresivo"
+msgstr "`'huber'`: Robusto ante valores atípicos, menos agresivo"
 
 #: ../../../docs/customization.md:276 b09ea30e15934956a36995b4f1a743b1
 msgid "`'cauchy'`: Very robust to outliers, but can converge slowly"
@@ -300,7 +300,7 @@ msgstr ""
 
 #: ../../../docs/customization.md:277 48abf5d507c14871bf28262f0c3fe593
 msgid "`'arctan'`: Similar to Cauchy"
-msgstr "``arctan'': Similar a Cauchy"
+msgstr "`'arctan'`: Similar a Cauchy"
 
 #: ../../../docs/customization.md:279 633b60227e6f4be0bc5521cdf37f04e4
 msgid "Method 2: Create Custom Fitting Wrapper"
