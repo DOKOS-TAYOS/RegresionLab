@@ -18,8 +18,8 @@ def plot_display_path(output_path: str) -> str:
         Path to the image file to display (preview PNG for PDFs when available).
     """
     p = Path(output_path)
-    if p.suffix.lower() == '.pdf':
-        preview = p.parent / (p.stem + '_preview.png')
+    if p.suffix.lower() == ".pdf":
+        preview = p.parent / (p.stem + "_preview.png")
         if preview.exists():
             return str(preview)
     return output_path
@@ -74,7 +74,7 @@ def load_image_scaled(
     except ImportError:
         return None
     try:
-        img = Image.open(path).convert('RGB')
+        img = Image.open(path).convert("RGB")
     except OSError:
         return None
     w, h = img.size

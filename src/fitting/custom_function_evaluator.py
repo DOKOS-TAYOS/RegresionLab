@@ -103,8 +103,12 @@ class CustomFunctionEvaluator:
             raise ValidationError(t("error.equation_empty"))
 
         if num_independent_vars < 1:
-            logger.error("Invalid number of independent variables: %s", num_independent_vars)
-            raise ValidationError(t("error.invalid_independent_vars", num=num_independent_vars))
+            logger.error(
+                "Invalid number of independent variables: %s", num_independent_vars
+            )
+            raise ValidationError(
+                t("error.invalid_independent_vars", num=num_independent_vars)
+            )
 
         validate_parameter_names(parameter_names)
 
@@ -150,38 +154,103 @@ class CustomFunctionEvaluator:
             allowed_names.update(f"x_{i}" for i in range(self.num_independent_vars))
 
         for node in ast.walk(tree):
-            if type(node) not in _ALLOWED_AST_NODES and not isinstance(node, ast.operator) and not isinstance(node, ast.unaryop):
-                raise EquationError(t("error.evaluation_error", error=f"Unsupported syntax: {type(node).__name__}"))
+            if (
+                type(node) not in _ALLOWED_AST_NODES
+                and not isinstance(node, ast.operator)
+                and not isinstance(node, ast.unaryop)
+            ):
+                raise EquationError(
+                    t(
+                        "error.evaluation_error",
+                        error=f"Unsupported syntax: {type(node).__name__}",
+                    )
+                )
 
             if isinstance(node, ast.BinOp) and type(node.op) not in _ALLOWED_BIN_OPS:
-                raise EquationError(t("error.evaluation_error", error=f"Unsupported operator: {type(node.op).__name__}"))
+                raise EquationError(
+                    t(
+                        "error.evaluation_error",
+                        error=f"Unsupported operator: {type(node.op).__name__}",
+                    )
+                )
 
-            if isinstance(node, ast.UnaryOp) and type(node.op) not in _ALLOWED_UNARY_OPS:
-                raise EquationError(t("error.evaluation_error", error=f"Unsupported unary operator: {type(node.op).__name__}"))
+            if (
+                isinstance(node, ast.UnaryOp)
+                and type(node.op) not in _ALLOWED_UNARY_OPS
+            ):
+                raise EquationError(
+                    t(
+                        "error.evaluation_error",
+                        error=f"Unsupported unary operator: {type(node.op).__name__}",
+                    )
+                )
 
             if isinstance(node, ast.Name):
                 if node.id not in allowed_names:
-                    raise EquationError(t("error.evaluation_error", error=f"Unknown identifier: {node.id}"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error=f"Unknown identifier: {node.id}",
+                        )
+                    )
 
             if isinstance(node, ast.Attribute):
                 if not isinstance(node.value, ast.Name) or node.value.id != "np":
-                    raise EquationError(t("error.evaluation_error", error="Only numpy attributes are allowed"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error="Only numpy attributes are allowed",
+                        )
+                    )
                 if node.attr not in _ALLOWED_NUMPY_MEMBERS:
-                    raise EquationError(t("error.evaluation_error", error=f"Unsupported numpy member: np.{node.attr}"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error=f"Unsupported numpy member: np.{node.attr}",
+                        )
+                    )
 
             if isinstance(node, ast.Call):
                 if node.keywords:
-                    raise EquationError(t("error.evaluation_error", error="Keyword arguments are not allowed"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error="Keyword arguments are not allowed",
+                        )
+                    )
                 if not isinstance(node.func, ast.Attribute):
-                    raise EquationError(t("error.evaluation_error", error="Only numpy function calls are allowed"))
-                if not isinstance(node.func.value, ast.Name) or node.func.value.id != "np":
-                    raise EquationError(t("error.evaluation_error", error="Only numpy function calls are allowed"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error="Only numpy function calls are allowed",
+                        )
+                    )
+                if (
+                    not isinstance(node.func.value, ast.Name)
+                    or node.func.value.id != "np"
+                ):
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error="Only numpy function calls are allowed",
+                        )
+                    )
                 if node.func.attr not in _ALLOWED_NUMPY_MEMBERS:
-                    raise EquationError(t("error.evaluation_error", error=f"Unsupported numpy function: np.{node.func.attr}"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error=f"Unsupported numpy function: np.{node.func.attr}",
+                        )
+                    )
 
             if isinstance(node, ast.Constant):
                 if not isinstance(node.value, (int, float)):
-                    raise EquationError(t("error.evaluation_error", error="Only numeric constants are allowed"))
+                    raise EquationError(
+                        t(
+                            "error.evaluation_error",
+                            error="Only numeric constants are allowed",
+                        )
+                    )
 
         return compile(tree, "<custom_formula>", "eval")
 
@@ -235,8 +304,12 @@ class CustomFunctionEvaluator:
         """Generate equation template for displaying fitted parameters."""
         if not self.parameter_names:
             return "y=" + self.original_equation_str
-        pattern = re.compile("|".join(r"\b" + re.escape(p) + r"\b" for p in self.parameter_names))
-        template = pattern.sub(lambda m: "{" + m.group(0) + "}", self.original_equation_str)
+        pattern = re.compile(
+            "|".join(r"\b" + re.escape(p) + r"\b" for p in self.parameter_names)
+        )
+        template = pattern.sub(
+            lambda m: "{" + m.group(0) + "}", self.original_equation_str
+        )
         return "y=" + template
 
     def fit(
@@ -245,7 +318,9 @@ class CustomFunctionEvaluator:
         x_name: Union[str, List[str]],
         y_name: str,
         initial_guess_override: Optional[List[Optional[float]]] = None,
-        bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+        bounds_override: Optional[
+            Tuple[List[Optional[float]], List[Optional[float]]]
+        ] = None,
     ) -> Tuple[str, NDArray, str, Optional[dict]]:
         """Perform curve fitting using this custom expression."""
         logger.info("Performing custom fit: %s", self.original_equation_str)
@@ -259,7 +334,12 @@ class CustomFunctionEvaluator:
             computed_guess = [1.0] * len(self.parameter_names)
             initial_guess = merge_initial_guess(computed_guess, initial_guess_override)
             bounds = (
-                merge_bounds(None, bounds_override[0], bounds_override[1], len(self.parameter_names))
+                merge_bounds(
+                    None,
+                    bounds_override[0],
+                    bounds_override[1],
+                    len(self.parameter_names),
+                )
                 if bounds_override is not None
                 else None
             )

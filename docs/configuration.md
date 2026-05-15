@@ -492,7 +492,7 @@ DONATIONS_URL="https://www.youtube.com/@whenphysics"
 
 ## 7. Update Check (Tkinter)
 
-The Tkinter desktop app can check for updates once a week when you open it. If a newer version is available, a dialog asks whether you want to update. If you confirm, the app runs `git pull` to update the code. Your `input/`, `output/` folders and `.env` file are not modified.
+The Tkinter desktop app can check for updates once a week when you open it. If a newer version is available, a dialog asks whether you want to update. If you confirm, the app runs `git pull --ff-only` to update the code without creating automatic merge commits. Your `input/`, `output/` folders and `.env` file are not modified.
 
 ```ini
 CHECK_UPDATES=true
@@ -531,7 +531,7 @@ UPDATE_CHECK_URL="https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/ma
 
 - The app stores the last check timestamp in `.last_update_check` (project root). The file is empty; only its modification time is used.
 - If at least 7 days have passed (or `CHECK_UPDATES_FORCE=true`), the app fetches the remote version and compares it with the current one.
-- If a newer version exists, a dialog asks whether to update. If you confirm, `git pull` is run. User data in `input/`, `output/`, and `.env` is preserved.
+- If a newer version exists, a dialog asks whether to update. If you confirm, `git pull --ff-only` is run. User data in `input/`, `output/`, and `.env` is preserved.
 
 ---
 

@@ -2,7 +2,7 @@
 Update checker for RegressionLab.
 
 Checks weekly if a newer version is available in the repository.
-If so, shows a dialog (when enabled via env) and can perform git pull
+If so, shows a dialog (when enabled via env) and can perform git pull --ff-only
 without overwriting user data (input/, output/, .env, etc.).
 """
 
@@ -18,7 +18,9 @@ from config import get_env
 
 
 # Default URL to fetch latest version (pyproject.toml from main repo)
-_DEFAULT_VERSION_URL = "https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/pyproject.toml"
+_DEFAULT_VERSION_URL = (
+    "https://raw.githubusercontent.com/DOKOS-TAYOS/RegressionLab/main/pyproject.toml"
+)
 _LAST_CHECK_FILE = ".last_update_check"
 _DAYS_BETWEEN_CHECKS = 7
 
@@ -47,6 +49,7 @@ def should_run_check() -> bool:
 
     try:
         import time
+
         mtime = path.stat().st_mtime
         elapsed_days = (time.time() - mtime) / (24 * 3600)
         return elapsed_days >= _DAYS_BETWEEN_CHECKS
@@ -92,7 +95,10 @@ def _fetch_latest_version(version_url: Optional[str] = None) -> Optional[str]:
     Returns:
         Version string (e.g. '1.1.1') or None if fetch failed.
     """
-    url = (version_url or get_env("UPDATE_CHECK_URL", _DEFAULT_VERSION_URL, str) or "").strip()
+    raw_url = (
+        version_url or get_env("UPDATE_CHECK_URL", _DEFAULT_VERSION_URL, str) or ""
+    )
+    url = str(raw_url).strip()
     if not url:
         url = _DEFAULT_VERSION_URL
 
@@ -103,7 +109,10 @@ def _fetch_latest_version(version_url: Optional[str] = None) -> Optional[str]:
     except (URLError, HTTPError, OSError, ValueError) as e:
         try:
             from utils import get_logger
-            get_logger(__name__).debug("Update check: could not fetch version from %s: %s", url, e)
+
+            get_logger(__name__).debug(
+                "Update check: could not fetch version from %s: %s", url, e
+            )
         except ImportError:
             pass
         return None
@@ -139,7 +148,7 @@ def is_update_available(current_version: str) -> Optional[str]:
 
 def perform_git_pull() -> Tuple[bool, str]:
     """
-    Perform git pull in the project root.
+    Perform git pull --ff-only in the project root.
 
     Before pulling, this function stashes any local changes in input/ and output/
     directories to prevent them from being overwritten. After the pull completes,
@@ -163,18 +172,21 @@ def perform_git_pull() -> Tuple[bool, str]:
             text=True,
             timeout=30,
         )
-        
+
         # Perform the pull
         result = subprocess.run(
-            ["git", "pull", "--no-edit"],
+            ["git", "pull", "--ff-only"],
             cwd=str(root),
             capture_output=True,
             text=True,
             timeout=60,
         )
-        
+
         # Restore stashed changes if any were stashed
-        if stash_result.returncode == 0 and "No local changes" not in stash_result.stdout:
+        if (
+            stash_result.returncode == 0
+            and "No local changes" not in stash_result.stdout
+        ):
             subprocess.run(
                 ["git", "stash", "pop"],
                 cwd=str(root),
@@ -182,7 +194,7 @@ def perform_git_pull() -> Tuple[bool, str]:
                 text=True,
                 timeout=30,
             )
-        
+
         if result.returncode == 0:
             return True, "update.pull_ok"
         err = (result.stderr or result.stdout or "").strip()

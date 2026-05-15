@@ -32,7 +32,7 @@ def create_main_menu(
     multiple_fits_single_dataset_callback: Callable,
     all_fits_single_dataset_callback: Callable,
     watch_data_callback: Callable,
-    help_callback: Callable
+    help_callback: Callable,
 ) -> Tk:
     """
     Create and display the main application menu window.
@@ -50,116 +50,122 @@ def create_main_menu(
     """
     menu = Tk()
     menu.title(f"{t('menu.title')} — v{__version__}")
-    menu.attributes('-fullscreen', False)
-    menu.configure(background=UI_STYLE['bg'])
+    menu.attributes("-fullscreen", False)
+    menu.configure(background=UI_STYLE["bg"])
     menu.resizable(width=False, height=False)
     configure_ttk_styles(menu)
     # Closing with X: same as Exit button (show confirmation, then close app)
     menu.protocol("WM_DELETE_WINDOW", lambda: show_exit_confirmation(menu))
 
     # Main frame: ttk with Raised.TFrame (lighter border) and inner content frame
-    outer_frame = ttk.Frame(menu, style='Raised.TFrame')
-    main_frame = ttk.Frame(outer_frame, padding=UI_STYLE['border_width'])
+    outer_frame = ttk.Frame(menu, style="Raised.TFrame")
+    main_frame = ttk.Frame(outer_frame, padding=UI_STYLE["border_width"])
 
     # Load and display logo (PNG with possible transparency; scale by width, keep aspect ratio)
     logo_label = None
     project_root = Path(__file__).resolve().parent.parent.parent
-    logo_path = project_root / 'images' / 'RegressionLab_logo_app.png'
+    logo_path = project_root / "images" / "RegressionLab_logo_app.png"
     if logo_path.exists():
         try:
-            logo_image = Image.open(logo_path)  # do not convert to RGB to preserve transparency
+            logo_image = Image.open(
+                logo_path
+            )  # do not convert to RGB to preserve transparency
             max_width = 600
             aspect_ratio = logo_image.height / logo_image.width
             new_height = int(max_width * aspect_ratio)
-            logo_image = logo_image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+            logo_image = logo_image.resize(
+                (max_width, new_height), Image.Resampling.LANCZOS
+            )
             logo_photo = ImageTk.PhotoImage(logo_image)
             logo_label = ttk.Label(main_frame, image=logo_photo)
-            logo_label.image = logo_photo  # keep reference to prevent garbage collection
+            logo_label.image = (
+                logo_photo  # keep reference to prevent garbage collection
+            )
         except Exception:
             pass  # show menu without logo if load fails
-    
+
     # Welcome message
-    message = ttk.Label(main_frame, text=t('menu.welcome'), style='LargeBold.TLabel')
+    message = ttk.Label(main_frame, text=t("menu.welcome"), style="LargeBold.TLabel")
     version_label = ttk.Label(main_frame, text=f"v{__version__}")
 
     # Primary actions: main fitting and data options (green)
     normal_fitting_button = ttk.Button(
         main_frame,
-        text=t('menu.normal_fitting'),
+        text=t("menu.normal_fitting"),
         command=normal_fitting_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
     multiple_datasets_button = ttk.Button(
         main_frame,
-        text=t('menu.multiple_datasets'),
+        text=t("menu.multiple_datasets"),
         command=single_fit_multiple_datasets_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
     multiple_fits_button = ttk.Button(
         main_frame,
-        text=t('menu.checker_fitting'),
+        text=t("menu.checker_fitting"),
         command=multiple_fits_single_dataset_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
     all_fits_button = ttk.Button(
         main_frame,
-        text=t('menu.total_fitting'),
+        text=t("menu.total_fitting"),
         command=all_fits_single_dataset_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
     view_data_button = ttk.Button(
         main_frame,
-        text=t('menu.view_data'),
+        text=t("menu.view_data"),
         command=watch_data_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
     help_button = ttk.Button(
         main_frame,
-        text=t('menu.information'),
+        text=t("menu.information"),
         command=help_callback,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width_wide'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width_wide"],
     )
 
     # Secondary: config (neutral)
     config_button = ttk.Button(
         main_frame,
-        text=t('menu.config'),
+        text=t("menu.config"),
         command=lambda: _handle_config(menu),
-        style='Secondary.TButton',
-        width=UI_STYLE['button_width'],
+        style="Secondary.TButton",
+        width=UI_STYLE["button_width"],
     )
 
     # Danger: exit (red)
     exit_button = ttk.Button(
         main_frame,
-        text=t('menu.exit'),
+        text=t("menu.exit"),
         command=lambda: show_exit_confirmation(menu),
-        style='Danger.TButton',
-        width=UI_STYLE['button_width'],
+        style="Danger.TButton",
+        width=UI_STYLE["button_width"],
     )
 
     # Tooltips for menu buttons
-    bind_tooltip(normal_fitting_button, t('menu.tooltip_normal_fitting'))
-    bind_tooltip(multiple_datasets_button, t('menu.tooltip_multiple_datasets'))
-    bind_tooltip(multiple_fits_button, t('menu.tooltip_checker_fitting'))
-    bind_tooltip(all_fits_button, t('menu.tooltip_total_fitting'))
-    bind_tooltip(view_data_button, t('menu.tooltip_view_data'))
-    bind_tooltip(help_button, t('menu.tooltip_information'))
-    bind_tooltip(config_button, t('menu.tooltip_config'))
-    bind_tooltip(exit_button, t('menu.tooltip_exit'))
-    
+    bind_tooltip(normal_fitting_button, t("menu.tooltip_normal_fitting"))
+    bind_tooltip(multiple_datasets_button, t("menu.tooltip_multiple_datasets"))
+    bind_tooltip(multiple_fits_button, t("menu.tooltip_checker_fitting"))
+    bind_tooltip(all_fits_button, t("menu.tooltip_total_fitting"))
+    bind_tooltip(view_data_button, t("menu.tooltip_view_data"))
+    bind_tooltip(help_button, t("menu.tooltip_information"))
+    bind_tooltip(config_button, t("menu.tooltip_config"))
+    bind_tooltip(exit_button, t("menu.tooltip_exit"))
+
     # Layout
     outer_frame.grid(column=0, row=0)
-    main_frame.pack(fill='both', expand=True)
-    
+    main_frame.pack(fill="both", expand=True)
+
     # Place logo if it was loaded successfully
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     current_row = 0
     if logo_label:
         logo_label.grid(column=0, row=current_row, columnspan=2, padx=_pad, pady=6)
@@ -180,12 +186,14 @@ def create_main_menu(
     config_button.grid(column=0, row=current_row, padx=_pad, pady=_pad)
     exit_button.grid(column=1, row=current_row, padx=_pad, pady=_pad)
 
-    setup_arrow_enter_navigation([
-        [normal_fitting_button, multiple_datasets_button],
-        [multiple_fits_button, all_fits_button],
-        [help_button, view_data_button],
-        [config_button, exit_button],
-    ])
+    setup_arrow_enter_navigation(
+        [
+            [normal_fitting_button, multiple_datasets_button],
+            [multiple_fits_button, all_fits_button],
+            [help_button, view_data_button],
+            [config_button, exit_button],
+        ]
+    )
     normal_fitting_button.focus_set()
 
     return menu
@@ -202,6 +210,7 @@ def _handle_config(menu: Tk) -> None:
         menu: The main menu Tkinter window (``Tk`` instance).
     """
     from frontend.ui_dialogs import show_config_dialog
+
     if show_config_dialog(menu):
         menu.destroy()
         os.execv(sys.executable, [sys.executable] + sys.argv)
@@ -210,38 +219,38 @@ def _handle_config(menu: Tk) -> None:
 def show_exit_confirmation(parent_menu: Tk) -> None:
     """
     Display exit confirmation dialog.
-    
+
     Args:
         parent_menu: The parent menu window to close if user confirms exit
     """
     exit_level = Toplevel()
-    exit_level.title(t('menu.exit_title'))
+    exit_level.title(t("menu.exit_title"))
     exit_level.resizable(width=False, height=False)
-    exit_level.configure(background=UI_STYLE['bg'])
-    
+    exit_level.configure(background=UI_STYLE["bg"])
+
     # Message
-    message = ttk.Label(exit_level, text=t('menu.exit_confirm'), style='Large.TLabel')
+    message = ttk.Label(exit_level, text=t("menu.exit_confirm"), style="Large.TLabel")
 
     # Buttons: confirm exit = danger, cancel = accent
     close_button = ttk.Button(
         exit_level,
-        text=t('menu.yes'),
+        text=t("menu.yes"),
         command=lambda: _close_application(parent_menu),
-        style='Danger.TButton',
-        width=UI_STYLE['button_width'],
+        style="Danger.TButton",
+        width=UI_STYLE["button_width"],
     )
     abort_button = ttk.Button(
         exit_level,
-        text=t('menu.no'),
+        text=t("menu.no"),
         command=exit_level.destroy,
-        style='Accent.TButton',
-        width=UI_STYLE['button_width'],
+        style="Accent.TButton",
+        width=UI_STYLE["button_width"],
     )
-    
+
     # Layout
-    message.pack(side=TOP, padx=5, pady=UI_STYLE['padding'])
-    close_button.pack(side=LEFT, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
-    abort_button.pack(side=RIGHT, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+    message.pack(side=TOP, padx=5, pady=UI_STYLE["padding"])
+    close_button.pack(side=LEFT, padx=UI_STYLE["padding"], pady=UI_STYLE["padding"])
+    abort_button.pack(side=RIGHT, padx=UI_STYLE["padding"], pady=UI_STYLE["padding"])
 
     setup_arrow_enter_navigation([[close_button, abort_button]])
     close_button.focus_set()
@@ -254,7 +263,7 @@ def show_exit_confirmation(parent_menu: Tk) -> None:
 def _close_application(menu: Tk) -> None:
     """
     Close the application and exit.
-    
+
     Args:
         menu: The main menu window to destroy
     """
@@ -268,13 +277,13 @@ def start_main_menu(
     multiple_fits_single_dataset_callback: Callable,
     all_fits_single_dataset_callback: Callable,
     watch_data_callback: Callable,
-    help_callback: Callable
+    help_callback: Callable,
 ) -> None:
     """
     Create and run the main application menu.
-    
+
     This is the entry point for the GUI application.
-    
+
     Args:
         normal_fitting_callback: Function to call for normal fitting
         single_fit_multiple_datasets_callback: Function to call for single fit on multiple datasets
@@ -289,11 +298,12 @@ def start_main_menu(
         multiple_fits_single_dataset_callback=multiple_fits_single_dataset_callback,
         all_fits_single_dataset_callback=all_fits_single_dataset_callback,
         watch_data_callback=watch_data_callback,
-        help_callback=help_callback
+        help_callback=help_callback,
     )
-    
+
     # Store menu globally for callbacks that need it
     import __main__
+
     __main__.menu = menu
 
     menu.mainloop()

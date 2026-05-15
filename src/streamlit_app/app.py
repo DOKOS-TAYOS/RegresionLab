@@ -27,12 +27,13 @@ try:
     from streamlit_app.theme import get_main_css, get_streamlit_theme
 
     initialize_and_validate_config()
-    _initial_language = get_env('LANGUAGE', 'es', str)
+    _initial_language = get_env("LANGUAGE", "es", str)
     initialize_i18n(_initial_language)
     setup_logging()
     logger = get_logger(__name__)
 except Exception as e:
     import logging
+
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     logger.error(f"Failed to initialize app: {e}")
@@ -43,6 +44,7 @@ except Exception as e:
 
     def initialize_i18n(language: Optional[str] = None) -> None:
         pass
+
 
 from streamlit_app.sections import (  # noqa: E402
     initialize_session_state,
@@ -72,13 +74,13 @@ def main() -> None:
             page_title="RegressionLab",
             page_icon="📊",
             layout="wide",
-            initial_sidebar_state="collapsed"
+            initial_sidebar_state="collapsed",
         )
     except Exception as e:
         logger.warning(f"Page config already set: {e}")
 
     # Apply theme from config (same colors/rules as tkinter app); cache for sections
-    if 'streamlit_theme' not in st.session_state:
+    if "streamlit_theme" not in st.session_state:
         st.session_state.streamlit_theme = get_streamlit_theme()
     _theme = st.session_state.streamlit_theme
     st.markdown(get_main_css(_theme), unsafe_allow_html=True)
@@ -93,11 +95,11 @@ def main() -> None:
         show_help_section()
 
         mode_map = {
-            t('menu.normal_fitting'): mode_normal_fitting,
-            t('menu.multiple_datasets'): mode_multiple_datasets,
-            t('menu.checker_fitting'): mode_checker_fitting,
-            t('menu.total_fitting'): mode_total_fitting,
-            t('menu.view_data'): mode_view_data,
+            t("menu.normal_fitting"): mode_normal_fitting,
+            t("menu.multiple_datasets"): mode_multiple_datasets,
+            t("menu.checker_fitting"): mode_checker_fitting,
+            t("menu.total_fitting"): mode_total_fitting,
+            t("menu.view_data"): mode_view_data,
         }
 
         mode_handler = mode_map.get(operation_mode)

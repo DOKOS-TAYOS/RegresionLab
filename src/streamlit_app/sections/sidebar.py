@@ -11,9 +11,9 @@ from streamlit_app.theme import get_streamlit_theme
 
 # Key for "switch to X" button label per language code
 _LANG_MENU_KEYS: dict[str, str] = {
-    'es': 'menu.language_spanish',
-    'en': 'menu.language_english',
-    'de': 'menu.language_german',
+    "es": "menu.language_spanish",
+    "en": "menu.language_english",
+    "de": "menu.language_german",
 }
 
 # Layout-only CSS (colors come from theme via get_main_css in app)
@@ -55,12 +55,13 @@ def _cached_logo_bytes(path: str) -> Optional[bytes]:
 
 def initialize_session_state() -> None:
     """Initialize Streamlit session state variables (language from config env)."""
-    if 'language' not in st.session_state:
+    if "language" not in st.session_state:
         from config import get_env_from_schema
-        st.session_state.language = get_env_from_schema('LANGUAGE')
-    if 'results' not in st.session_state:
+
+        st.session_state.language = get_env_from_schema("LANGUAGE")
+    if "results" not in st.session_state:
         st.session_state.results = []
-    if 'plot_counter' not in st.session_state:
+    if "plot_counter" not in st.session_state:
         st.session_state.plot_counter = 0
 
 
@@ -88,12 +89,15 @@ def setup_sidebar(version: str) -> str:
     """
     with st.sidebar:
         st.markdown(_SIDEBAR_LAYOUT_CSS, unsafe_allow_html=True)
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <div class="sidebar-brand">
                 <h2>📊 RegressionLab</h2>
                 <span class="version-badge">v{version}</span>
             </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         codes = list(SUPPORTED_LANGUAGE_CODES)
         try:
@@ -103,22 +107,24 @@ def setup_sidebar(version: str) -> str:
         next_idx = (current_idx + 1) % len(codes)
         next_code = codes[next_idx]
         next_lang_label = t(_LANG_MENU_KEYS[next_code])
-        if st.button(next_lang_label, key="lang_toggle", width='stretch'):
+        if st.button(next_lang_label, key="lang_toggle", width="stretch"):
             cycle_language()
             st.rerun()
 
-        section_title = t('help.fitting_modes').replace("\n", "").strip()
-        st.markdown(f'<p class="sidebar-section">{section_title}</p>', unsafe_allow_html=True)
+        section_title = t("help.fitting_modes").replace("\n", "").strip()
+        st.markdown(
+            f'<p class="sidebar-section">{section_title}</p>', unsafe_allow_html=True
+        )
 
         mode_options = [
-            t('menu.normal_fitting'),
-            t('menu.multiple_datasets'),
-            t('menu.checker_fitting'),
-            t('menu.total_fitting'),
-            t('menu.view_data'),
+            t("menu.normal_fitting"),
+            t("menu.multiple_datasets"),
+            t("menu.checker_fitting"),
+            t("menu.total_fitting"),
+            t("menu.view_data"),
         ]
         operation_mode = st.radio(
-            t('help.fitting_modes'),
+            t("help.fitting_modes"),
             mode_options,
             label_visibility="collapsed",
         )
@@ -129,16 +135,21 @@ def setup_sidebar(version: str) -> str:
 def show_logo() -> None:
     """Display application logo or fallback header (colors from config theme)."""
     # __file__ is streamlit_app/sections/sidebar.py -> parent.parent = streamlit_app, parent.parent.parent = src, project root = parent.parent.parent.parent
-    logo_path = Path(__file__).resolve().parent.parent.parent.parent / "images" / "RegressionLab_logo.png"
+    logo_path = (
+        Path(__file__).resolve().parent.parent.parent.parent
+        / "images"
+        / "RegressionLab_logo.png"
+    )
     logo_bytes = _cached_logo_bytes(str(logo_path))
     theme = st.session_state.get("streamlit_theme") or get_streamlit_theme()
-    primary = theme['button_fg_primary']
-    muted = theme['muted']
+    primary = theme["button_fg_primary"]
+    muted = theme["muted"]
 
     if logo_bytes is not None:
-        st.image(logo_bytes, width='content')
+        st.image(logo_bytes, width="content")
     else:
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <h1 class="main-title" style='text-align: center; color: {primary}; font-size: 3.5em;
                 font-weight: bold; margin-bottom: 0;'>
                 RegressionLab
@@ -146,4 +157,6 @@ def show_logo() -> None:
             <p style='text-align: center; color: {muted}; font-size: 1.2em; margin-top: 0;'>
                 📈 Curve Fitting & Data Analysis
             </p>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )

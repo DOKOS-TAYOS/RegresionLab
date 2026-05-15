@@ -29,11 +29,11 @@ def bind_tooltip(widget: Any, text: str, delay_ms: int = 500) -> None:
         tooltip_window = Toplevel(widget)
         tooltip_window.wm_overrideredirect(True)
         tooltip_window.wm_geometry("+0+0")
-        tooltip_window.configure(background=UI_STYLE['tooltip_border'])
+        tooltip_window.configure(background=UI_STYLE["tooltip_border"])
         label = ttk.Label(
             tooltip_window,
             text=text,
-            style='Tooltip.TLabel',
+            style="Tooltip.TLabel",
         )
         label.pack(padx=1, pady=1)
         widget.update_idletasks()

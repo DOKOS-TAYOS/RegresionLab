@@ -23,32 +23,35 @@ from utils import FittingError
 
 class TestFormatParameter:
     """Tests for format_parameter function."""
-    
+
     def test_normal_value(self) -> None:
         """Test formatting normal parameter value."""
         value, sigma = format_parameter(1.234567, 0.001)
         assert isinstance(value, float)
         assert isinstance(sigma, str)
-    
-    @pytest.mark.parametrize("sigma,expected", [
-        (np.inf, '∞'),
-        (np.nan, 'NaN'),
-    ])
+
+    @pytest.mark.parametrize(
+        "sigma,expected",
+        [
+            (np.inf, "∞"),
+            (np.nan, "NaN"),
+        ],
+    )
     def test_special_sigma_values(self, sigma: float, expected: str) -> None:
         """Test formatting with special sigma values."""
         _, sigma_str = format_parameter(1.0, sigma)
         assert sigma_str == expected
-    
+
     def test_small_sigma(self) -> None:
         """Test formatting with very small uncertainty: value rounded correctly, sigma ~1e-8."""
         value, sigma_str = format_parameter(1.23456789, 1e-8)
         # Value rounded to 9 decimals (1 - exp of 1e-8)
         assert abs(value - 1.23456789) < 1e-9
         # Sigma string represents ~1e-8 (scientific notation with 10^exp)
-        assert '×10' in sigma_str
+        assert "×10" in sigma_str
         # Parse exponent: format is "M×10⁻⁸" for 10^-8
-        superscript_to_digit = str.maketrans('⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻', '0123456789+-')
-        exp_part = sigma_str.split('×10')[-1].strip()
+        superscript_to_digit = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻", "0123456789+-")
+        exp_part = sigma_str.split("×10")[-1].strip()
         exp_str = exp_part.translate(superscript_to_digit)
         exp_val = int(exp_str)
         assert exp_val == -8
@@ -60,31 +63,34 @@ class TestFormatScientific:
     def test_small_value_superscript(self) -> None:
         """Test small value uses 10^exp with superscript."""
         result = format_scientific(1.234e-5)
-        assert '×10' in result
-        assert '⁻⁵' in result or '⁻⁰⁵' in result
+        assert "×10" in result
+        assert "⁻⁵" in result or "⁻⁰⁵" in result
 
     def test_large_value_superscript(self) -> None:
         """Test large value uses 10^exp with superscript."""
         result = format_scientific(1.2e6)  # .4g produces scientific for 1e6+
-        assert '×10' in result
-        assert '⁶' in result
+        assert "×10" in result
+        assert "⁶" in result
 
     def test_inf_returns_infinity_symbol(self) -> None:
         """Test inf value returns infinity symbol."""
-        assert format_scientific(np.inf) == '∞'
+        assert format_scientific(np.inf) == "∞"
 
     def test_nan_returns_nan(self) -> None:
         """Test NaN value returns NaN string."""
-        assert format_scientific(np.nan) == 'NaN'
+        assert format_scientific(np.nan) == "NaN"
 
 
 class TestEstimateTrigonometricParameters:
     """Tests for estimate_trigonometric_parameters function."""
-    
-    @pytest.mark.parametrize("x,y", [
-        (np.linspace(0, 4*np.pi, 100), lambda x: 2.0 * np.sin(x)),
-        (np.linspace(0, 4*np.pi, 100), lambda x: 3.0 * np.cos(2.0*x)),
-    ])
+
+    @pytest.mark.parametrize(
+        "x,y",
+        [
+            (np.linspace(0, 4 * np.pi, 100), lambda x: 2.0 * np.sin(x)),
+            (np.linspace(0, 4 * np.pi, 100), lambda x: 3.0 * np.cos(2.0 * x)),
+        ],
+    )
     def test_parameter_estimation(self, x: np.ndarray, y: callable) -> None:
         """Test parameter estimation for trigonometric waves."""
         y_data = y(x)
@@ -93,7 +99,7 @@ class TestEstimateTrigonometricParameters:
         assert isinstance(frequency, float)
         assert amplitude > 0
         assert frequency > 0
-    
+
     def test_constant_data(self) -> None:
         """Test parameter estimation with constant data."""
         x = np.linspace(0, 10, 50)
@@ -105,18 +111,18 @@ class TestEstimateTrigonometricParameters:
 
 class TestEstimatePhaseShift:
     """Tests for estimate_phase_shift function."""
-    
+
     def test_phase_estimation(self) -> None:
         """Test phase shift estimation."""
-        x = np.linspace(0, 4*np.pi, 100)
-        y = 2.0 * np.sin(x + np.pi/4)
+        x = np.linspace(0, 4 * np.pi, 100)
+        y = 2.0 * np.sin(x + np.pi / 4)
         phase = estimate_phase_shift(x, y, 2.0, 1.0)
         assert isinstance(phase, float)
         assert -np.pi <= phase <= np.pi
-    
+
     def test_zero_amplitude(self) -> None:
         """Test phase estimation with zero amplitude."""
-        x = np.linspace(0, 4*np.pi, 100)
+        x = np.linspace(0, 4 * np.pi, 100)
         y = np.zeros_like(x)
         phase = estimate_phase_shift(x, y, 0.0, 1.0)
         assert isinstance(phase, float)
@@ -124,87 +130,70 @@ class TestEstimatePhaseShift:
 
 class TestGenericFit:
     """Tests for generic_fit function."""
-    
+
     @pytest.fixture
     def test_data(self) -> pd.DataFrame:
         """Fixture for test data."""
         x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
-        return pd.DataFrame({
-            'x': x,
-            'ux': np.ones_like(x) * 0.1,
-            'y': 2.0 * x,
-            'uy': np.ones_like(x) * 0.2
-        })
-    
+        return pd.DataFrame(
+            {
+                "x": x,
+                "ux": np.ones_like(x) * 0.1,
+                "y": 2.0 * x,
+                "uy": np.ones_like(x) * 0.2,
+            }
+        )
+
     def test_linear_fit(self, test_data: pd.DataFrame) -> None:
         """Test generic fit with linear function."""
         text, y_fitted, equation, fit_info = generic_fit(
-            test_data,
-            'x',
-            'y',
-            linear_function,
-            ['m'],
-            'y={m}x'
+            test_data, "x", "y", linear_function, ["m"], "y={m}x"
         )
         assert isinstance(text, str)
         assert isinstance(y_fitted, (np.ndarray, pd.Series))
         assert isinstance(equation, str)
-        assert 'm=' in text
-        assert 'R²=' in text
+        assert "m=" in text
+        assert "R²=" in text
         assert fit_info is not None
-        assert 'fit_func' in fit_info
-        assert 'params' in fit_info
-        assert 'cov' in fit_info
-        assert 'x_names' in fit_info
-    
+        assert "fit_func" in fit_info
+        assert "params" in fit_info
+        assert "cov" in fit_info
+        assert "x_names" in fit_info
+
     def test_fit_with_initial_guess(self, test_data: pd.DataFrame) -> None:
         """Test generic fit with initial parameter guess."""
         text, y_fitted, equation, _ = generic_fit(
-            test_data,
-            'x',
-            'y',
-            linear_function,
-            ['m'],
-            'y={m}x',
-            initial_guess=[1.5]
+            test_data, "x", "y", linear_function, ["m"], "y={m}x", initial_guess=[1.5]
         )
         assert isinstance(text, str)
-        assert 'm=' in text
-    
+        assert "m=" in text
+
     def test_invalid_data(self) -> None:
         """Test generic fit with invalid data."""
-        bad_data = pd.DataFrame({
-            'x': np.array([1.0, 2.0]),
-            'ux': np.array([0.1, 0.1])
-        })
+        bad_data = pd.DataFrame({"x": np.array([1.0, 2.0]), "ux": np.array([0.1, 0.1])})
         with pytest.raises(FittingError):
-            generic_fit(
-                bad_data,
-                'x',
-                'y',
-                linear_function,
-                ['m'],
-                'y={m}x'
-            )
-    
+            generic_fit(bad_data, "x", "y", linear_function, ["m"], "y={m}x")
+
     def test_non_convergent_fit_raises_fitting_error(self) -> None:
         """Test that impossible bounds cause curve_fit to fail with FittingError."""
-        data = pd.DataFrame({
-            'x': np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
-            'ux': np.ones(5) * 0.1,
-            'y': np.array([100.0, 200.0, 300.0, 400.0, 500.0]),
-            'uy': np.ones(5) * 1.0,
-        })
+        data = pd.DataFrame(
+            {
+                "x": np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                "ux": np.ones(5) * 0.1,
+                "y": np.array([100.0, 200.0, 300.0, 400.0, 500.0]),
+                "uy": np.ones(5) * 1.0,
+            }
+        )
         # Bounds exclude any valid solution: amplitude and frequency forced near zero
         # cannot fit linear data; curve_fit raises RuntimeError -> FittingError
         with pytest.raises(FittingError):
             generic_fit(
                 data,
-                'x',
-                'y',
+                "x",
+                "y",
                 sin_function,
-                ['a', 'b'],
-                'y={a}sin({b}x)',
+                ["a", "b"],
+                "y={a}sin({b}x)",
                 bounds=([0.0, 0.0], [0.001, 0.001]),
             )
 
@@ -212,46 +201,48 @@ class TestGenericFit:
         """Test generic fit with valid bounds converges."""
         text, y_fitted, equation, fit_info = generic_fit(
             test_data,
-            'x',
-            'y',
+            "x",
+            "y",
             linear_function,
-            ['m'],
-            'y={m}x',
+            ["m"],
+            "y={m}x",
             bounds=([0.0], [10.0]),
         )
-        assert 'm=' in text
+        assert "m=" in text
         assert fit_info is not None
-        assert len(fit_info['params']) == 1
+        assert len(fit_info["params"]) == 1
 
     def test_fit_with_multiple_x_variables(self) -> None:
         """Test generic fit with multiple independent variables (x as list)."""
         # y = 2*x1 + 3*x2
-        data = pd.DataFrame({
-            'x1': [1.0, 2.0, 3.0, 4.0, 5.0],
-            'ux1': [0.1] * 5,
-            'x2': [1.0, 1.0, 1.0, 1.0, 1.0],
-            'ux2': [0.1] * 5,
-            'y': [5.0, 7.0, 9.0, 11.0, 13.0],  # 2*x1 + 3
-            'uy': [0.2] * 5,
-        })
+        data = pd.DataFrame(
+            {
+                "x1": [1.0, 2.0, 3.0, 4.0, 5.0],
+                "ux1": [0.1] * 5,
+                "x2": [1.0, 1.0, 1.0, 1.0, 1.0],
+                "ux2": [0.1] * 5,
+                "y": [5.0, 7.0, 9.0, 11.0, 13.0],  # 2*x1 + 3
+                "uy": [0.2] * 5,
+            }
+        )
 
         def two_var_func(x: np.ndarray, a: float, b: float) -> np.ndarray:
             return a * x[:, 0] + b * x[:, 1]
 
         text, y_fitted, equation, fit_info = generic_fit(
             data,
-            ['x1', 'x2'],
-            'y',
+            ["x1", "x2"],
+            "y",
             two_var_func,
-            ['a', 'b'],
-            'y={a}x1+{b}x2',
+            ["a", "b"],
+            "y={a}x1+{b}x2",
         )
-        assert 'a=' in text
-        assert 'b=' in text
+        assert "a=" in text
+        assert "b=" in text
         assert fit_info is not None
-        assert fit_info['x_names'] == ['x1', 'x2']
+        assert fit_info["x_names"] == ["x1", "x2"]
         np.testing.assert_array_almost_equal(
-            fit_info['params'],
+            fit_info["params"],
             [2.0, 3.0],
             decimal=1,
         )
@@ -259,22 +250,25 @@ class TestGenericFit:
 
 class TestGetFittingFunction:
     """Tests for get_fitting_function."""
-    
-    @pytest.mark.parametrize("func_name", [
-        'linear_function',
-        'quadratic_function',
-        'sin_function',
-    ])
+
+    @pytest.mark.parametrize(
+        "func_name",
+        [
+            "linear_function",
+            "quadratic_function",
+            "sin_function",
+        ],
+    )
     def test_get_fitting_functions(self, func_name: str) -> None:
         """Test getting fitting functions."""
         func = get_fitting_function(func_name)
         assert func is not None
         assert callable(func)
-    
+
     def test_unknown_equation(self) -> None:
         """Test getting unknown equation returns None."""
-        assert get_fitting_function('unknown_equation') is None
-    
+        assert get_fitting_function("unknown_equation") is None
+
     def test_exit_signal(self) -> None:
         """Test exit signal returns None."""
         assert get_fitting_function(EXIT_SIGNAL) is None

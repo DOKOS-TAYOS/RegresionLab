@@ -28,20 +28,20 @@ logger = get_logger(__name__)
 
 # Reader dispatch by file type (used by load_data and workflow_controller)
 FILE_TYPE_READERS: dict[str, Callable[[str], pd.DataFrame]] = {
-    'csv': csv_reader,
-    'xlsx': excel_reader,
-    'txt': txt_reader,
+    "csv": csv_reader,
+    "xlsx": excel_reader,
+    "txt": txt_reader,
 }
 
 
 def load_data(file_path: str, file_type: str) -> pd.DataFrame:
     """
     Load data based on file type.
-    
+
     Args:
         file_path: Complete path to the file
         file_type: File type ('csv', 'xlsx', 'txt')
-        
+
     Returns:
         DataFrame with loaded data.
 
@@ -60,7 +60,9 @@ def load_data(file_path: str, file_type: str) -> pd.DataFrame:
         raise
 
 
-def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> List[str]:
+def get_variable_names(
+    data: pd.DataFrame, filter_uncertainty: bool = False
+) -> List[str]:
     """
     Extract variable names from the dataset.
 
@@ -88,7 +90,8 @@ def get_variable_names(data: pd.DataFrame, filter_uncertainty: bool = False) -> 
 
     columns_set = set(data.columns)
     uncertainty_cols = {
-        c for c in data.columns
-        if len(c) > 1 and c.startswith('u') and c[1:] in columns_set
+        c
+        for c in data.columns
+        if len(c) > 1 and c.startswith("u") and c[1:] in columns_set
     }
     return [c for c in columns if c not in uncertainty_cols]

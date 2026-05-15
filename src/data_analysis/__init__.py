@@ -10,8 +10,8 @@ from .transforms import (
 )
 
 __all__ = [
-    'CLEAN_OPTIONS',
-    'apply_cleaning',
-    'TRANSFORM_OPTIONS',
-    'apply_transform',
+    "CLEAN_OPTIONS",
+    "apply_cleaning",
+    "TRANSFORM_OPTIONS",
+    "apply_transform",
 ]

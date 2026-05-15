@@ -36,7 +36,7 @@ def _split_parameters_text(text: str) -> Tuple[List[str], List[str]]:
     # Find where statistics start (first line containing R²)
     stats_start = -1
     for i, ln in enumerate(lines):
-        if "R²" in ln or "R\u00B2" in ln:
+        if "R²" in ln or "R\u00b2" in ln:
             stats_start = i
             break
     if stats_start < 0:
@@ -60,8 +60,8 @@ def show_results(results: List[Dict[str, Any]]) -> None:
     if not results:
         return
 
-    st.markdown('---')
-    st.header(t('dialog.results_title'))
+    st.markdown("---")
+    st.header(t("dialog.results_title"))
 
     for idx, result in enumerate(results):
         with st.container():
@@ -99,8 +99,11 @@ def show_results(results: List[Dict[str, Any]]) -> None:
                 download_name = f"{result['plot_name']}{plot_ext}"
                 display_path_p = Path(display_path)
 
-                if display_path_p.exists() and display_path_p.suffix.lower() in _IMAGE_EXTENSIONS:
-                    st.image(display_path, width='stretch')
+                if (
+                    display_path_p.exists()
+                    and display_path_p.suffix.lower() in _IMAGE_EXTENSIONS
+                ):
+                    st.image(display_path, width="stretch")
                 elif plot_ext == ".pdf":
                     st.caption(t("dialog.plot_pdf_preview_caption"))
 

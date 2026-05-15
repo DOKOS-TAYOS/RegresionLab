@@ -11,7 +11,9 @@ from i18n import t
 from loaders import get_default_save_directory
 
 
-def open_load_dialog(parent: Union[Tk, Toplevel]) -> Tuple[Optional[str], Optional[str]]:
+def open_load_dialog(
+    parent: Union[Tk, Toplevel],
+) -> Tuple[Optional[str], Optional[str]]:
     """
     Open native file dialog to select a data file (CSV, TXT, XLSX).
 
@@ -29,20 +31,20 @@ def open_load_dialog(parent: Union[Tk, Toplevel]) -> Tuple[Optional[str], Option
     path = filedialog.askopenfilename(
         parent=parent,
         initialdir=initial_dir,
-        title=t('dialog.upload_file'),
+        title=t("dialog.upload_file"),
         filetypes=[
             (
-                t('dialog.all_data_files'),
-                '*.csv *.txt *.xlsx',
+                t("dialog.all_data_files"),
+                "*.csv *.txt *.xlsx",
             ),
-            (t('data_analysis.filetype_csv'), '*.csv'),
-            (t('data_analysis.filetype_txt'), '*.txt'),
-            (t('data_analysis.filetype_xlsx'), '*.xlsx'),
+            (t("data_analysis.filetype_csv"), "*.csv"),
+            (t("data_analysis.filetype_txt"), "*.txt"),
+            (t("data_analysis.filetype_xlsx"), "*.xlsx"),
         ],
     )
     if not path:
         return (None, None)
-    ext = Path(path).suffix.lower().lstrip('.')
-    if ext not in ('csv', 'txt', 'xlsx'):
+    ext = Path(path).suffix.lower().lstrip(".")
+    if ext not in ("csv", "txt", "xlsx"):
         return (None, None)
     return (path, ext)

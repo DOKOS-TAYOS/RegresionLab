@@ -140,6 +140,8 @@ def test_registry_rejects_invalid_expression_bounds() -> None:
         )
 
         with pytest.raises(ValueError):
-            load_equation_registry(base_path=base_path, user_path=tmp_dir / "missing.user.yaml")
+            load_equation_registry(
+                base_path=base_path, user_path=tmp_dir / "missing.user.yaml"
+            )
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)

@@ -52,6 +52,7 @@ def main() -> None:
     main_fn = _load_main_callable()
     main_fn()
 
+
 __all__ = ["main"]
 
 

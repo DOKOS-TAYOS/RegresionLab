@@ -39,13 +39,11 @@ def _load_yaml_mapping(path: Path, *, required: bool) -> dict[str, Any]:
             raw = yaml.safe_load(f)
     except yaml.YAMLError as e:
         raise yaml.YAMLError(
-            f"Error parsing equations file: {e}\n"
-            f"File path: {path}"
+            f"Error parsing equations file: {e}\nFile path: {path}"
         ) from e
     except OSError as e:
         raise RuntimeError(
-            f"Unexpected error reading equations file: {e}\n"
-            f"File path: {path}"
+            f"Unexpected error reading equations file: {e}\nFile path: {path}"
         ) from e
 
     if raw is None:
@@ -75,7 +73,9 @@ def _normalize_param_names(eq_id: str, value: Any) -> list[str]:
     return out
 
 
-def _normalize_optional_float_list(value: Any, *, field_name: str, eq_id: str) -> Optional[list[float]]:
+def _normalize_optional_float_list(
+    value: Any, *, field_name: str, eq_id: str
+) -> Optional[list[float]]:
     """Normalize an optional list of floats."""
     if value is None:
         return None
@@ -158,9 +158,7 @@ def _template_from_expression(expression: str, param_names: list[str]) -> str:
 def _normalize_equation_entry(eq_id: str, raw_entry: Any) -> dict[str, Any]:
     """Validate and normalize one equation entry."""
     if not isinstance(raw_entry, dict):
-        raise ValueError(
-            f"Equation '{eq_id}' must be a dictionary."
-        )
+        raise ValueError(f"Equation '{eq_id}' must be a dictionary.")
 
     eq_type = str(raw_entry.get("type", EQUATION_TYPE_PYTHON)).strip().lower()
     if eq_type not in _VALID_EQUATION_TYPES:
@@ -172,9 +170,7 @@ def _normalize_equation_entry(eq_id: str, raw_entry: Any) -> dict[str, Any]:
     param_names = _normalize_param_names(eq_id, raw_entry.get("param_names"))
     num_independent_vars = int(raw_entry.get("num_independent_vars", 1))
     if num_independent_vars < 1:
-        raise ValueError(
-            f"Equation '{eq_id}' must have num_independent_vars >= 1."
-        )
+        raise ValueError(f"Equation '{eq_id}' must have num_independent_vars >= 1.")
 
     initial_guess = _normalize_optional_float_list(
         raw_entry.get("initial_guess"),
@@ -208,7 +204,11 @@ def _normalize_equation_entry(eq_id: str, raw_entry: Any) -> dict[str, Any]:
             "num_independent_vars": num_independent_vars,
         }
         if fmt is None:
-            normalized["format"] = _template_from_expression(formula, param_names) if formula else "y=" + target
+            normalized["format"] = (
+                _template_from_expression(formula, param_names)
+                if formula
+                else "y=" + target
+            )
         elif isinstance(fmt, str) and fmt.strip():
             normalized["format"] = fmt.strip()
         else:
@@ -264,9 +264,7 @@ def load_equation_registry(
     for eq_id, raw in user_raw.items():
         merged[str(eq_id)] = _normalize_equation_entry(str(eq_id), raw)
     if not merged:
-        raise ValueError(
-            f"No equation definitions were loaded from: {base_yaml}"
-        )
+        raise ValueError(f"No equation definitions were loaded from: {base_yaml}")
     return merged
 
 

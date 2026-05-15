@@ -33,32 +33,29 @@ def generate_trigonometric_function(
     Returns:
         A function that takes t and parameters (a, b, [c]) as arguments.
     """
-    func_map = {
-        'sin': np.sin,
-        'cos': np.cos,
-        'sinh': np.sinh,
-        'cosh': np.cosh
-    }
+    func_map = {"sin": np.sin, "cos": np.cos, "sinh": np.sinh, "cosh": np.cosh}
     if func_type not in func_map:
         raise ValueError(f"Unknown function type: {func_type}")
     np_func = func_map[func_type]
 
     if with_phase:
+
         def trig_func(t: Numeric, a: float, b: float, c: float) -> Numeric:
             return a * np_func(b * t + c)
     else:
+
         def trig_func(t: Numeric, a: float, b: float) -> Numeric:
             return a * np_func(b * t)
 
     return trig_func
 
 
-sin_function = generate_trigonometric_function('sin', with_phase=False)
-sin_function_with_c = generate_trigonometric_function('sin', with_phase=True)
-cos_function = generate_trigonometric_function('cos', with_phase=False)
-cos_function_with_c = generate_trigonometric_function('cos', with_phase=True)
-sinh_function = generate_trigonometric_function('sinh', with_phase=False)
-cosh_function = generate_trigonometric_function('cosh', with_phase=False)
+sin_function = generate_trigonometric_function("sin", with_phase=False)
+sin_function_with_c = generate_trigonometric_function("sin", with_phase=True)
+cos_function = generate_trigonometric_function("cos", with_phase=False)
+cos_function_with_c = generate_trigonometric_function("cos", with_phase=True)
+sinh_function = generate_trigonometric_function("sinh", with_phase=False)
+cosh_function = generate_trigonometric_function("cosh", with_phase=False)
 
 
 def tan_function(t: Numeric, a: float, b: float) -> Numeric:
@@ -76,7 +73,9 @@ def fit_sin_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a sine model without phase, :math:`y = a \\sin(b x)`.
@@ -101,10 +100,12 @@ def fit_sin_function(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=sin_function,
-        param_names=get_equation_param_names_for_function('fit_sin_function'),
-        equation_template=get_equation_format_for_function('fit_sin_function'),
+        param_names=get_equation_param_names_for_function("fit_sin_function"),
+        equation_template=get_equation_format_for_function("fit_sin_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -115,7 +116,9 @@ def fit_sin_function_with_c(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a sine model with phase, :math:`y = a \\sin(b x + c)`.
@@ -143,10 +146,12 @@ def fit_sin_function_with_c(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=sin_function_with_c,
-        param_names=get_equation_param_names_for_function('fit_sin_function_with_c'),
-        equation_template=get_equation_format_for_function('fit_sin_function_with_c'),
+        param_names=get_equation_param_names_for_function("fit_sin_function_with_c"),
+        equation_template=get_equation_format_for_function("fit_sin_function_with_c"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -157,7 +162,9 @@ def fit_cos_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a cosine model without phase, :math:`y = a \\cos(b x)`.
@@ -182,10 +189,12 @@ def fit_cos_function(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=cos_function,
-        param_names=get_equation_param_names_for_function('fit_cos_function'),
-        equation_template=get_equation_format_for_function('fit_cos_function'),
+        param_names=get_equation_param_names_for_function("fit_cos_function"),
+        equation_template=get_equation_format_for_function("fit_cos_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -196,7 +205,9 @@ def fit_cos_function_with_c(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a cosine model with phase, :math:`y = a \\cos(b x + c)`.
@@ -224,10 +235,12 @@ def fit_cos_function_with_c(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=cos_function_with_c,
-        param_names=get_equation_param_names_for_function('fit_cos_function_with_c'),
-        equation_template=get_equation_format_for_function('fit_cos_function_with_c'),
+        param_names=get_equation_param_names_for_function("fit_cos_function_with_c"),
+        equation_template=get_equation_format_for_function("fit_cos_function_with_c"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -238,7 +251,9 @@ def fit_sinh_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a hyperbolic sine model, :math:`y = a \\sinh(b x)`.
@@ -264,10 +279,12 @@ def fit_sinh_function(
         else computed_bounds
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=sinh_function,
-        param_names=get_equation_param_names_for_function('fit_sinh_function'),
-        equation_template=get_equation_format_for_function('fit_sinh_function'),
+        param_names=get_equation_param_names_for_function("fit_sinh_function"),
+        equation_template=get_equation_format_for_function("fit_sinh_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -278,7 +295,9 @@ def fit_cosh_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a hyperbolic cosine model, :math:`y = a \\cosh(b x)`.
@@ -304,10 +323,12 @@ def fit_cosh_function(
         else computed_bounds
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=cosh_function,
-        param_names=get_equation_param_names_for_function('fit_cosh_function'),
-        equation_template=get_equation_format_for_function('fit_cosh_function'),
+        param_names=get_equation_param_names_for_function("fit_cosh_function"),
+        equation_template=get_equation_format_for_function("fit_cosh_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -318,7 +339,9 @@ def fit_tan_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a tangent model without phase, :math:`y = a \\tan(b x)`.
@@ -343,10 +366,12 @@ def fit_tan_function(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=tan_function,
-        param_names=get_equation_param_names_for_function('fit_tan_function'),
-        equation_template=get_equation_format_for_function('fit_tan_function'),
+        param_names=get_equation_param_names_for_function("fit_tan_function"),
+        equation_template=get_equation_format_for_function("fit_tan_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -357,7 +382,9 @@ def fit_tan_function_with_c(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a tangent model with phase, :math:`y = a \\tan(b x + c)`.
@@ -385,10 +412,12 @@ def fit_tan_function_with_c(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=tan_function_with_c,
-        param_names=get_equation_param_names_for_function('fit_tan_function_with_c'),
-        equation_template=get_equation_format_for_function('fit_tan_function_with_c'),
+        param_names=get_equation_param_names_for_function("fit_tan_function_with_c"),
+        equation_template=get_equation_format_for_function("fit_tan_function_with_c"),
         initial_guess=initial_guess,
         bounds=bounds,
     )

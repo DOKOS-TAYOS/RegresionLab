@@ -90,14 +90,18 @@ def test_python_equation_supports_module_path_target(monkeypatch: Any) -> None:
     assert "m=" in text
 
 
-def test_tk_equation_label_fallback_when_translation_is_missing(monkeypatch: Any) -> None:
+def test_tk_equation_label_fallback_when_translation_is_missing(
+    monkeypatch: Any,
+) -> None:
     """Tk dialog should derive a readable label from equation id when i18n key is missing."""
     monkeypatch.setattr(equation_dialog, "t", lambda key, **kwargs: key)
     assert equation_dialog._equation_label("my_new_equation") == "My New Equation"
     assert equation_dialog._equation_description("my_new_equation") == ""
 
 
-def test_streamlit_equation_label_fallback_when_translation_is_missing(monkeypatch: Any) -> None:
+def test_streamlit_equation_label_fallback_when_translation_is_missing(
+    monkeypatch: Any,
+) -> None:
     """Streamlit selector should use id-based fallback labels when i18n key is missing."""
     monkeypatch.setattr(streamlit_fitting, "t", lambda key, **kwargs: key)
     options = streamlit_fitting._create_equation_options(["my_new_equation"])

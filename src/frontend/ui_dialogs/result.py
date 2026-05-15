@@ -24,7 +24,7 @@ _RESULT_PLOT_MAX_HEIGHT = 720
 
 # Thin raised border for result frames
 _RESULT_FRAME_BORDER = 1
-_RESULT_FRAME_RELIEF = 'raised'
+_RESULT_FRAME_RELIEF = "raised"
 
 
 def _predict_with_uncertainty(
@@ -57,7 +57,7 @@ def _predict_with_uncertainty(
         y_pred = fit_func(x_point, *params)
         y_pred = float(np.squeeze(y_pred))
     except Exception:
-        return float('nan'), None
+        return float("nan"), None
 
     params_arr = np.array(params, dtype=float)
     cov_arr = np.asarray(cov)
@@ -85,32 +85,32 @@ def _predict_with_uncertainty(
 
 def _show_prediction_dialog(parent: Toplevel, fit_info: Dict[str, Any]) -> None:
     """Open a prediction dialog for evaluating the fitted function at user-specified x values."""
-    fit_func = fit_info['fit_func']
-    params = fit_info['params']
-    cov = fit_info['cov']
-    x_names = fit_info['x_names']
+    fit_func = fit_info["fit_func"]
+    params = fit_info["params"]
+    cov = fit_info["cov"]
+    x_names = fit_info["x_names"]
     num_indep = len(x_names)
 
     pred_win = Toplevel(parent)
-    pred_win.title(t('dialog.prediction_title'))
-    pred_win.configure(background=UI_STYLE['bg'])
+    pred_win.title(t("dialog.prediction_title"))
+    pred_win.configure(background=UI_STYLE["bg"])
     pred_win.transient(parent)
     pred_win.grab_set()
 
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     entry_vars: List[StringVar] = []
     entries: List[Entry] = []
 
     for i, name in enumerate(x_names):
         lbl = ttk.Label(pred_win, text=f"{name}:")
-        lbl.grid(row=i, column=0, padx=_pad, pady=_pad, sticky='e')
-        var = StringVar(value='0')
+        lbl.grid(row=i, column=0, padx=_pad, pady=_pad, sticky="e")
+        var = StringVar(value="0")
         entry_vars.append(var)
         ent = ttk.Entry(pred_win, textvariable=var, width=15)
-        ent.grid(row=i, column=1, padx=_pad, pady=_pad, sticky='w')
+        ent.grid(row=i, column=1, padx=_pad, pady=_pad, sticky="w")
         entries.append(ent)
 
-    result_var = StringVar(value=t('dialog.prediction_result_placeholder'))
+    result_var = StringVar(value=t("dialog.prediction_result_placeholder"))
 
     def _update_result(*_args: Any) -> None:
         try:
@@ -118,31 +118,43 @@ def _show_prediction_dialog(parent: Toplevel, fit_info: Dict[str, Any]) -> None:
             for var in entry_vars:
                 val = var.get().strip()
                 if not val:
-                    result_var.set(t('dialog.prediction_result_placeholder'))
+                    result_var.set(t("dialog.prediction_result_placeholder"))
                     return
                 x_vals.append(float(val))
         except ValueError:
-            result_var.set(t('dialog.prediction_invalid_input'))
+            result_var.set(t("dialog.prediction_invalid_input"))
             return
 
         y_pred, sigma_y = _predict_with_uncertainty(
             fit_func, params, cov, x_vals, num_indep
         )
         if np.isnan(y_pred):
-            result_var.set(t('dialog.prediction_invalid_input'))
+            result_var.set(t("dialog.prediction_invalid_input"))
             return
         if sigma_y is not None and np.isfinite(sigma_y):
-            result_var.set(t('dialog.prediction_result_with_uncertainty', y=format_scientific(y_pred, ".6g"), uy=format_scientific(sigma_y)))
+            result_var.set(
+                t(
+                    "dialog.prediction_result_with_uncertainty",
+                    y=format_scientific(y_pred, ".6g"),
+                    uy=format_scientific(sigma_y),
+                )
+            )
         else:
-            result_var.set(t('dialog.prediction_result', y=format_scientific(y_pred, ".6g")))
+            result_var.set(
+                t("dialog.prediction_result", y=format_scientific(y_pred, ".6g"))
+            )
 
     for var in entry_vars:
-        var.trace_add('write', _update_result)
+        var.trace_add("write", _update_result)
 
-    result_label = ttk.Label(pred_win, textvariable=result_var, font=(UI_STYLE['font_family'], UI_STYLE['font_size'], 'bold'))
+    result_label = ttk.Label(
+        pred_win,
+        textvariable=result_var,
+        font=(UI_STYLE["font_family"], UI_STYLE["font_size"], "bold"),
+    )
     result_label.grid(row=num_indep, column=0, columnspan=2, padx=_pad, pady=_pad * 2)
 
-    ttk.Button(pred_win, text=t('dialog.accept'), command=pred_win.destroy).grid(
+    ttk.Button(pred_win, text=t("dialog.accept"), command=pred_win.destroy).grid(
         row=num_indep + 1, column=0, columnspan=2, padx=_pad, pady=_pad
     )
 
@@ -179,23 +191,28 @@ def create_result_window(
     """
     plot_level = Toplevel()
     plot_level.title(fit_name)
-    plot_level.configure(background=UI_STYLE['bg'])
+    plot_level.configure(background=UI_STYLE["bg"])
 
     display_path = plot_display_path(output_path)
     preview_to_remove = preview_path_to_remove_after_display(display_path, output_path)
 
     def _on_close() -> None:
-        if hasattr(plot_level, 'matplotlib_canvas') and plot_level.matplotlib_canvas is not None:
+        if (
+            hasattr(plot_level, "matplotlib_canvas")
+            and plot_level.matplotlib_canvas is not None
+        ):
             try:
                 fig = plot_level.matplotlib_canvas.figure
-                fig.savefig(output_path, bbox_inches='tight', dpi=PLOT_CONFIG['dpi'])
-                if Path(output_path).suffix.lower() == '.pdf':
-                    preview_path = Path(output_path).parent / (Path(output_path).stem + '_preview.png')
+                fig.savefig(output_path, bbox_inches="tight", dpi=PLOT_CONFIG["dpi"])
+                if Path(output_path).suffix.lower() == ".pdf":
+                    preview_path = Path(output_path).parent / (
+                        Path(output_path).stem + "_preview.png"
+                    )
                     fig.savefig(
                         str(preview_path),
-                        bbox_inches='tight',
-                        dpi=PLOT_CONFIG['dpi'],
-                        format='png',
+                        bbox_inches="tight",
+                        dpi=PLOT_CONFIG["dpi"],
+                        format="png",
                     )
                 plot_level.matplotlib_canvas.get_tk_widget().destroy()
                 plt.close(fig)
@@ -208,27 +225,29 @@ def create_result_window(
                 pass
         plot_level.destroy()
 
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
 
-    equation_lines = equation_str.split('\n')
+    equation_lines = equation_str.split("\n")
     equation_height = max(1, len(equation_lines))
-    equation_width = max(len(line) for line in equation_lines) + 2 if equation_lines else 2
+    equation_width = (
+        max(len(line) for line in equation_lines) + 2 if equation_lines else 2
+    )
     plot_level.equation_text = Text(
         plot_level,
         relief=_RESULT_FRAME_RELIEF,
         borderwidth=_RESULT_FRAME_BORDER,
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size_large'], 'bold'),
+        bg=UI_STYLE["bg"],
+        fg=UI_STYLE["fg"],
+        font=(UI_STYLE["font_family"], UI_STYLE["font_size_large"], "bold"),
         height=equation_height,
         width=equation_width,
-        wrap='none',
-        cursor='arrow',
+        wrap="none",
+        cursor="arrow",
     )
-    plot_level.equation_text.insert('1.0', equation_str)
-    plot_level.equation_text.config(state='disabled')
+    plot_level.equation_text.insert("1.0", equation_str)
+    plot_level.equation_text.config(state="disabled")
 
-    text_lines = text.split('\n')
+    text_lines = text.split("\n")
     num_lines = len(text_lines)
     max_line_length = max(len(line) for line in text_lines) if text_lines else 0
     param_width = max_line_length + 2
@@ -236,33 +255,34 @@ def create_result_window(
         plot_level,
         relief=_RESULT_FRAME_RELIEF,
         borderwidth=_RESULT_FRAME_BORDER,
-        bg=UI_STYLE['bg'],
+        bg=UI_STYLE["bg"],
     )
     plot_level.label_parameters = Text(
         plot_level.middle_frame,
         relief=_RESULT_FRAME_RELIEF,
         borderwidth=_RESULT_FRAME_BORDER,
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+        bg=UI_STYLE["bg"],
+        fg=UI_STYLE["fg"],
+        font=(UI_STYLE["font_family"], UI_STYLE["font_size"]),
         height=num_lines,
         width=param_width,
-        wrap='none',
-        cursor='arrow',
+        wrap="none",
+        cursor="arrow",
     )
-    plot_level.label_parameters.insert('1.0', text)
-    plot_level.label_parameters.config(state='disabled')
+    plot_level.label_parameters.insert("1.0", text)
+    plot_level.label_parameters.config(state="disabled")
 
     plot_level.imagen = None
     plot_level.matplotlib_canvas = None
     if figure_3d is not None:
         try:
             from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
             plot_level.matplotlib_canvas = FigureCanvasTkAgg(
                 figure_3d, master=plot_level.middle_frame
             )
             plot_level.matplotlib_canvas.draw()
-            
+
         except Exception:
             plot_level.matplotlib_canvas = None
     if plot_level.matplotlib_canvas is None:
@@ -286,36 +306,40 @@ def create_result_window(
     else:
         plot_level.image = ttk.Label(
             plot_level.middle_frame,
-            text=t('dialog.plot_preview_unavailable'),
+            text=t("dialog.plot_preview_unavailable"),
         )
 
-    button_frame = Frame(plot_level, bg=UI_STYLE['bg'])
+    button_frame = Frame(plot_level, bg=UI_STYLE["bg"])
     plot_level.accept_button = ttk.Button(
         button_frame,
-        text=t('dialog.accept'),
+        text=t("dialog.accept"),
         command=_on_close,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width"],
     )
-    plot_level.accept_button.pack(side='left', padx=_pad, pady=_pad)
-    focusables = [plot_level.equation_text, plot_level.label_parameters, plot_level.accept_button]
+    plot_level.accept_button.pack(side="left", padx=_pad, pady=_pad)
+    focusables = [
+        plot_level.equation_text,
+        plot_level.label_parameters,
+        plot_level.accept_button,
+    ]
     if fit_info is not None:
         plot_level.prediction_button = ttk.Button(
             button_frame,
-            text=t('dialog.prediction'),
+            text=t("dialog.prediction"),
             command=lambda: _show_prediction_dialog(plot_level, fit_info),
-            width=UI_STYLE['button_width'],
+            width=UI_STYLE["button_width"],
         )
-        plot_level.prediction_button.pack(side='left', padx=_pad, pady=_pad)
+        plot_level.prediction_button.pack(side="left", padx=_pad, pady=_pad)
         focusables.append(plot_level.prediction_button)
 
     plot_level.equation_text.pack(padx=_pad, pady=_pad)
     plot_level.middle_frame.pack(padx=_pad, pady=_pad)
     plot_level.label_parameters.pack(
-        in_=plot_level.middle_frame, side='left', padx=_pad, pady=_pad
+        in_=plot_level.middle_frame, side="left", padx=_pad, pady=_pad
     )
     plot_level.image.pack(
-        in_=plot_level.middle_frame, side='left', padx=_pad, pady=_pad
+        in_=plot_level.middle_frame, side="left", padx=_pad, pady=_pad
     )
     button_frame.pack(padx=_pad, pady=_pad)
 
@@ -323,7 +347,10 @@ def create_result_window(
 
     plot_level.accept_button.focus_set()
     plot_level.protocol("WM_DELETE_WINDOW", _on_close)
-    plot_level.resizable(plot_level.matplotlib_canvas is not None, plot_level.matplotlib_canvas is not None)
+    plot_level.resizable(
+        plot_level.matplotlib_canvas is not None,
+        plot_level.matplotlib_canvas is not None,
+    )
     if plot_level.matplotlib_canvas is not None:
         plot_level._figure_3d = figure_3d  # keep reference to avoid garbage collection
 

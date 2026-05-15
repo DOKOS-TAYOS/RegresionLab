@@ -11,7 +11,14 @@ from tkinter import (
     ttk,
 )
 
-from config import EQUATIONS, EXIT_SIGNAL, UI_STYLE, SPINBOX_STYLE, apply_hover_to_children, get_entry_font
+from config import (
+    EQUATIONS,
+    EXIT_SIGNAL,
+    UI_STYLE,
+    SPINBOX_STYLE,
+    apply_hover_to_children,
+    get_entry_font,
+)
 from i18n import t
 from utils import parse_optional_float
 
@@ -45,27 +52,27 @@ UNICODE_PARAM_MAP: Dict[str, str] = {
 
 # Shared hint text for parameter/formula dialogs (Greek Unicode codes + exit instruction)
 _UNICODE_HINT_LINES: str = (
-    r'\u03B1=α, \u03B2=β, \u03B3=γ, \u03B4=δ, \u03B5=ε' + '\n'
-    r'\u03B6=ζ, \u03B7=η, \u03B8=θ, \u03BB=λ, \u03BC=μ' + '\n'
-    r'\u03BE=ξ, \u03C0=π, \u03C1=ρ, \u03C3=σ, \u03C6=φ' + '\n'
-    r'\u03C9=ω, \u0394=Δ, \u03A3=Σ, \u03A6=Φ, \u03A9=Ω'
+    r"\u03B1=α, \u03B2=β, \u03B3=γ, \u03B4=δ, \u03B5=ε" + "\n"
+    r"\u03B6=ζ, \u03B7=η, \u03B8=θ, \u03BB=λ, \u03BC=μ" + "\n"
+    r"\u03BE=ξ, \u03C0=π, \u03C1=ρ, \u03C3=σ, \u03C6=φ" + "\n"
+    r"\u03C9=ω, \u0394=Δ, \u03A3=Σ, \u03A6=Φ, \u03A9=Ω"
 )
 
 
 def _equation_label(eq_id: str) -> str:
     """Return translated equation name with human-readable fallback."""
-    key = f'equations.{eq_id}'
+    key = f"equations.{eq_id}"
     translated = t(key)
     if translated == key:
-        return eq_id.replace('_', ' ').title()
+        return eq_id.replace("_", " ").title()
     return translated
 
 
 def _equation_description(eq_id: str) -> str:
     """Return translated equation description (empty when missing)."""
-    key = f'equations_descriptions.{eq_id}'
+    key = f"equations_descriptions.{eq_id}"
     translated = t(key)
-    return '' if translated == key else translated
+    return "" if translated == key else translated
 
 
 def _normalize_unicode_text(text: str) -> str:
@@ -107,7 +114,11 @@ def _normalize_param_name(name: str) -> str:
 
 def ask_equation_type(
     parent_window: Any,
-) -> Tuple[str, Optional[List[Optional[float]]], Optional[Tuple[List[Optional[float]], List[Optional[float]]]]]:
+) -> Tuple[
+    str,
+    Optional[List[Optional[float]]],
+    Optional[Tuple[List[Optional[float]], List[Optional[float]]]],
+]:
     """
     Dialog to select fitting equation type.
 
@@ -125,10 +136,12 @@ def ask_equation_type(
     from fitting import get_equation_param_info
 
     equation_level = Toplevel()
-    equation_level.title(t('dialog.equation_type'))
-    equation_level.selected_equation = ''
+    equation_level.title(t("dialog.equation_type"))
+    equation_level.selected_equation = ""
     equation_level.user_initial_guess: Optional[List[Optional[float]]] = None
-    equation_level.user_bounds: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None
+    equation_level.user_bounds: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None
 
     def _on_close_equation_type() -> None:
         equation_level.selected_equation = EXIT_SIGNAL
@@ -137,18 +150,20 @@ def ask_equation_type(
     equation_level.protocol("WM_DELETE_WINDOW", _on_close_equation_type)
     equation_level.resizable(False, False)
 
-    equation_level.frame_custom = ttk.Frame(equation_level, padding=UI_STYLE['border_width'])
+    equation_level.frame_custom = ttk.Frame(
+        equation_level, padding=UI_STYLE["border_width"]
+    )
 
     equation_level.message = ttk.Label(
         equation_level.frame_custom,
-        text=t('dialog.select_equation'),
-        style='LargeBold.TLabel',
+        text=t("dialog.select_equation"),
+        style="LargeBold.TLabel",
     )
 
     configure_params_var: BooleanVar = BooleanVar(value=False)
     equation_level.configure_params_cb = ttk.Checkbutton(
         equation_level.frame_custom,
-        text=t('dialog.configure_initial_params'),
+        text=t("dialog.configure_initial_params"),
         variable=configure_params_var,
     )
 
@@ -162,20 +177,30 @@ def ask_equation_type(
         param_names, formula = param_info
 
         param_dlg = Toplevel(equation_level)
-        param_dlg.title(t('dialog.param_config_title'))
+        param_dlg.title(t("dialog.param_config_title"))
         param_dlg.transient(equation_level)
         param_dlg.grab_set()
 
-        frm = ttk.Frame(param_dlg, padding=UI_STYLE['padding'])
-        frm.pack(padx=UI_STYLE['padding'], pady=UI_STYLE['padding'], fill='both', expand=True)
+        frm = ttk.Frame(param_dlg, padding=UI_STYLE["padding"])
+        frm.pack(
+            padx=UI_STYLE["padding"], pady=UI_STYLE["padding"], fill="both", expand=True
+        )
 
         ttk.Label(frm, text=f"{t('dialog.equation')} {formula}").grid(
-            row=0, column=0, columnspan=5, padx=4, pady=(2, 8), sticky='w'
+            row=0, column=0, columnspan=5, padx=4, pady=(2, 8), sticky="w"
         )
-        ttk.Label(frm, text=t('dialog.param_column_name')).grid(row=1, column=0, padx=4, pady=2)
-        ttk.Label(frm, text=t('dialog.param_column_initial')).grid(row=1, column=1, padx=4, pady=2)
-        ttk.Label(frm, text=t('dialog.param_column_range_start')).grid(row=1, column=2, padx=4, pady=2)
-        ttk.Label(frm, text=t('dialog.param_column_range_end')).grid(row=1, column=3, padx=4, pady=2)
+        ttk.Label(frm, text=t("dialog.param_column_name")).grid(
+            row=1, column=0, padx=4, pady=2
+        )
+        ttk.Label(frm, text=t("dialog.param_column_initial")).grid(
+            row=1, column=1, padx=4, pady=2
+        )
+        ttk.Label(frm, text=t("dialog.param_column_range_start")).grid(
+            row=1, column=2, padx=4, pady=2
+        )
+        ttk.Label(frm, text=t("dialog.param_column_range_end")).grid(
+            row=1, column=3, padx=4, pady=2
+        )
 
         initial_entries: List[ttk.Entry] = []
         lower_entries: List[ttk.Entry] = []
@@ -183,7 +208,7 @@ def ask_equation_type(
 
         for i, pname in enumerate(param_names):
             r = i + 2
-            ttk.Label(frm, text=pname).grid(row=r, column=0, padx=4, pady=2, sticky='w')
+            ttk.Label(frm, text=pname).grid(row=r, column=0, padx=4, pady=2, sticky="w")
             e_init = ttk.Entry(frm, width=12, font=get_entry_font())
             e_init.grid(row=r, column=1, padx=4, pady=2)
             initial_entries.append(e_init)
@@ -210,12 +235,18 @@ def ask_equation_type(
 
         btn_accept = ttk.Button(
             frm,
-            text=t('dialog.accept'),
+            text=t("dialog.accept"),
             command=on_accept,
-            style='Primary.TButton',
-            width=UI_STYLE['button_width'],
+            style="Primary.TButton",
+            width=UI_STYLE["button_width"],
         )
-        btn_accept.grid(row=len(param_names) + 2, column=1, columnspan=2, padx=UI_STYLE['padding'], pady=UI_STYLE['padding'])
+        btn_accept.grid(
+            row=len(param_names) + 2,
+            column=1,
+            columnspan=2,
+            padx=UI_STYLE["padding"],
+            pady=UI_STYLE["padding"],
+        )
         apply_hover_to_children(frm)
         param_dlg.resizable(False, False)
         place_window_centered(param_dlg, preserve_size=True)
@@ -230,7 +261,7 @@ def ask_equation_type(
         equation_level.destroy()
 
     def handle_custom_click() -> None:
-        equation_level.selected_equation = 'custom'
+        equation_level.selected_equation = "custom"
         equation_level.destroy()
 
     def handle_exit_click() -> None:
@@ -246,7 +277,7 @@ def ask_equation_type(
             equation_level.frame_custom,
             text=btn_text,
             command=lambda eq_type=attr_name: handle_equation_click(eq_type),
-            style='Equation.TButton',
+            style="Equation.TButton",
             width=32,
         )
         bind_tooltip(btn, tooltip_text)
@@ -254,35 +285,37 @@ def ask_equation_type(
 
     equation_level.custom = ttk.Button(
         equation_level.frame_custom,
-        text=t('equations.custom_formula'),
+        text=t("equations.custom_formula"),
         command=handle_custom_click,
-        style='Equation.TButton',
+        style="Equation.TButton",
         width=32,
     )
 
     equation_level.accept_button = ttk.Button(
         equation_level.frame_custom,
-        text=t('dialog.exit_option'),
+        text=t("dialog.exit_option"),
         command=handle_exit_click,
-        style='Danger.TButton',
-        width=UI_STYLE['button_width'],
+        style="Danger.TButton",
+        width=UI_STYLE["button_width"],
     )
 
     equation_level.frame_custom.grid(column=0, row=0)
     equation_level.message.grid(
-        column=0, row=0, columnspan=3, padx=UI_STYLE['padding'], pady=6
+        column=0, row=0, columnspan=3, padx=UI_STYLE["padding"], pady=6
     )
     equation_level.configure_params_cb.grid(
-        column=0, row=1, columnspan=3, padx=UI_STYLE['padding'], pady=4, sticky='w'
+        column=0, row=1, columnspan=3, padx=UI_STYLE["padding"], pady=4, sticky="w"
     )
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     _start_row = 2
     for i, attr_name in enumerate(equation_keys):
         getattr(equation_level, attr_name).grid(
             column=i % 3, row=_start_row + i // 3, padx=_pad, pady=_pad
         )
     _last_row = _start_row + (len(equation_keys) + 2) // 3
-    equation_level.custom.grid(column=0, row=_last_row, columnspan=3, padx=_pad, pady=_pad)
+    equation_level.custom.grid(
+        column=0, row=_last_row, columnspan=3, padx=_pad, pady=_pad
+    )
     equation_level.accept_button.grid(column=2, row=_last_row + 1, padx=_pad, pady=_pad)
 
     # Arrow keys + Enter navigation: 3-column grid of equation buttons, then custom, then accept
@@ -303,8 +336,8 @@ def ask_equation_type(
 
     return (
         equation_level.selected_equation,
-        getattr(equation_level, 'user_initial_guess', None),
-        getattr(equation_level, 'user_bounds', None),
+        getattr(equation_level, "user_initial_guess", None),
+        getattr(equation_level, "user_bounds", None),
     )
 
 
@@ -323,7 +356,7 @@ def ask_num_parameters(parent_window: Any) -> Optional[Tuple[int, int]]:
         the window.
     """
     num_parameter_level = Toplevel()
-    num_parameter_level.title(t('dialog.custom_formula_title'))
+    num_parameter_level.title(t("dialog.custom_formula_title"))
     num_parameter_level.cancelled = False
     num_parameter_level.numparam = IntVar(value=2)
     num_parameter_level.numindep = IntVar(value=1)
@@ -333,28 +366,30 @@ def ask_num_parameters(parent_window: Any) -> Optional[Tuple[int, int]]:
         num_parameter_level.destroy()
 
     num_parameter_level.protocol("WM_DELETE_WINDOW", _on_close_num_parameters)
-    num_parameter_level.frame_custom = ttk.Frame(num_parameter_level, padding=UI_STYLE['border_width'])
-    
+    num_parameter_level.frame_custom = ttk.Frame(
+        num_parameter_level, padding=UI_STYLE["border_width"]
+    )
+
     # Parameters label and spinbox
     num_parameter_level.message = ttk.Label(
         num_parameter_level.frame_custom,
-        text=t('dialog.num_parameters'),
+        text=t("dialog.num_parameters"),
     )
     num_parameter_level.num = Spinbox(
         num_parameter_level.frame_custom,
         textvariable=num_parameter_level.numparam,
         from_=1,
-        to=12, # If you want more parameters, change this
+        to=12,  # If you want more parameters, change this
         wrap=True,
-        state='readonly',
-        width=UI_STYLE['spinbox_width'],
+        state="readonly",
+        width=UI_STYLE["spinbox_width"],
         **SPINBOX_STYLE,
     )
-    
+
     # Independent variables label and spinbox
     num_parameter_level.message_indep = ttk.Label(
         num_parameter_level.frame_custom,
-        text=t('dialog.num_independent_variables'),
+        text=t("dialog.num_independent_variables"),
     )
     num_parameter_level.num_indep = Spinbox(
         num_parameter_level.frame_custom,
@@ -362,20 +397,20 @@ def ask_num_parameters(parent_window: Any) -> Optional[Tuple[int, int]]:
         from_=1,
         to=10,
         wrap=True,
-        state='readonly',
-        width=UI_STYLE['spinbox_width'],
+        state="readonly",
+        width=UI_STYLE["spinbox_width"],
         **SPINBOX_STYLE,
     )
-    
+
     num_parameter_level.accept_button = ttk.Button(
         num_parameter_level.frame_custom,
-        text=t('dialog.accept'),
+        text=t("dialog.accept"),
         command=num_parameter_level.destroy,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width"],
     )
 
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     num_parameter_level.frame_custom.grid(column=0, row=0)
     num_parameter_level.message.grid(column=0, row=0, padx=_pad, pady=_pad)
     num_parameter_level.num.grid(column=1, row=0, padx=_pad, pady=_pad)
@@ -383,13 +418,16 @@ def ask_num_parameters(parent_window: Any) -> Optional[Tuple[int, int]]:
     num_parameter_level.num_indep.grid(column=1, row=1, padx=_pad, pady=_pad)
     num_parameter_level.accept_button.grid(column=1, row=2, padx=_pad, pady=_pad)
 
-    bind_enter_to_accept([num_parameter_level.num, num_parameter_level.num_indep], num_parameter_level.destroy)
+    bind_enter_to_accept(
+        [num_parameter_level.num, num_parameter_level.num_indep],
+        num_parameter_level.destroy,
+    )
     num_parameter_level.num.focus_set()
     num_parameter_level.resizable(False, False)
     place_window_centered(num_parameter_level, preserve_size=True)
     parent_window.wait_window(num_parameter_level)
 
-    if getattr(num_parameter_level, 'cancelled', False):
+    if getattr(num_parameter_level, "cancelled", False):
         return None
     return (num_parameter_level.numparam.get(), num_parameter_level.numindep.get())
 
@@ -415,7 +453,7 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
     parameter_names_list: List[str] = []
     for i in range(num_params):
         parameter_asker_leve = Toplevel()
-        parameter_asker_leve.title(t('dialog.parameter_names_title'))
+        parameter_asker_leve.title(t("dialog.parameter_names_title"))
         parameter_asker_leve.cancelled = False
         parameter_asker_leve.name_parame = StringVar()
 
@@ -423,46 +461,48 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
             w.cancelled = True
             w.destroy()
 
-        parameter_asker_leve.protocol("WM_DELETE_WINDOW", lambda w=parameter_asker_leve: _on_close_param(w))
+        parameter_asker_leve.protocol(
+            "WM_DELETE_WINDOW", lambda w=parameter_asker_leve: _on_close_param(w)
+        )
         parameter_asker_leve.frame_custom = ttk.Frame(
             parameter_asker_leve,
-            padding=UI_STYLE['border_width'],
+            padding=UI_STYLE["border_width"],
         )
         parameter_asker_leve.message = ttk.Label(
             parameter_asker_leve.frame_custom,
-            text=t('dialog.parameter_name', index=i + 1),
+            text=t("dialog.parameter_name", index=i + 1),
         )
         parameter_asker_leve.codes = Text(
             parameter_asker_leve.frame_custom,
-            bg=UI_STYLE['bg'],
-            fg=UI_STYLE['fg'],
-            font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+            bg=UI_STYLE["bg"],
+            fg=UI_STYLE["fg"],
+            font=(UI_STYLE["font_family"], UI_STYLE["font_size"]),
             height=10,
-            width=UI_STYLE['entry_width']*2,
-            wrap='word',
+            width=UI_STYLE["entry_width"] * 2,
+            wrap="word",
             borderwidth=0,
             highlightthickness=0,
         )
-        unicode_hint: str = t('dialog.custom_formula_unicode_hint')
+        unicode_hint: str = t("dialog.custom_formula_unicode_hint")
         parameter_asker_leve.codes.insert(
-            '1.0', _UNICODE_HINT_LINES + exit_instruction + '\n\n' + unicode_hint
+            "1.0", _UNICODE_HINT_LINES + exit_instruction + "\n\n" + unicode_hint
         )
-        parameter_asker_leve.codes.config(state='disabled')
+        parameter_asker_leve.codes.config(state="disabled")
         parameter_asker_leve.name_entry = ttk.Entry(
             parameter_asker_leve.frame_custom,
             textvariable=parameter_asker_leve.name_parame,
-            width=UI_STYLE['entry_width'],
+            width=UI_STYLE["entry_width"],
             font=get_entry_font(),
         )
         parameter_asker_leve.accept_button = ttk.Button(
             parameter_asker_leve.frame_custom,
-            text=t('dialog.accept'),
+            text=t("dialog.accept"),
             command=parameter_asker_leve.destroy,
-            style='Primary.TButton',
-            width=UI_STYLE['button_width'],
+            style="Primary.TButton",
+            width=UI_STYLE["button_width"],
         )
 
-        _pad = UI_STYLE['padding']
+        _pad = UI_STYLE["padding"]
         parameter_asker_leve.frame_custom.grid(column=0, row=0)
         parameter_asker_leve.codes.grid(
             column=0, row=0, columnspan=2, padx=_pad, pady=6
@@ -471,13 +511,15 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
         parameter_asker_leve.name_entry.grid(column=1, row=1, padx=_pad, pady=_pad)
         parameter_asker_leve.accept_button.grid(column=1, row=2, padx=_pad, pady=_pad)
 
-        bind_enter_to_accept([parameter_asker_leve.name_entry], parameter_asker_leve.destroy)
+        bind_enter_to_accept(
+            [parameter_asker_leve.name_entry], parameter_asker_leve.destroy
+        )
         apply_hover_to_children(parameter_asker_leve.frame_custom)
         parameter_asker_leve.name_entry.focus_set()
         place_window_centered(parameter_asker_leve, preserve_size=True)
         parent_window.wait_window(parameter_asker_leve)
 
-        if getattr(parameter_asker_leve, 'cancelled', False):
+        if getattr(parameter_asker_leve, "cancelled", False):
             return [EXIT_SIGNAL]
         raw_name: str = parameter_asker_leve.name_parame.get()
         if not raw_name.strip():
@@ -487,7 +529,9 @@ def ask_parameter_names(parent_window: Any, num_params: int) -> List[str]:
     return parameter_names_list
 
 
-def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_independent_vars: int = 1) -> str:
+def ask_custom_formula(
+    parent_window: Any, parameter_names: List[str], num_independent_vars: int = 1
+) -> str:
     """
     Dialog to ask for custom function formula.
 
@@ -507,7 +551,7 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_indep
     exit_instruction = f'\n"{t("dialog.exit_option")}" {t("dialog.exit_instruction")}'
 
     formulator_level = Toplevel()
-    formulator_level.title(t('dialog.custom_formula_title'))
+    formulator_level.title(t("dialog.custom_formula_title"))
     formulator_level.cancelled = False
     formulator_level.formule = StringVar()
 
@@ -518,37 +562,37 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_indep
     formulator_level.protocol("WM_DELETE_WINDOW", _on_close_formula)
     formulator_level.frame_custom = ttk.Frame(
         formulator_level,
-        padding=UI_STYLE['border_width'],
+        padding=UI_STYLE["border_width"],
     )
     # Determine variable names based on number of independent variables
     if num_independent_vars == 1:
-        var_hint = t('dialog.custom_formula_syntax_hint')
-        var_label = 'y(x)= '
+        var_hint = t("dialog.custom_formula_syntax_hint")
+        var_label = "y(x)= "
     else:
-        var_names = ', '.join([f'x_{i}' for i in range(num_independent_vars)])
-        var_hint = t('dialog.custom_formula_multidim_hint', vars=var_names)
-        var_label = f'y({var_names})= '
-    
+        var_names = ", ".join([f"x_{i}" for i in range(num_independent_vars)])
+        var_hint = t("dialog.custom_formula_multidim_hint", vars=var_names)
+        var_label = f"y({var_names})= "
+
     syntax_hint_text = (
         var_hint
-        + '\n'
-        + t('dialog.custom_formula_unicode_hint')
-        + '\n'
-        + t('dialog.formula_example')
+        + "\n"
+        + t("dialog.custom_formula_unicode_hint")
+        + "\n"
+        + t("dialog.formula_example")
     )
     formulator_level.syntax_hint = Text(
         formulator_level.frame_custom,
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+        bg=UI_STYLE["bg"],
+        fg=UI_STYLE["fg"],
+        font=(UI_STYLE["font_family"], UI_STYLE["font_size"]),
         height=3,
-        width=UI_STYLE['entry_width'] + 10,
-        wrap='word',
+        width=UI_STYLE["entry_width"] + 10,
+        wrap="word",
         borderwidth=0,
         highlightthickness=0,
     )
-    formulator_level.syntax_hint.insert('1.0', syntax_hint_text)
-    formulator_level.syntax_hint.config(state='disabled')
+    formulator_level.syntax_hint.insert("1.0", syntax_hint_text)
+    formulator_level.syntax_hint.config(state="disabled")
     formulator_level.message = ttk.Label(
         formulator_level.frame_custom,
         text=var_label,
@@ -556,18 +600,18 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_indep
     )
     formulator_level.codes = Text(
         formulator_level.frame_custom,
-        bg=UI_STYLE['bg'],
-        fg=UI_STYLE['fg'],
-        font=(UI_STYLE['font_family'], UI_STYLE['font_size']),
+        bg=UI_STYLE["bg"],
+        fg=UI_STYLE["fg"],
+        font=(UI_STYLE["font_family"], UI_STYLE["font_size"]),
         height=8,
-        width=UI_STYLE['entry_width'] + 10,
-        wrap='word',
+        width=UI_STYLE["entry_width"] + 10,
+        wrap="word",
         borderwidth=0,
         highlightthickness=0,
     )
-    formulator_level.codes.insert('1.0', _UNICODE_HINT_LINES + exit_instruction)
-    formulator_level.codes.config(state='disabled')
-    params_display = t('dialog.parameters_defined', params=', '.join(parameter_names))
+    formulator_level.codes.insert("1.0", _UNICODE_HINT_LINES + exit_instruction)
+    formulator_level.codes.config(state="disabled")
+    params_display = t("dialog.parameters_defined", params=", ".join(parameter_names))
     formulator_level.parametros = ttk.Label(
         formulator_level.frame_custom,
         text=params_display,
@@ -575,25 +619,23 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_indep
     formulator_level.name_entry = ttk.Entry(
         formulator_level.frame_custom,
         textvariable=formulator_level.formule,
-        width=UI_STYLE['entry_width'],
+        width=UI_STYLE["entry_width"],
         font=get_entry_font(),
     )
     formulator_level.accept_button = ttk.Button(
         formulator_level.frame_custom,
-        text=t('dialog.accept'),
+        text=t("dialog.accept"),
         command=formulator_level.destroy,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width"],
     )
 
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     formulator_level.frame_custom.grid(column=0, row=0)
     formulator_level.syntax_hint.grid(
         column=0, row=0, columnspan=2, padx=_pad, pady=(6, 0)
     )
-    formulator_level.codes.grid(
-        column=0, row=1, columnspan=2, padx=_pad, pady=6
-    )
+    formulator_level.codes.grid(column=0, row=1, columnspan=2, padx=_pad, pady=6)
     formulator_level.parametros.grid(
         column=0, row=2, columnspan=2, padx=_pad, pady=_pad
     )
@@ -608,13 +650,15 @@ def ask_custom_formula(parent_window: Any, parameter_names: List[str], num_indep
     place_window_centered(formulator_level, preserve_size=True)
     parent_window.wait_window(formulator_level)
 
-    if getattr(formulator_level, 'cancelled', False):
+    if getattr(formulator_level, "cancelled", False):
         return EXIT_SIGNAL
     user_formula: str = _normalize_unicode_text(formulator_level.formule.get())
     return user_formula
 
 
-def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Optional[int]:
+def ask_num_fits(
+    parent_window: Any, min_val: int = 2, max_val: int = 10
+) -> Optional[int]:
     """
     Dialog to ask for number of multiple fits.
 
@@ -631,7 +675,7 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
         ``None`` if the user closed the window.
     """
     number_fits_level = Toplevel()
-    number_fits_level.title(t('workflow.multiple_fitting_title'))
+    number_fits_level.title(t("workflow.multiple_fitting_title"))
     number_fits_level.cancelled = False
 
     def _on_close_num_fits() -> None:
@@ -641,12 +685,12 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
     number_fits_level.protocol("WM_DELETE_WINDOW", _on_close_num_fits)
     number_fits_level.frame_custom = ttk.Frame(
         number_fits_level,
-        padding=UI_STYLE['border_width'],
+        padding=UI_STYLE["border_width"],
     )
     number_fits_level.num = IntVar()
     number_fits_level.num_label = ttk.Label(
         number_fits_level.frame_custom,
-        text=t('dialog.num_fits'),
+        text=t("dialog.num_fits"),
     )
     number_fits_level.num_x = Spinbox(
         number_fits_level.frame_custom,
@@ -654,19 +698,19 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
         from_=min_val,
         to=max_val,
         wrap=True,
-        state='readonly',
-        width=UI_STYLE['spinbox_width'],
+        state="readonly",
+        width=UI_STYLE["spinbox_width"],
         **SPINBOX_STYLE,
     )
     number_fits_level.accept_button = ttk.Button(
         number_fits_level.frame_custom,
-        text=t('dialog.accept'),
+        text=t("dialog.accept"),
         command=number_fits_level.destroy,
-        style='Primary.TButton',
-        width=UI_STYLE['button_width'],
+        style="Primary.TButton",
+        width=UI_STYLE["button_width"],
     )
 
-    _pad = UI_STYLE['padding']
+    _pad = UI_STYLE["padding"]
     number_fits_level.frame_custom.grid(column=0, row=0)
     number_fits_level.num_label.grid(column=0, row=0, padx=_pad, pady=_pad)
     number_fits_level.num_x.grid(column=1, row=0, padx=_pad, pady=_pad)
@@ -678,6 +722,6 @@ def ask_num_fits(parent_window: Any, min_val: int = 2, max_val: int = 10) -> Opt
     place_window_centered(number_fits_level, preserve_size=True)
     parent_window.wait_window(number_fits_level)
 
-    if getattr(number_fits_level, 'cancelled', False):
+    if getattr(number_fits_level, "cancelled", False):
         return None
     return number_fits_level.num.get()

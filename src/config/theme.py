@@ -15,6 +15,7 @@ try:
     import tkinter
     import tkinter.font as tkfont
     from tkinter import ttk
+
     _TKINTER_AVAILABLE = True
 except ImportError:
     tkinter = None
@@ -23,29 +24,30 @@ except ImportError:
     _TKINTER_AVAILABLE = False
 
 # Fallback UI font families if the configured font is not available on this OS
-_UI_FONT_FALLBACKS = ('Bahnschrift', 'SF Pro Text', 'Inter')
+_UI_FONT_FALLBACKS = ("Bahnschrift", "SF Pro Text", "Inter")
 
 # -----------------------------------------------------------------------------
 # Color conversion helpers (work with or without tkinter)
 # -----------------------------------------------------------------------------
 
+
 def _color_name_to_rgb(color: str) -> tuple[int, int, int] | None:
     """Convert color name to RGB tuple (0-255 range). Works with or without tkinter.
-    
+
     Args:
         color: Color name (e.g., 'navy', 'gray15') or hex string
-        
+
     Returns:
         Tuple of (r, g, b) in 0-255 range, or None if conversion fails
     """
     if not isinstance(color, str) or not color.strip():
         return None
-    
+
     # Normalize before lookup so cache hits for equivalent inputs
     normalized = color.strip().strip('"').strip("'")
     if not normalized:
         return None
-    
+
     return _color_name_to_rgb_cached(normalized)
 
 
@@ -53,9 +55,9 @@ def _color_name_to_rgb(color: str) -> tuple[int, int, int] | None:
 def _color_name_to_rgb_cached(color: str) -> tuple[int, int, int] | None:
     """Cached implementation of color-to-RGB conversion (receives normalized input)."""
     # If it's already hex, parse it directly
-    if color.startswith('#'):
+    if color.startswith("#"):
         try:
-            hex_color = color.lstrip('#').strip()
+            hex_color = color.lstrip("#").strip()
             if len(hex_color) == 6:
                 r = int(hex_color[0:2], 16)
                 g = int(hex_color[2:4], 16)
@@ -68,7 +70,7 @@ def _color_name_to_rgb_cached(color: str) -> tuple[int, int, int] | None:
                 return (r, g, b)
         except ValueError:
             pass
-    
+
     # Try tkinter first (if available)
     if _TKINTER_AVAILABLE:
         try:
@@ -80,15 +82,16 @@ def _color_name_to_rgb_cached(color: str) -> tuple[int, int, int] | None:
             return (r // 256, g // 256, b // 256)
         except (tkinter.TclError, Exception):
             pass
-    
+
     # Fallback to matplotlib
     try:
         from matplotlib.colors import to_rgb
+
         r, g, b = to_rgb(color)
         return (int(r * 255), int(g * 255), int(b * 255))
     except (ValueError, TypeError, ImportError):
         pass
-    
+
     return None
 
 
@@ -96,108 +99,113 @@ def _color_name_to_rgb_cached(color: str) -> tuple[int, int, int] | None:
 # Single source: ENV_SCHEMA (env.py) + derived constants (same default look)
 # -----------------------------------------------------------------------------
 
-def _normalize_color_to_hex(color: str, default: str = '#181818') -> str:
+
+def _normalize_color_to_hex(color: str, default: str = "#181818") -> str:
     """Normalize a color value to hex format. Used to ensure UI_STYLE always has valid hex colors.
-    
+
     Args:
         color: Color name or hex string
         default: Default hex color to return if conversion fails
-        
+
     Returns:
         Hex color string (#rrggbb)
     """
     if not isinstance(color, str) or not color.strip():
         return default
-    
+
     color = color.strip().strip('"').strip("'")
-    
+
     # If already valid hex, return it
-    if color.startswith('#') and len(color) in (4, 7):
+    if color.startswith("#") and len(color) in (4, 7):
         try:
             # Validate hex format
-            hex_part = color.lstrip('#')
-            if len(hex_part) == 6 and all(c in '0123456789abcdefABCDEF' for c in hex_part):
+            hex_part = color.lstrip("#")
+            if len(hex_part) == 6 and all(
+                c in "0123456789abcdefABCDEF" for c in hex_part
+            ):
                 return color.lower()
-            elif len(hex_part) == 3 and all(c in '0123456789abcdefABCDEF' for c in hex_part):
+            elif len(hex_part) == 3 and all(
+                c in "0123456789abcdefABCDEF" for c in hex_part
+            ):
                 # Expand 3-digit hex to 6-digit
-                return f'#{hex_part[0]*2}{hex_part[1]*2}{hex_part[2]*2}'.lower()
+                return f"#{hex_part[0] * 2}{hex_part[1] * 2}{hex_part[2] * 2}".lower()
         except Exception:
             pass
-    
+
     # Try to convert color name to hex
     rgb = _color_name_to_rgb(color)
     if rgb is not None:
         r, g, b = rgb
-        return f'#{r:02x}{g:02x}{b:02x}'
-    
+        return f"#{r:02x}{g:02x}{b:02x}"
+
     return default
 
 
 def _darken_bg(color: str) -> str:
     """Return a slightly darker shade for backgrounds (button active, widget hover).
-    
+
     Uses algorithmic color transformation instead of lookup tables.
-    
+
     Args:
         color: Named color string (e.g., 'navy', 'gray15')
-        
+
     Returns:
         Darker shade as hex color string
     """
     rgb = _color_name_to_rgb(color)
     if rgb is None:
-        return '#1e1e1e'
-    
+        return "#1e1e1e"
+
     r, g, b = rgb
     # Darken by reducing each channel by 15%
     factor = 0.85
     r = int(r * factor)
     g = int(g * factor)
     b = int(b * factor)
-    
-    return f'#{r:02x}{g:02x}{b:02x}'
+
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def _lighten_fg(color: str) -> str:
     """Return a slightly lighter shade for foreground (button text when active/pressed).
-    
+
     Uses algorithmic color transformation instead of lookup tables.
-    
+
     Args:
         color: Named color string (e.g., 'snow', 'lime green')
-        
+
     Returns:
         Lighter shade as hex color string
     """
     rgb = _color_name_to_rgb(color)
     if rgb is None:
-        return '#ffffff'
-    
+        return "#ffffff"
+
     r, g, b = rgb
     # Lighten by moving 20% toward white
     factor = 0.20
     r = min(255, int(r + (255 - r) * factor))
     g = min(255, int(g + (255 - g) * factor))
     b = min(255, int(b + (255 - b) * factor))
-    
-    return f'#{r:02x}{g:02x}{b:02x}'
+
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def _tooltip_bg_from_ui(ui_bg: str) -> str:
     """Convert UI background to tooltip background: more grayish and slightly lighter.
-    
+
     Uses algorithmic color transformation to desaturate and lighten.
-    
+
     Args:
         ui_bg: UI background color name
-        
+
     Returns:
         Tooltip background as hex color string
     """
     rgb = _color_name_to_rgb(ui_bg)
     if rgb is None:
-        return '#4d4d4d'
-    
+        return "#4d4d4d"
+
     r, g, b = rgb
     # Desaturate by moving toward average (grayscale) by 60%
     avg = (r + g + b) // 3
@@ -205,48 +213,56 @@ def _tooltip_bg_from_ui(ui_bg: str) -> str:
     r = int(r + (avg - r) * desat_factor)
     g = int(g + (avg - g) * desat_factor)
     b = int(b + (avg - b) * desat_factor)
-    
+
     # Then lighten by moving 25% toward white
     lighten_factor = 0.25
     r = min(255, int(r + (255 - r) * lighten_factor))
     g = min(255, int(g + (255 - g) * lighten_factor))
     b = min(255, int(b + (255 - b) * lighten_factor))
-    
-    return f'#{r:02x}{g:02x}{b:02x}'
+
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def _lighten_bg_hex(color: str, factor: float = 0.06) -> str:
     """Return a very slightly lighter shade of color as #rrggbb, calculated from RGB."""
     rgb = _color_name_to_rgb(color)
     if rgb is None:
-        return '#2e2e2e'
-    
+        return "#2e2e2e"
+
     r, g, b = rgb
     # Move each channel slightly toward white
     r = min(255, int(r + (255 - r) * factor))
     g = min(255, int(g + (255 - g) * factor))
     b = min(255, int(b + (255 - b) * factor))
-    return f'#{r:02x}{g:02x}{b:02x}'
+    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 # Colors (only main knobs; rest derived where used)
 # Normalize all colors to hex format to ensure UI_STYLE always has valid hex values
-_bg = _normalize_color_to_hex(get_env_from_schema('UI_BACKGROUND'), '#181818')
-_fg = _normalize_color_to_hex(get_env_from_schema('UI_FOREGROUND'), '#CCCCCC')
-_btn_bg = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_BG'), '#1F1F1F')
-_btn_fg_primary = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG'), '#32CD32')  # lime green
-_btn_fg_cancel = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG_CANCEL'), '#EE3B3B')  # red2
-_btn_fg_accent2 = _normalize_color_to_hex(get_env_from_schema('UI_BUTTON_FG_ACCENT2'), '#FFFF00')  # yellow
-_text_select_bg = _normalize_color_to_hex(get_env_from_schema('UI_TEXT_SELECT_BG'), '#4682B4')  # steel blue
+_bg = _normalize_color_to_hex(get_env_from_schema("UI_BACKGROUND"), "#181818")
+_fg = _normalize_color_to_hex(get_env_from_schema("UI_FOREGROUND"), "#CCCCCC")
+_btn_bg = _normalize_color_to_hex(get_env_from_schema("UI_BUTTON_BG"), "#1F1F1F")
+_btn_fg_primary = _normalize_color_to_hex(
+    get_env_from_schema("UI_BUTTON_FG"), "#32CD32"
+)  # lime green
+_btn_fg_cancel = _normalize_color_to_hex(
+    get_env_from_schema("UI_BUTTON_FG_CANCEL"), "#EE3B3B"
+)  # red2
+_btn_fg_accent2 = _normalize_color_to_hex(
+    get_env_from_schema("UI_BUTTON_FG_ACCENT2"), "#FFFF00"
+)  # yellow
+_text_select_bg = _normalize_color_to_hex(
+    get_env_from_schema("UI_TEXT_SELECT_BG"), "#4682B4"
+)  # steel blue
 
 # Layout and sizes (fixed or derived)
 _border = 8
-_relief = 'raised'
-_padding = get_env_from_schema('UI_PADDING')
-_btn_w = get_env_from_schema('UI_BUTTON_WIDTH')
+_relief = "raised"
+_padding = get_env_from_schema("UI_PADDING")
+_btn_w = get_env_from_schema("UI_BUTTON_WIDTH")
 _btn_wide = int(2.5 * _btn_w)
-_spin_w = get_env_from_schema('UI_SPINBOX_WIDTH')
-_entry_w = get_env_from_schema('UI_ENTRY_WIDTH')
+_spin_w = get_env_from_schema("UI_SPINBOX_WIDTH")
+_entry_w = get_env_from_schema("UI_ENTRY_WIDTH")
 
 
 def _resolve_ui_font_family(preferred: str) -> str:
@@ -260,12 +276,12 @@ def _resolve_ui_font_family(preferred: str) -> str:
     Bahnschrift, SF Pro Text, Inter; otherwise the preferred string as-is.
     """
     if not (preferred and preferred.strip()):
-        preferred = 'sans-serif'
-    
+        preferred = "sans-serif"
+
     preferred_clean = preferred.strip()
     preferred_lower = preferred_clean.lower()
     available: dict[str, str] = {}
-    
+
     # Try tkinter first (if available)
     if _TKINTER_AVAILABLE:
         try:
@@ -276,11 +292,12 @@ def _resolve_ui_font_family(preferred: str) -> str:
             root.destroy()
         except (tkinter.TclError, Exception):
             pass
-    
+
     # Fallback to matplotlib font manager if tkinter not available or failed
     if not available:
         try:
             from matplotlib.font_manager import FontManager
+
             fm = FontManager()
             # Get all font families
             font_families = set()
@@ -290,17 +307,19 @@ def _resolve_ui_font_family(preferred: str) -> str:
             available = {f.lower(): f for f in font_families}
         except (ImportError, Exception):
             pass
-    
+
     # If we still don't have font list, just return preferred
     if not available:
         return preferred_clean
-    
+
     # Preferred: exact match or system name that starts with preferred
     if preferred_lower in available:
         return available[preferred_lower]
     for key, actual_name in available.items():
         # Space (e.g. "Menlo Regular") or hyphen (e.g. "Menlo-Regular") after preferred name
-        if key.startswith(preferred_lower + ' ') or key.startswith(preferred_lower + '-'):
+        if key.startswith(preferred_lower + " ") or key.startswith(
+            preferred_lower + "-"
+        ):
             return actual_name
     for key, actual_name in available.items():
         # Any family that starts with preferred name (e.g. "MenloMono" when preferred is "Menlo")
@@ -313,8 +332,8 @@ def _resolve_ui_font_family(preferred: str) -> str:
     return preferred_clean
 
 
-_font_family = _resolve_ui_font_family(get_env_from_schema('UI_FONT_FAMILY'))
-_font_size = get_env_from_schema('UI_FONT_SIZE')
+_font_family = _resolve_ui_font_family(get_env_from_schema("UI_FONT_FAMILY"))
+_font_size = get_env_from_schema("UI_FONT_SIZE")
 _font_size_large = int(1.25 * _font_size)
 
 # -----------------------------------------------------------------------------
@@ -330,65 +349,65 @@ _field_bg = _lighten_bg_hex(_bg, factor=0.14)
 
 UI_STYLE = {
     # Core colors
-    'bg': _bg,
-    'fg': _fg,
-    'background': _bg,
-    'foreground': _fg,
-    'button_bg': _btn_bg,
-    'active_bg': _active_bg,
-    'button_fg_accept': _btn_fg_primary,
-    'button_fg_cancel': _btn_fg_cancel,
-    'button_fg_accent2': _btn_fg_accent2,
+    "bg": _bg,
+    "fg": _fg,
+    "background": _bg,
+    "foreground": _fg,
+    "button_bg": _btn_bg,
+    "active_bg": _active_bg,
+    "button_fg_accept": _btn_fg_primary,
+    "button_fg_cancel": _btn_fg_cancel,
+    "button_fg_accent2": _btn_fg_accent2,
     # Entry/Combobox/Spinbox: very slightly lighter than main bg (calculated from _bg)
-    'field_bg': _field_bg,
+    "field_bg": _field_bg,
     # Hover/focus: element bg darkened (entry, combobox, check, radio use _bg)
-    'widget_hover_bg': _hover_bg,
-    'checkbutton_hover_bg': _hover_bg,
-    'combobox_focus_bg': _hover_bg,
+    "widget_hover_bg": _hover_bg,
+    "checkbutton_hover_bg": _hover_bg,
+    "combobox_focus_bg": _hover_bg,
     # Text widget (cursor and text = UI foreground)
-    'text_bg': _text_bg,
-    'text_fg': _fg,
-    'text_insert_bg': _fg,
-    'text_select_bg': _text_select_bg,
-    'text_select_fg': _fg,
+    "text_bg": _text_bg,
+    "text_fg": _fg,
+    "text_insert_bg": _fg,
+    "text_select_bg": _text_select_bg,
+    "text_select_fg": _fg,
     # Tooltip: UI bg grayish+lighter, text = UI fg
-    'tooltip_bg': _tooltip_bg,
-    'tooltip_fg': _fg,
-    'tooltip_border': 'gray40',
+    "tooltip_bg": _tooltip_bg,
+    "tooltip_fg": _fg,
+    "tooltip_border": "gray40",
     # Layout: fixed relief and border
-    'relief': _relief,
-    'border_width': _border,
-    'button_relief': _relief,
-    'button_borderwidth': max(1, min(_border, 4)),
-    'padding': _padding,
-    'padding_x': _padding,
-    'padding_y': _padding,
+    "relief": _relief,
+    "border_width": _border,
+    "button_relief": _relief,
+    "button_borderwidth": max(1, min(_border, 4)),
+    "padding": _padding,
+    "padding_x": _padding,
+    "padding_y": _padding,
     # Sizes (wide = 2.5*normal, font large = 1.25*normal)
-    'button_width': _btn_w,
-    'button_width_wide': _btn_wide,
-    'spinbox_width': _spin_w,
-    'entry_width': _entry_w,
+    "button_width": _btn_w,
+    "button_width_wide": _btn_wide,
+    "spinbox_width": _spin_w,
+    "entry_width": _entry_w,
     # Fonts
-    'font_family': _font_family,
-    'font_size': _font_size,
-    'font_size_large': _font_size_large,
-    'entry_fg': _bg,
-    'text_font_family': _font_family,
-    'text_font_size': _font_size,
-    'entry_font_size': _font_size,
+    "font_family": _font_family,
+    "font_size": _font_size,
+    "font_size_large": _font_size_large,
+    "entry_fg": _bg,
+    "text_font_family": _font_family,
+    "text_font_size": _font_size,
+    "entry_font_size": _font_size,
 }
 
 # tk Spinbox options so it matches ttk Combobox (same field_bg, fg, font, relief).
 # readonlybackground: needed so readonly state uses theme bg on Windows.
 SPINBOX_STYLE: dict[str, Any] = {
-    'bg': _field_bg,
-    'fg': _fg,
-    'readonlybackground': _field_bg,
-    'font': (_font_family, _font_size),
-    'relief': 'sunken',
-    'bd': 2,
-    'highlightthickness': 0,
-    'insertbackground': _fg,
+    "bg": _field_bg,
+    "fg": _fg,
+    "readonlybackground": _field_bg,
+    "font": (_font_family, _font_size),
+    "relief": "sunken",
+    "bd": 2,
+    "highlightthickness": 0,
+    "insertbackground": _fg,
 }
 
 # -----------------------------------------------------------------------------
@@ -396,30 +415,30 @@ SPINBOX_STYLE: dict[str, Any] = {
 # -----------------------------------------------------------------------------
 
 PLOT_CONFIG = {
-    'figsize': (
-        get_env_from_schema('PLOT_FIGSIZE_WIDTH'),
-        get_env_from_schema('PLOT_FIGSIZE_HEIGHT'),
+    "figsize": (
+        get_env_from_schema("PLOT_FIGSIZE_WIDTH"),
+        get_env_from_schema("PLOT_FIGSIZE_HEIGHT"),
     ),
-    'dpi': get_env_from_schema('DPI'),
-    'show_title': get_env_from_schema('PLOT_SHOW_TITLE'),
-    'show_grid': get_env_from_schema('PLOT_SHOW_GRID'),
-    'line_color': get_env_from_schema('PLOT_LINE_COLOR'),
-    'line_width': get_env_from_schema('PLOT_LINE_WIDTH'),
-    'line_style': get_env_from_schema('PLOT_LINE_STYLE'),
-    'marker_format': get_env_from_schema('PLOT_MARKER_FORMAT'),
-    'marker_size': get_env_from_schema('PLOT_MARKER_SIZE'),
-    'error_color': get_env_from_schema('PLOT_ERROR_COLOR'),
-    'marker_face_color': get_env_from_schema('PLOT_MARKER_FACE_COLOR'),
-    'marker_edge_color': get_env_from_schema('PLOT_MARKER_EDGE_COLOR'),
+    "dpi": get_env_from_schema("DPI"),
+    "show_title": get_env_from_schema("PLOT_SHOW_TITLE"),
+    "show_grid": get_env_from_schema("PLOT_SHOW_GRID"),
+    "line_color": get_env_from_schema("PLOT_LINE_COLOR"),
+    "line_width": get_env_from_schema("PLOT_LINE_WIDTH"),
+    "line_style": get_env_from_schema("PLOT_LINE_STYLE"),
+    "marker_format": get_env_from_schema("PLOT_MARKER_FORMAT"),
+    "marker_size": get_env_from_schema("PLOT_MARKER_SIZE"),
+    "error_color": get_env_from_schema("PLOT_ERROR_COLOR"),
+    "marker_face_color": get_env_from_schema("PLOT_MARKER_FACE_COLOR"),
+    "marker_edge_color": get_env_from_schema("PLOT_MARKER_EDGE_COLOR"),
 }
 
 FONT_CONFIG = {
-    'family': get_env_from_schema('FONT_FAMILY'),
-    'title_size': get_env_from_schema('FONT_TITLE_SIZE'),
-    'title_weight': get_env_from_schema('FONT_TITLE_WEIGHT'),
-    'axis_size': get_env_from_schema('FONT_AXIS_SIZE'),
-    'axis_style': get_env_from_schema('FONT_AXIS_STYLE'),
-    'tick_size': get_env_from_schema('FONT_TICK_SIZE'),
+    "family": get_env_from_schema("FONT_FAMILY"),
+    "title_size": get_env_from_schema("FONT_TITLE_SIZE"),
+    "title_weight": get_env_from_schema("FONT_TITLE_WEIGHT"),
+    "axis_size": get_env_from_schema("FONT_AXIS_SIZE"),
+    "axis_style": get_env_from_schema("FONT_AXIS_STYLE"),
+    "tick_size": get_env_from_schema("FONT_TICK_SIZE"),
 }
 
 _font_cache = None
@@ -434,7 +453,7 @@ def get_entry_font() -> tuple[str, int]:
     Returns:
         Tuple of ``(font_family, font_size)`` from ``UI_STYLE`` configuration.
     """
-    return (UI_STYLE['font_family'], UI_STYLE['font_size'])
+    return (UI_STYLE["font_family"], UI_STYLE["font_size"])
 
 
 def _edge_color(bg_color: str, lighter: bool) -> str:
@@ -452,12 +471,28 @@ def _edge_color(bg_color: str, lighter: bool) -> str:
     Returns:
         Color name string for the edge color (e.g., ``'steel blue'``, ``'gray12'``).
     """
-    key = bg_color.lower() if isinstance(bg_color, str) else ''
+    key = bg_color.lower() if isinstance(bg_color, str) else ""
     if lighter:
-        m = {'midnight blue': 'steel blue', 'navy': 'steel blue', 'black': 'gray20', 'gray5': 'gray15', 'gray10': 'gray25', 'gray15': 'gray30', 'gray20': 'gray35'}
+        m = {
+            "midnight blue": "steel blue",
+            "navy": "steel blue",
+            "black": "gray20",
+            "gray5": "gray15",
+            "gray10": "gray25",
+            "gray15": "gray30",
+            "gray20": "gray35",
+        }
     else:
-        m = {'midnight blue': 'midnight blue', 'navy': 'midnight blue', 'black': 'black', 'gray5': 'gray3', 'gray10': 'gray8', 'gray15': 'gray10', 'gray20': 'gray12'}
-    return m.get(key, 'steel blue' if lighter else 'gray12')
+        m = {
+            "midnight blue": "midnight blue",
+            "navy": "midnight blue",
+            "black": "black",
+            "gray5": "gray3",
+            "gray10": "gray8",
+            "gray15": "gray10",
+            "gray20": "gray12",
+        }
+    return m.get(key, "steel blue" if lighter else "gray12")
 
 
 def configure_ttk_styles(root: Any) -> None:
@@ -466,48 +501,55 @@ def configure_ttk_styles(root: Any) -> None:
     the Tk root. Uses 'clam' theme for consistent field colors.
     """
     style = ttk.Style(root)
-    for theme_name in ('clam', 'alt', 'classic'):
+    for theme_name in ("clam", "alt", "classic"):
         try:
             style.theme_use(theme_name)
             break
         except tkinter.TclError:
             continue
 
-    fam = UI_STYLE['font_family']
-    sz = UI_STYLE['font_size']
-    sz_l = UI_STYLE['font_size_large']
+    fam = UI_STYLE["font_family"]
+    sz = UI_STYLE["font_size"]
+    sz_l = UI_STYLE["font_size_large"]
     font_normal = (fam, sz)
     font_large = (fam, sz_l)
-    font_bold = (fam, sz, 'bold')
-    font_large_bold = (fam, sz_l, 'bold')
+    font_bold = (fam, sz, "bold")
+    font_large_bold = (fam, sz_l, "bold")
 
-    bg = UI_STYLE['bg']
-    field_bg = UI_STYLE['field_bg']
-    fg = UI_STYLE['fg']
-    btn_bg = UI_STYLE['button_bg']
-    hover_bg = UI_STYLE['widget_hover_bg']
+    bg = UI_STYLE["bg"]
+    field_bg = UI_STYLE["field_bg"]
+    fg = UI_STYLE["fg"]
+    btn_bg = UI_STYLE["button_bg"]
+    hover_bg = UI_STYLE["widget_hover_bg"]
     btn_light = _edge_color(btn_bg, True)
     btn_dark = _edge_color(btn_bg, False)
 
-    style.configure('TFrame', background=bg)
-    style.configure('TLabel', background=bg, foreground=fg, font=font_normal)
-    style.configure('Bold.TLabel', background=bg, foreground=fg, font=font_bold)
-    style.configure('Large.TLabel', background=bg, foreground=fg, font=font_large)
-    style.configure('LargeBold.TLabel', background=bg, foreground=fg, font=font_large_bold)
+    style.configure("TFrame", background=bg)
+    style.configure("TLabel", background=bg, foreground=fg, font=font_normal)
+    style.configure("Bold.TLabel", background=bg, foreground=fg, font=font_bold)
+    style.configure("Large.TLabel", background=bg, foreground=fg, font=font_large)
     style.configure(
-        'Tooltip.TLabel',
-        background=UI_STYLE['tooltip_bg'],
-        foreground=UI_STYLE['tooltip_fg'],
+        "LargeBold.TLabel", background=bg, foreground=fg, font=font_large_bold
+    )
+    style.configure(
+        "Tooltip.TLabel",
+        background=UI_STYLE["tooltip_bg"],
+        foreground=UI_STYLE["tooltip_fg"],
         font=(fam, max(8, sz - 2)),
         padding=(6, 4),
     )
-    style.configure('Raised.TFrame', background=btn_light)
+    style.configure("Raised.TFrame", background=btn_light)
 
-    pad = (UI_STYLE['padding'], UI_STYLE['padding'])
-    btn_common = {'font': font_normal, 'padding': pad, 'lightcolor': btn_light, 'darkcolor': btn_dark}
+    pad = (UI_STYLE["padding"], UI_STYLE["padding"])
+    btn_common = {
+        "font": font_normal,
+        "padding": pad,
+        "lightcolor": btn_light,
+        "darkcolor": btn_dark,
+    }
 
     # Focus highlight: same as active so keyboard-focused control is clearly visible
-    focus_bg = UI_STYLE['active_bg']
+    focus_bg = UI_STYLE["active_bg"]
 
     def _btn_style(name: str, fg_color: str) -> None:
         active_fg = _lighten_fg(fg_color)
@@ -515,120 +557,133 @@ def configure_ttk_styles(root: Any) -> None:
         style.map(
             name,
             background=[
-                ('active', focus_bg),
-                ('pressed', focus_bg),
-                ('focus', focus_bg),
+                ("active", focus_bg),
+                ("pressed", focus_bg),
+                ("focus", focus_bg),
             ],
             foreground=[
-                ('active', active_fg),
-                ('pressed', active_fg),
-                ('focus', active_fg),
+                ("active", active_fg),
+                ("pressed", active_fg),
+                ("focus", active_fg),
             ],
-            lightcolor=[('pressed', btn_dark)],
-            darkcolor=[('pressed', btn_light)],
+            lightcolor=[("pressed", btn_dark)],
+            darkcolor=[("pressed", btn_light)],
         )
 
-    _btn_style('TButton', fg)
-    _btn_style('Primary.TButton', UI_STYLE['button_fg_accept'])
-    _btn_style('Secondary.TButton', fg)
-    _btn_style('Danger.TButton', UI_STYLE['button_fg_cancel'])
-    _btn_style('Accent.TButton', UI_STYLE['button_fg_accept'])
-    _btn_style('Equation.TButton', UI_STYLE['button_fg_accent2'])
+    _btn_style("TButton", fg)
+    _btn_style("Primary.TButton", UI_STYLE["button_fg_accept"])
+    _btn_style("Secondary.TButton", fg)
+    _btn_style("Danger.TButton", UI_STYLE["button_fg_cancel"])
+    _btn_style("Accent.TButton", UI_STYLE["button_fg_accept"])
+    _btn_style("Equation.TButton", UI_STYLE["button_fg_accent2"])
 
     # Entry: same font as rest of UI; field slightly lighter than main bg
     style.configure(
-        'TEntry',
+        "TEntry",
         fieldbackground=field_bg,
         foreground=fg,
         font=font_normal,
-        padding=UI_STYLE['padding'],
+        padding=UI_STYLE["padding"],
     )
     # Copy layout from base style to hover variant
-    style.layout('TEntry.Hover', style.layout('TEntry'))
+    style.layout("TEntry.Hover", style.layout("TEntry"))
     style.configure(
-        'TEntry.Hover',
+        "TEntry.Hover",
         fieldbackground=hover_bg,
         foreground=fg,
         font=font_normal,
-        padding=UI_STYLE['padding'],
+        padding=UI_STYLE["padding"],
     )
 
     # Combobox: field slightly lighter than main bg
     style.configure(
-        'TCombobox',
+        "TCombobox",
         fieldbackground=field_bg,
         foreground=fg,
         background=bg,
         arrowcolor=fg,
         font=font_normal,
-        padding=UI_STYLE['padding'],
+        padding=UI_STYLE["padding"],
     )
     # Copy layout from base style to hover variant
-    style.layout('TCombobox.Hover', style.layout('TCombobox'))
+    style.layout("TCombobox.Hover", style.layout("TCombobox"))
     style.configure(
-        'TCombobox.Hover',
+        "TCombobox.Hover",
         fieldbackground=hover_bg,
         foreground=fg,
         background=bg,
         arrowcolor=fg,
         font=font_normal,
-        padding=UI_STYLE['padding'],
+        padding=UI_STYLE["padding"],
     )
     style.map(
-        'TCombobox',
-        fieldbackground=[('readonly', field_bg), ('focus', hover_bg)],
-        foreground=[('readonly', fg)],
-        background=[('focus', bg)],
-        arrowcolor=[('focus', fg), ('readonly', fg)],
+        "TCombobox",
+        fieldbackground=[("readonly", field_bg), ("focus", hover_bg)],
+        foreground=[("readonly", fg)],
+        background=[("focus", bg)],
+        arrowcolor=[("focus", fg), ("readonly", fg)],
     )
     style.map(
-        'TCombobox.Hover',
-        fieldbackground=[('readonly', hover_bg), ('focus', hover_bg)],
-        foreground=[('readonly', fg)],
-        background=[('focus', bg)],
-        arrowcolor=[('focus', fg), ('readonly', fg)],
+        "TCombobox.Hover",
+        fieldbackground=[("readonly", hover_bg), ("focus", hover_bg)],
+        foreground=[("readonly", fg)],
+        background=[("focus", bg)],
+        arrowcolor=[("focus", fg), ("readonly", fg)],
     )
 
     # Radiobutton and Checkbutton: same font, hover and focus so current option is visible
-    style.configure('TRadiobutton', background=bg, foreground=fg, font=font_normal)
+    style.configure("TRadiobutton", background=bg, foreground=fg, font=font_normal)
     # Copy layout from base style to hover variant
-    style.layout('TRadiobutton.Hover', style.layout('TRadiobutton'))
-    style.configure('TRadiobutton.Hover', background=hover_bg, foreground=fg, font=font_normal)
-    style.map(
-        'TRadiobutton',
-        background=[('active', bg), ('focus', hover_bg)],
-        foreground=[('active', fg), ('focus', fg)],
+    style.layout("TRadiobutton.Hover", style.layout("TRadiobutton"))
+    style.configure(
+        "TRadiobutton.Hover", background=hover_bg, foreground=fg, font=font_normal
     )
     style.map(
-        'TRadiobutton.Hover',
-        background=[('active', hover_bg), ('focus', hover_bg)],
-        foreground=[('active', fg), ('focus', fg)],
+        "TRadiobutton",
+        background=[("active", bg), ("focus", hover_bg)],
+        foreground=[("active", fg), ("focus", fg)],
     )
-    style.configure('TCheckbutton', background=bg, foreground=fg, font=font_normal)
+    style.map(
+        "TRadiobutton.Hover",
+        background=[("active", hover_bg), ("focus", hover_bg)],
+        foreground=[("active", fg), ("focus", fg)],
+    )
+    style.configure("TCheckbutton", background=bg, foreground=fg, font=font_normal)
     # Copy layout from base style to hover variant
-    style.layout('TCheckbutton.Hover', style.layout('TCheckbutton'))
-    style.configure('TCheckbutton.Hover', background=hover_bg, foreground=fg, font=font_normal)
-    style.map(
-        'TCheckbutton',
-        background=[('active', bg), ('focus', hover_bg)],
-        foreground=[('active', fg), ('focus', fg)],
+    style.layout("TCheckbutton.Hover", style.layout("TCheckbutton"))
+    style.configure(
+        "TCheckbutton.Hover", background=hover_bg, foreground=fg, font=font_normal
     )
     style.map(
-        'TCheckbutton.Hover',
-        background=[('active', hover_bg), ('focus', hover_bg)],
-        foreground=[('active', fg), ('focus', fg)],
+        "TCheckbutton",
+        background=[("active", bg), ("focus", hover_bg)],
+        foreground=[("active", fg), ("focus", fg)],
+    )
+    style.map(
+        "TCheckbutton.Hover",
+        background=[("active", hover_bg), ("focus", hover_bg)],
+        foreground=[("active", fg), ("focus", fg)],
     )
 
     # Scrollbars
-    style.configure('Vertical.TScrollbar', background=bg, troughcolor=bg, arrowcolor=fg)
-    style.configure('Horizontal.TScrollbar', background=bg, troughcolor=bg, arrowcolor=fg)
+    style.configure("Vertical.TScrollbar", background=bg, troughcolor=bg, arrowcolor=fg)
+    style.configure(
+        "Horizontal.TScrollbar", background=bg, troughcolor=bg, arrowcolor=fg
+    )
 
     # Config dialog sections
-    style.configure('ConfigSectionHeader.TFrame', background=btn_light)
-    style.configure('ConfigSectionHeader.TLabel', background=btn_light, foreground=fg, font=font_bold)
-    style.configure('ConfigSectionContent.TFrame', background=bg)
+    style.configure("ConfigSectionHeader.TFrame", background=btn_light)
+    style.configure(
+        "ConfigSectionHeader.TLabel",
+        background=btn_light,
+        foreground=fg,
+        font=font_bold,
+    )
+    style.configure("ConfigSectionContent.TFrame", background=bg)
     font_desc = (fam, max(8, int(sz * 0.7)))
-    style.configure('ConfigOptionDesc.TLabel', background=bg, foreground=fg, font=font_desc)
+    style.configure(
+        "ConfigOptionDesc.TLabel", background=bg, foreground=fg, font=font_desc
+    )
 
 
 def apply_hover_to_children(parent: Any) -> None:
@@ -647,27 +702,31 @@ def apply_hover_to_children(parent: Any) -> None:
     for w in parent.winfo_children():
         apply_hover_to_children(w)
         cls = w.winfo_class()
-        if cls not in ('TEntry', 'TCombobox'):
+        if cls not in ("TEntry", "TCombobox"):
             continue
-        hover_style = cls + '.Hover'
-        normal_style = w.cget('style') or cls
+        hover_style = cls + ".Hover"
+        normal_style = w.cget("style") or cls
 
-        def _on_enter(_: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+        def _on_enter(
+            _: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style
+        ) -> None:
             try:
                 widget.configure(style=hov)
             except tkinter.TclError:
                 # Hover style not available, ignore
                 pass
 
-        def _on_leave(_: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style) -> None:
+        def _on_leave(
+            _: Any, widget: Any = w, norm: str = normal_style, hov: str = hover_style
+        ) -> None:
             try:
                 widget.configure(style=norm)
             except tkinter.TclError:
                 # Style configuration failed, ignore
                 pass
 
-        w.bind('<Enter>', _on_enter)
-        w.bind('<Leave>', _on_leave)
+        w.bind("<Enter>", _on_enter)
+        w.bind("<Leave>", _on_leave)
 
 
 def setup_fonts() -> tuple[Any, Any]:
@@ -688,11 +747,14 @@ def setup_fonts() -> tuple[Any, Any]:
 
     try:
         from utils import get_logger
+
         logger = get_logger(__name__)
     except ImportError:
         logger = None
 
-    def _set_font_property(setter_method: Any, value: Any, property_name: str, default_value: Any) -> None:
+    def _set_font_property(
+        setter_method: Any, value: Any, property_name: str, default_value: Any
+    ) -> None:
         try:
             setter_method(value)
         except (ValueError, KeyError) as e:
@@ -706,12 +768,18 @@ def setup_fonts() -> tuple[Any, Any]:
     fontt = font0.copy()
     fonta = font0.copy()
 
-    _set_font_property(fontt.set_family, FONT_CONFIG['family'], 'font family', 'serif')
-    _set_font_property(fontt.set_size, FONT_CONFIG['title_size'], 'title size', 'xx-large')
-    _set_font_property(fontt.set_weight, FONT_CONFIG['title_weight'], 'title weight', 'semibold')
-    _set_font_property(fonta.set_family, FONT_CONFIG['family'], 'font family', 'serif')
-    _set_font_property(fonta.set_size, FONT_CONFIG['axis_size'], 'axis size', 30)
-    _set_font_property(fonta.set_style, FONT_CONFIG['axis_style'], 'axis style', 'italic')
+    _set_font_property(fontt.set_family, FONT_CONFIG["family"], "font family", "serif")
+    _set_font_property(
+        fontt.set_size, FONT_CONFIG["title_size"], "title size", "xx-large"
+    )
+    _set_font_property(
+        fontt.set_weight, FONT_CONFIG["title_weight"], "title weight", "semibold"
+    )
+    _set_font_property(fonta.set_family, FONT_CONFIG["family"], "font family", "serif")
+    _set_font_property(fonta.set_size, FONT_CONFIG["axis_size"], "axis size", 30)
+    _set_font_property(
+        fonta.set_style, FONT_CONFIG["axis_style"], "axis style", "italic"
+    )
 
     _font_cache = (fontt, fonta)
     return _font_cache

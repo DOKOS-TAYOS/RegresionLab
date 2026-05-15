@@ -7,10 +7,10 @@ from config.env import get_env
 
 # Map common format variants to canonical extensions (for _normalize_plot_format)
 _PLOT_FORMAT_MAPPING: dict[str, str] = {
-    'jpg': 'jpg',
-    'jpeg': 'jpg',
-    'png': 'png',
-    'pdf': 'pdf',
+    "jpg": "jpg",
+    "jpeg": "jpg",
+    "png": "png",
+    "pdf": "pdf",
 }
 
 
@@ -36,15 +36,15 @@ def _normalize_plot_format(value: str) -> str:
         >>> _normalize_plot_format('unknown')
         'png'
     """
-    normalized = (value or 'png').strip().lower()
-    return _PLOT_FORMAT_MAPPING.get(normalized, 'png')
+    normalized = (value or "png").strip().lower()
+    return _PLOT_FORMAT_MAPPING.get(normalized, "png")
 
 
 FILE_CONFIG = {
-    'input_dir': get_env('FILE_INPUT_DIR', 'input'),
-    'output_dir': get_env('FILE_OUTPUT_DIR', 'output'),
-    'filename_template': get_env('FILE_FILENAME_TEMPLATE', 'fit_{}'),
-    'plot_format': _normalize_plot_format(get_env('FILE_PLOT_FORMAT', 'png')),
+    "input_dir": get_env("FILE_INPUT_DIR", "input"),
+    "output_dir": get_env("FILE_OUTPUT_DIR", "output"),
+    "filename_template": get_env("FILE_FILENAME_TEMPLATE", "fit_{}"),
+    "plot_format": _normalize_plot_format(get_env("FILE_PLOT_FORMAT", "png")),
 }
 
 
@@ -79,7 +79,7 @@ def ensure_output_directory(output_dir: Optional[str] = None) -> str:
         OSError: If the directory cannot be created.
     """
     if output_dir is None:
-        output_dir = FILE_CONFIG['output_dir']
+        output_dir = FILE_CONFIG["output_dir"]
     project_root = get_project_root()
     full_path = project_root / output_dir
     try:
@@ -110,9 +110,9 @@ def get_output_path(fit_name: str, output_dir: Optional[str] = None) -> str:
         '.../output/fit_linear_fit.png'
     """
     if output_dir is None:
-        output_dir = FILE_CONFIG['output_dir']
+        output_dir = FILE_CONFIG["output_dir"]
     output_path = ensure_output_directory(output_dir)
-    filename = FILE_CONFIG['filename_template'].format(fit_name)
+    filename = FILE_CONFIG["filename_template"].format(fit_name)
     base = Path(filename).stem
-    fmt = FILE_CONFIG['plot_format']
+    fmt = FILE_CONFIG["plot_format"]
     return str(Path(output_path) / f"{base}.{fmt}")

@@ -20,6 +20,7 @@ def bind_enter_to_accept(
         accept_callback: Callback function with signature ``() -> None`` to call
             when Enter is pressed.
     """
+
     def _on_enter(_event: Event) -> str:
         accept_callback()
         return "break"

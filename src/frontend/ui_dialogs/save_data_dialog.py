@@ -20,20 +20,20 @@ def open_save_dialog(
     path = filedialog.asksaveasfilename(
         parent=parent,
         initialdir=initial_dir,
-        defaultextension='.csv',
+        defaultextension=".csv",
         filetypes=[
-            (t('data_analysis.filetype_csv'), '*.csv'),
-            (t('data_analysis.filetype_txt'), '*.txt'),
-            (t('data_analysis.filetype_xlsx'), '*.xlsx'),
+            (t("data_analysis.filetype_csv"), "*.csv"),
+            (t("data_analysis.filetype_txt"), "*.txt"),
+            (t("data_analysis.filetype_xlsx"), "*.xlsx"),
         ],
     )
     if not path:
         on_focus_data()
         return
     try:
-        ext = Path(path).suffix.lower().lstrip('.')
-        save_dataframe(data, path, ext if ext in ('csv', 'txt', 'xlsx') else 'csv')
-        messagebox.showinfo(t('dialog.data'), t('data_analysis.saved_ok', path=path))
+        ext = Path(path).suffix.lower().lstrip(".")
+        save_dataframe(data, path, ext if ext in ("csv", "txt", "xlsx") else "csv")
+        messagebox.showinfo(t("dialog.data"), t("data_analysis.saved_ok", path=path))
     except Exception as e:
-        messagebox.showerror(t('dialog.data'), str(e))
+        messagebox.showerror(t("dialog.data"), str(e))
     on_focus_data()

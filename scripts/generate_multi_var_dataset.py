@@ -110,41 +110,61 @@ def generate_multi_var_dataset(
     N = a_cosh * np.cosh(b_cosh * x) + noise(n_points)
 
     data: dict[str, np.ndarray] = {
-        'x': x,
-        'A': A,
-        'B': B,
-        'C': C,
-        'D': D,
-        'E': E,
-        'F': F,
-        'G': G,
-        'H': H,
-        'I': y_fourth,
-        'J': J,
-        'K': K,
-        'L': L,
-        'M': M,
-        'N': N,
+        "x": x,
+        "A": A,
+        "B": B,
+        "C": C,
+        "D": D,
+        "E": E,
+        "F": F,
+        "G": G,
+        "H": H,
+        "I": y_fourth,
+        "J": J,
+        "K": K,
+        "L": L,
+        "M": M,
+        "N": N,
     }
 
-    var_order = ['x', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']
+    var_order = [
+        "x",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+    ]
     if add_uncertainties:
         for key in list(data.keys()):
-            u = np.abs(x) * 0.01 + 0.02 if key == 'x' else np.abs(data[key]) * 0.03 + 0.05
-            data[f'u{key}'] = np.maximum(u, 1e-6)
-        cols = [item for name in var_order for item in (name, f'u{name}')]
+            u = (
+                np.abs(x) * 0.01 + 0.02
+                if key == "x"
+                else np.abs(data[key]) * 0.03 + 0.05
+            )
+            data[f"u{key}"] = np.maximum(u, 1e-6)
+        cols = [item for name in var_order for item in (name, f"u{name}")]
     else:
         cols = var_order
     return pd.DataFrame({c: data[c] for c in cols})
 
 
-def save_dataset(df: pd.DataFrame, filename: str, output_dir: str = 'input') -> Path:
+def save_dataset(df: pd.DataFrame, filename: str, output_dir: str = "input") -> Path:
     """Save dataset as CSV (and optionally .xlsx, .txt). Returns path to CSV."""
     project_root = Path(__file__).resolve().parent.parent
     out = project_root / output_dir
     out.mkdir(exist_ok=True)
-    csv_path = out / f'{filename}.csv'
-    df.to_csv(csv_path, index=False, encoding='utf-8')
+    csv_path = out / f"{filename}.csv"
+    df.to_csv(csv_path, index=False, encoding="utf-8")
     print(f"Generated: {csv_path} ({len(df)} rows, {len(df.columns)} columns)")
     return csv_path
 
@@ -157,11 +177,13 @@ def main() -> None:
         add_uncertainties=True,
         seed=42,
     )
-    save_dataset(df, 'MultiVar_Equations')
+    save_dataset(df, "MultiVar_Equations")
     print("\nVariables: x (independent); A..N (dependent).")
     print("Equations: linear, quadratic, exponential, ln, inverse, sin, cos,")
-    print("  inverse_square, fourth_power, logistic, gaussian, linear(A,B), sinh, cosh.")
+    print(
+        "  inverse_square, fourth_power, logistic, gaussian, linear(A,B), sinh, cosh."
+    )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

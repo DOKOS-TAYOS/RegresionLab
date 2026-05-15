@@ -14,10 +14,10 @@ Supported languages:
 Usage::
 
     from i18n import t
-    
+
     # In UI code
     messagebox.showerror(t('error.title'), t('error.fitting_failed'))
-    
+
     # In logger code
     logger.info(t('log.application_starting'))
 """
@@ -42,7 +42,7 @@ _translation_cache: Dict[str, Dict[str, Any]] = {}
 # Cache resolved keys for current language to avoid repeated nested lookups
 _key_cache: Dict[str, str] = {}
 
-__all__ = ['initialize_i18n', 't', 'DEFAULT_LANGUAGE']
+__all__ = ["initialize_i18n", "t", "DEFAULT_LANGUAGE"]
 
 
 def _normalize_language(language: str) -> str:
@@ -64,12 +64,12 @@ def _normalize_language(language: str) -> str:
 def _get_language_from_env() -> str:
     """
     Get the language from the LANGUAGE environment variable.
-    
+
     Returns:
         Language code ('es', 'en', or 'de')
     """
-    lang = os.getenv('LANGUAGE', DEFAULT_LANGUAGE).lower()
-    
+    lang = os.getenv("LANGUAGE", DEFAULT_LANGUAGE).lower()
+
     return _normalize_language(lang)
 
 
@@ -77,30 +77,28 @@ def _load_translations(language: str) -> Dict[str, Any]:
     """
     Load translation file for the specified language.
     Uses an in-memory cache so each language file is read at most once.
-    
+
     Args:
         language: Language code ('es', 'en', or 'de')
-        
+
     Returns:
         Dictionary with translations
-        
+
     Raises:
         FileNotFoundError: If translation file doesn't exist
     """
     if language in _translation_cache:
         return _translation_cache[language]
-    
-    locales_dir = Path(__file__).parent / 'locales'
-    translation_file = locales_dir / f'{language}.json'
-    
+
+    locales_dir = Path(__file__).parent / "locales"
+    translation_file = locales_dir / f"{language}.json"
+
     if not translation_file.exists():
-        raise FileNotFoundError(
-            f"Translation file not found: {translation_file}"
-        )
-    
-    with open(translation_file, 'r', encoding='utf-8') as f:
+        raise FileNotFoundError(f"Translation file not found: {translation_file}")
+
+    with open(translation_file, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
+
     _translation_cache[language] = data
     return data
 
@@ -108,23 +106,23 @@ def _load_translations(language: str) -> Dict[str, Any]:
 def initialize_i18n(language: Optional[str] = None) -> None:
     """
     Initialize the internationalization system.
-    
+
     This function should be called once at application startup.
     If no language is specified, it reads from the LANGUAGE environment variable.
-    
+
     Args:
         language: Optional language code ('es', 'en', or 'de'). If None, reads from env var.
     """
     global _current_language, _translations, _key_cache
-    
+
     if language is None:
         language = _get_language_from_env()
     else:
         language = _normalize_language(language)
-    
+
     _current_language = language
     _key_cache.clear()
-    
+
     try:
         _translations = _load_translations(language)
     except FileNotFoundError as e:
@@ -159,7 +157,7 @@ def t(key: str, **kwargs: Any) -> str:
     # Ensure translations are loaded
     if not _translations:
         initialize_i18n()
-    
+
     # Use cached template string when available
     if key in _key_cache:
         template = _key_cache[key]
@@ -169,23 +167,23 @@ def t(key: str, **kwargs: Any) -> str:
             except (KeyError, ValueError):
                 return template
         return template
-    
+
     # Navigate nested dictionaries using dot notation
-    keys = key.split('.')
+    keys = key.split(".")
     value: Any = _translations
-    
+
     for k in keys:
         if isinstance(value, dict) and k in value:
             value = value[k]
         else:
             return key
-    
+
     if isinstance(value, dict):
         return key
-    
+
     template = str(value)
     _key_cache[key] = template
-    
+
     if kwargs:
         try:
             return template.format(**kwargs)

@@ -11,22 +11,22 @@ from utils import get_logger
 logger = get_logger(__name__)
 
 # Cleaning identifiers for UI
-CLEAN_DROP_NA = 'drop_na'
-CLEAN_DROP_DUPLICATES = 'drop_duplicates'
-CLEAN_FILL_NA_MEAN = 'fill_na_mean'
-CLEAN_FILL_NA_MEDIAN = 'fill_na_median'
-CLEAN_FILL_NA_ZERO = 'fill_na_zero'
-CLEAN_REMOVE_OUTLIERS_IQR = 'remove_outliers_iqr'
-CLEAN_REMOVE_OUTLIERS_ZSCORE = 'remove_outliers_zscore'
+CLEAN_DROP_NA = "drop_na"
+CLEAN_DROP_DUPLICATES = "drop_duplicates"
+CLEAN_FILL_NA_MEAN = "fill_na_mean"
+CLEAN_FILL_NA_MEDIAN = "fill_na_median"
+CLEAN_FILL_NA_ZERO = "fill_na_zero"
+CLEAN_REMOVE_OUTLIERS_IQR = "remove_outliers_iqr"
+CLEAN_REMOVE_OUTLIERS_ZSCORE = "remove_outliers_zscore"
 
 CLEAN_OPTIONS: dict[str, str] = {
-    CLEAN_DROP_NA: 'Drop rows with NaN',
-    CLEAN_DROP_DUPLICATES: 'Drop duplicate rows',
-    CLEAN_FILL_NA_MEAN: 'Fill NaN with column mean',
-    CLEAN_FILL_NA_MEDIAN: 'Fill NaN with column median',
-    CLEAN_FILL_NA_ZERO: 'Fill NaN with 0',
-    CLEAN_REMOVE_OUTLIERS_IQR: 'Remove outliers (IQR method)',
-    CLEAN_REMOVE_OUTLIERS_ZSCORE: 'Remove outliers (z-score)',
+    CLEAN_DROP_NA: "Drop rows with NaN",
+    CLEAN_DROP_DUPLICATES: "Drop duplicate rows",
+    CLEAN_FILL_NA_MEAN: "Fill NaN with column mean",
+    CLEAN_FILL_NA_MEDIAN: "Fill NaN with column median",
+    CLEAN_FILL_NA_ZERO: "Fill NaN with 0",
+    CLEAN_REMOVE_OUTLIERS_IQR: "Remove outliers (IQR method)",
+    CLEAN_REMOVE_OUTLIERS_ZSCORE: "Remove outliers (z-score)",
 }
 
 
@@ -104,7 +104,7 @@ def apply_cleaning(
             if std == 0:
                 continue
             z = np.abs((result[col] - mean) / std)
-            mask &= (z <= 3)
+            mask &= z <= 3
         before = len(result)
         result = result[mask]
         logger.info(f"Z-score outliers: dropped {before - len(result)} rows")

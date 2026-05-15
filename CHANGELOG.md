@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased]
+
+### Added
+
+- **Dependabot configuration**: Added weekly dependency update checks for Python, Sphinx documentation, GitHub Actions, and the independent `nodejs` desktop branch.
+- **Security policy**: Added GitHub-facing vulnerability reporting guidance for responsible disclosure.
+- **Update helper regression test**: Added coverage to ensure the GUI updater uses fast-forward-only Git updates.
+
+### Changed
+
+- **GitHub Actions hardening**: Updated CI to `actions/setup-python@v5`, enabled pip caching, added `pip check`, and added Ruff format verification.
+- **Updater safety**: The Tkinter update helper now runs `git pull --ff-only` to avoid automatic merge commits during in-app updates.
+- **Ignore rules**: Expanded `.gitignore` for local `.env.*` secrets and Node/Electron build artifacts.
+
+
 ## [1.1.2] - 2026-03-07
 
 ### Added

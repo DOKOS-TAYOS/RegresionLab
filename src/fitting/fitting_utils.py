@@ -113,7 +113,9 @@ def _prepare_fit_arrays(
         validate_fitting_data(data, x_names[0], y_name)
         for extra_x in x_names[1:]:
             if extra_x not in data.columns:
-                raise FittingError(f"Independent variable '{extra_x}' not found in data")
+                raise FittingError(
+                    f"Independent variable '{extra_x}' not found in data"
+                )
     except Exception as e:
         logger.error(t("log.data_validation_failed", error=str(e)))
         raise FittingError(t("error.data_validation_failed", error=str(e)))
@@ -193,7 +195,9 @@ def _format_parameter_output(
     for name, param, uncertainty in zip(param_names, params, uncertainties):
         formatted_param, formatted_uncertainty = format_parameter(param, uncertainty)
         formatted_params[name] = formatted_param
-        lines.append(f"{name}={formatted_param}, \u03c3({name})={formatted_uncertainty}")
+        lines.append(
+            f"{name}={formatted_param}, \u03c3({name})={formatted_uncertainty}"
+        )
     return formatted_params, lines
 
 
@@ -264,9 +268,14 @@ def _append_statistics_lines(
     """Append human-readable statistics lines to result text."""
     lines.append(f"R\u00b2={fit_stats['r_squared']:.6f}")
     lines.append(t("stats.rmse", value=format_scientific(fit_stats["rmse"])))
-    lines.append(t("stats.chi_squared", value=format_scientific(fit_stats["chi_squared"])))
     lines.append(
-        t("stats.reduced_chi_squared", value=format_scientific(fit_stats["reduced_chi_squared"]))
+        t("stats.chi_squared", value=format_scientific(fit_stats["chi_squared"]))
+    )
+    lines.append(
+        t(
+            "stats.reduced_chi_squared",
+            value=format_scientific(fit_stats["reduced_chi_squared"]),
+        )
     )
     lines.append(t("stats.dof", value=fit_stats["dof"]))
 
@@ -299,10 +308,14 @@ def generic_fit(
 ) -> Tuple[str, Any, str, Optional[dict]]:
     """Generic fitting function that performs curve fitting with any model."""
     x_names = _normalize_x_names(x_name)
-    logger.info(t("log.starting_generic_fit", x=str(x_names), y=y_name, params=str(param_names)))
+    logger.info(
+        t("log.starting_generic_fit", x=str(x_names), y=y_name, params=str(param_names))
+    )
 
     if equation_template is None:
-        raise FittingError("Equation format template is missing in config (equations.yaml 'format' key).")
+        raise FittingError(
+            "Equation format template is missing in config (equations.yaml 'format' key)."
+        )
 
     prepared = _prepare_fit_arrays(data=data, x_name=x_name, y_name=y_name)
     params_array, cov = _run_curve_fit(
@@ -316,20 +329,26 @@ def generic_fit(
 
     try:
         uncertainties = list(np.sqrt(np.diag(cov)))
-        logger.debug(t("log.extracted_parameters", params=str(dict(zip(param_names, params)))))
+        logger.debug(
+            t("log.extracted_parameters", params=str(dict(zip(param_names, params))))
+        )
         if any(np.isinf(u) for u in uncertainties):
             logger.info(t("log.infinite_uncertainties"))
     except Exception as e:
         logger.error(t("log.error_extracting_parameters", error=str(e)), exc_info=True)
         raise FittingError(t("error.extracting_parameters", error=str(e)))
 
-    formatted_params, text_lines = _format_parameter_output(param_names, params, uncertainties)
+    formatted_params, text_lines = _format_parameter_output(
+        param_names, params, uncertainties
+    )
 
     try:
         y_fitted = np.asarray(fit_func(prepared.x, *params), dtype=float)
         logger.debug(t("log.fitted_curve_calculated", points=len(y_fitted)))
     except Exception as e:
-        logger.error(t("log.error_calculating_fitted_curve", error=str(e)), exc_info=True)
+        logger.error(
+            t("log.error_calculating_fitted_curve", error=str(e)), exc_info=True
+        )
         raise FittingError(t("error.calculating_fitted_curve", error=str(e)))
 
     fit_stats = _compute_fit_statistics(
@@ -349,7 +368,11 @@ def generic_fit(
     logger.info(t("log.fit_completed_successfully", equation=formatted_equation))
     if equation_formula is None:
         equation_formula = FORMAT_TO_FORMULA.get(equation_template) or None
-    equation_str = f"{equation_formula}\n{formatted_equation}" if equation_formula else formatted_equation
+    equation_str = (
+        f"{equation_formula}\n{formatted_equation}"
+        if equation_formula
+        else formatted_equation
+    )
 
     fit_info: Optional[dict] = {
         "fit_func": fit_func,
@@ -398,7 +421,9 @@ def merge_initial_guess(
     """Merge computed initial guesses with user overrides."""
     if override is None or len(override) != len(computed):
         return list(computed)
-    return [float(ov) if ov is not None else comp for comp, ov in zip(computed, override)]
+    return [
+        float(ov) if ov is not None else comp for comp, ov in zip(computed, override)
+    ]
 
 
 def merge_bounds(
@@ -410,7 +435,10 @@ def merge_bounds(
     """Merge computed parameter bounds with user overrides."""
     if override_lower is None and override_upper is None:
         return (
-            (tuple(float(x) for x in computed_bounds[0]), tuple(float(x) for x in computed_bounds[1]))
+            (
+                tuple(float(x) for x in computed_bounds[0]),
+                tuple(float(x) for x in computed_bounds[1]),
+            )
             if computed_bounds is not None
             else None
         )
@@ -517,7 +545,9 @@ def _build_expression_fit_callable(equation_meta: dict[str, Any]) -> Callable[..
         x_name: Union[str, List[str]],
         y_name: str,
         initial_guess_override: Optional[List[Optional[float]]] = None,
-        bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+        bounds_override: Optional[
+            Tuple[List[Optional[float]], List[Optional[float]]]
+        ] = None,
     ) -> Tuple[str, Any, str, Optional[dict]]:
         return evaluator.fit(
             data,
@@ -534,7 +564,9 @@ def _build_expression_fit_callable(equation_meta: dict[str, Any]) -> Callable[..
 def get_fitting_function(
     equation_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Optional[Callable]:
     """Get fitting function for equation id (supports python and expression types)."""
     logger.debug(t("log.getting_fitting_function", equation=equation_name))
@@ -552,13 +584,21 @@ def get_fitting_function(
     try:
         if eq_type == "expression":
             base_fit = _build_expression_fit_callable(equation_meta)
-            function_name = str(equation_meta.get("target", f"expression::{equation_name}"))
+            function_name = str(
+                equation_meta.get("target", f"expression::{equation_name}")
+            )
         else:
-            function_name = str(equation_meta.get("target") or equation_meta.get("function"))
+            function_name = str(
+                equation_meta.get("target") or equation_meta.get("function")
+            )
             base_fit = _resolve_python_fit_callable(function_name)
     except (ImportError, AttributeError, KeyError, ValueError) as e:
         logger.error(
-            t("log.error_importing_fitting_function", function=str(equation_meta.get("target", "<unknown>")), error=str(e)),
+            t(
+                "log.error_importing_fitting_function",
+                function=str(equation_meta.get("target", "<unknown>")),
+                error=str(e),
+            ),
             exc_info=True,
         )
         return None
@@ -566,11 +606,17 @@ def get_fitting_function(
     logger.info(t("log.successfully_loaded_fitting_function", function=function_name))
 
     default_guess = equation_meta.get("initial_guess")
-    defaults_guess_list = [float(v) for v in default_guess] if isinstance(default_guess, list) else None
-    merged_initial_guess = _merge_override_list(defaults_guess_list, initial_guess_override)
+    defaults_guess_list = (
+        [float(v) for v in default_guess] if isinstance(default_guess, list) else None
+    )
+    merged_initial_guess = _merge_override_list(
+        defaults_guess_list, initial_guess_override
+    )
 
     default_bounds = equation_meta.get("bounds")
-    defaults_bounds_tuple: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None
+    defaults_bounds_tuple: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None
     if (
         isinstance(default_bounds, (tuple, list))
         and len(default_bounds) == 2
@@ -584,7 +630,9 @@ def get_fitting_function(
     accepts_initial = "initial_guess_override" in signature.parameters
     accepts_bounds = "bounds_override" in signature.parameters
 
-    def fit_with_overrides(data: Any, x_name: Any, y_name: str) -> Tuple[str, Any, str, Optional[dict]]:
+    def fit_with_overrides(
+        data: Any, x_name: Any, y_name: str
+    ) -> Tuple[str, Any, str, Optional[dict]]:
         kwargs: dict[str, Any] = {}
         if accepts_initial:
             kwargs["initial_guess_override"] = merged_initial_guess
@@ -592,5 +640,9 @@ def get_fitting_function(
             kwargs["bounds_override"] = merged_bounds
         return base_fit(data, x_name, y_name, **kwargs)
 
-    fit_with_overrides.num_independent_vars = int(equation_meta.get("num_independent_vars", getattr(base_fit, "num_independent_vars", 1)))  # type: ignore[attr-defined]
+    fit_with_overrides.num_independent_vars = int(
+        equation_meta.get(
+            "num_independent_vars", getattr(base_fit, "num_independent_vars", 1)
+        )
+    )  # type: ignore[attr-defined]
     return fit_with_overrides

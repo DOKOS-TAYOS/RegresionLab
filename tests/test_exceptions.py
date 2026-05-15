@@ -16,31 +16,37 @@ from utils import (
 )
 
 
-@pytest.mark.parametrize("exception_class,parent_class", [
-    (RegressionLabError, Exception),
-    (DataLoadError, RegressionLabError),
-    (DataValidationError, RegressionLabError),
-    (FileNotFoundError, DataLoadError),
-    (InvalidFileTypeError, DataLoadError),
-    (FittingError, RegressionLabError),
-    (EquationError, RegressionLabError),
-    (ValidationError, RegressionLabError),
-])
+@pytest.mark.parametrize(
+    "exception_class,parent_class",
+    [
+        (RegressionLabError, Exception),
+        (DataLoadError, RegressionLabError),
+        (DataValidationError, RegressionLabError),
+        (FileNotFoundError, DataLoadError),
+        (InvalidFileTypeError, DataLoadError),
+        (FittingError, RegressionLabError),
+        (EquationError, RegressionLabError),
+        (ValidationError, RegressionLabError),
+    ],
+)
 def test_exception_hierarchy(exception_class: type, parent_class: type) -> None:
     """Test exception class hierarchy."""
     assert issubclass(exception_class, parent_class)
 
 
-@pytest.mark.parametrize("exception_class", [
-    RegressionLabError,
-    DataLoadError,
-    DataValidationError,
-    FileNotFoundError,
-    InvalidFileTypeError,
-    FittingError,
-    EquationError,
-    ValidationError,
-])
+@pytest.mark.parametrize(
+    "exception_class",
+    [
+        RegressionLabError,
+        DataLoadError,
+        DataValidationError,
+        FileNotFoundError,
+        InvalidFileTypeError,
+        FittingError,
+        EquationError,
+        ValidationError,
+    ],
+)
 def test_exception_raising(exception_class: type) -> None:
     """Test raising exceptions."""
     with pytest.raises(exception_class):

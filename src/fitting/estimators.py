@@ -56,7 +56,11 @@ def estimate_trigonometric_parameters(x: Any, y: Any) -> Tuple[float, float]:
     if x_range < _EPS_DENOM:
         # No range in x: cannot estimate period; avoid division by zero below
         logger.debug(
-            t('log.estimated_trig_parameters', amplitude=f"{amplitude:.3f}", frequency=f"{frequency:.3f}")
+            t(
+                "log.estimated_trig_parameters",
+                amplitude=f"{amplitude:.3f}",
+                frequency=f"{frequency:.3f}",
+            )
         )
         return amplitude, frequency
 
@@ -73,32 +77,40 @@ def estimate_trigonometric_parameters(x: Any, y: Any) -> Tuple[float, float]:
             else:
                 frequency = 2.0 * np.pi / x_range
     except Exception as e:
-        logger.warning(t('log.peak_detection_failed', error=str(e)))
+        logger.warning(t("log.peak_detection_failed", error=str(e)))
 
     # 2) Fallback: autocorrelation to estimate period
     if frequency <= 0 or frequency > 1e8:
         try:
             n = min(len(y_centered), _MAX_AUTOCORR_LAG)
-            acf = np.correlate(y_centered[:n], y_centered[:n], mode='full')
-            acf = acf[len(acf) // 2:]
+            acf = np.correlate(y_centered[:n], y_centered[:n], mode="full")
+            acf = acf[len(acf) // 2 :]
             if len(acf) > 2:
                 peaks_acf, _ = find_peaks(acf, distance=max(1, n // 10))
                 if len(peaks_acf) >= 2:
                     lag_diff = np.diff(peaks_acf)
                     if len(lag_diff) > 0 and np.median(lag_diff) > 0:
-                        dx = float(np.median(np.diff(x))) if len(x) > 1 else x_range / max(1, len(x))
+                        dx = (
+                            float(np.median(np.diff(x)))
+                            if len(x) > 1
+                            else x_range / max(1, len(x))
+                        )
                         period = float(np.median(lag_diff)) * dx
                         if period > _EPS_DENOM:
                             frequency = 2.0 * np.pi / period
             if not (0 < frequency <= 1e8):
                 frequency = 2.0 * np.pi / x_range
         except Exception as e:
-            logger.warning(t('log.peak_detection_failed', error=str(e)))
+            logger.warning(t("log.peak_detection_failed", error=str(e)))
             frequency = 2.0 * np.pi / x_range
 
     frequency = np.clip(float(frequency), 1e-8, 1e8)
     logger.debug(
-        t('log.estimated_trig_parameters', amplitude=f"{amplitude:.3f}", frequency=f"{frequency:.3f}")
+        t(
+            "log.estimated_trig_parameters",
+            amplitude=f"{amplitude:.3f}",
+            frequency=f"{frequency:.3f}",
+        )
     )
     return amplitude, frequency
 
@@ -129,9 +141,9 @@ def estimate_phase_shift(x: Any, y: Any, amplitude: float, frequency: float) -> 
         phase = np.pi / 2.0 - frequency * x_at_max
         phase = float(np.arctan2(np.sin(phase), np.cos(phase)))
     except Exception as e:
-        logger.warning(t('log.phase_estimation_failed', error=str(e)))
+        logger.warning(t("log.phase_estimation_failed", error=str(e)))
         phase = 0.0
-    logger.debug(t('log.estimated_phase_shift', phase=f"{phase:.3f}"))
+    logger.debug(t("log.estimated_phase_shift", phase=f"{phase:.3f}"))
     return phase
 
 
@@ -191,7 +203,7 @@ def estimate_single_power_parameter(x: Any, y: Any, power: int) -> float:
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
-    xp = x ** power
+    xp = x**power
     denom = np.sum(xp * xp)
     if denom < _EPS_DENOM:
         return 1.0
@@ -234,7 +246,7 @@ def estimate_inverse_parameter(x: Any, y: Any, power: int) -> float:
     """
     x = np.asarray(x, dtype=float)
     y = np.asarray(y, dtype=float)
-    return float(np.median(y * (x ** power)))
+    return float(np.median(y * (x**power)))
 
 
 def estimate_gaussian_parameters(x: Any, y: Any) -> Tuple[float, float, float]:
@@ -343,7 +355,9 @@ def estimate_exponential_parameters(x: Any, y: Any) -> Tuple[float, float]:
         dx = x[-1] - x[0]
         if np.abs(dx) > 1e-12:
             end_ratio = np.abs(y[-1]) / (np.abs(y[0]) + 1e-300)
-            b_0 = float(np.clip(np.log(end_ratio + 1e-12) / dx, -b_max + 0.01, b_max - 0.01))
+            b_0 = float(
+                np.clip(np.log(end_ratio + 1e-12) / dx, -b_max + 0.01, b_max - 0.01)
+            )
         else:
             b_0 = 0.0
     return a_0, b_0
@@ -401,7 +415,9 @@ def estimate_hyperbolic_parameters(x: Any, y: Any) -> Tuple[float, float]:
     return amplitude, frequency
 
 
-def estimate_hyperbolic_bounds(x: Any) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+def estimate_hyperbolic_bounds(
+    x: Any,
+) -> Tuple[Tuple[float, float], Tuple[float, float]]:
     """
     Return parameter bounds for hyperbolic fits (sinh/cosh) to avoid overflow.
 

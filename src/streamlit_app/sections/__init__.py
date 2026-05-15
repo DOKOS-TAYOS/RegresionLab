@@ -15,13 +15,13 @@ from .modes import (
 )
 
 __all__ = [
-    'initialize_session_state',
-    'setup_sidebar',
-    'show_logo',
-    'show_help_section',
-    'mode_normal_fitting',
-    'mode_checker_fitting',
-    'mode_multiple_datasets',
-    'mode_total_fitting',
-    'mode_view_data',
+    "initialize_session_state",
+    "setup_sidebar",
+    "show_logo",
+    "show_help_section",
+    "mode_normal_fitting",
+    "mode_checker_fitting",
+    "mode_multiple_datasets",
+    "mode_total_fitting",
+    "mode_view_data",
 ]

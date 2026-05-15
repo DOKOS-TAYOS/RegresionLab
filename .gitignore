@@ -1,5 +1,8 @@
 # Environment variables
 .env
+.env.*
+!.env.example
+!.env_mobile.example
 
 # Update check state (last check timestamp)
 .last_update_check
@@ -54,6 +57,20 @@ dmypy.json
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node / Electron
+node_modules/
+desktop/node_modules/
+desktop/dist/
+desktop/dist-electron/
+desktop/.vite/
+desktop/coverage/
+desktop/playwright-report/
+desktop/test-results/
+*.tsbuildinfo
 
 # Sphinx documentation
 sphinx-docs/build/
@@ -87,6 +104,3 @@ output/*
 # Documentation builds
 docs/_build/
 site/
-
-# Keep template files
-!.env.example

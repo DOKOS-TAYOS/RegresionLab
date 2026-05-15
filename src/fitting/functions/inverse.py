@@ -26,7 +26,9 @@ def _fit_single_param(
     fit_name: str,
     a_0: float,
     initial_guess_override: Optional[list[Optional[float]]] = None,
-    bounds_override: Optional[tuple[list[Optional[float]], list[Optional[float]]]] = None,
+    bounds_override: Optional[
+        tuple[list[Optional[float]], list[Optional[float]]]
+    ] = None,
 ) -> tuple[str, NDArray, str]:
     """Common workflow for single-parameter inverse/log fits."""
     initial_guess = merge_initial_guess([a_0], initial_guess_override)
@@ -62,8 +64,10 @@ def generate_inverse_function(power: int) -> Callable[..., Numeric]:
     Returns:
         A function that takes t and coefficient a as arguments.
     """
+
     def inverse_func(t: Numeric, a: float) -> Numeric:
         return a / (t**power)
+
     return inverse_func
 
 
@@ -76,7 +80,9 @@ def fit_ln_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[list[Optional[float]]] = None,
-    bounds_override: Optional[tuple[list[Optional[float]], list[Optional[float]]]] = None,
+    bounds_override: Optional[
+        tuple[list[Optional[float]], list[Optional[float]]]
+    ] = None,
 ) -> tuple[str, NDArray, str]:
     """
     Fit a logarithmic model :math:`y = a \\ln(x)`.
@@ -95,8 +101,14 @@ def fit_ln_function(
     y = data[y_name]
     a_0 = estimate_ln_parameter(x, y)
     return _fit_single_param(
-        data, x_name, y_name, ln_function, 'fit_ln_function', a_0,
-        initial_guess_override, bounds_override,
+        data,
+        x_name,
+        y_name,
+        ln_function,
+        "fit_ln_function",
+        a_0,
+        initial_guess_override,
+        bounds_override,
     )
 
 
@@ -105,7 +117,9 @@ def fit_inverse_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[list[Optional[float]]] = None,
-    bounds_override: Optional[tuple[list[Optional[float]], list[Optional[float]]]] = None,
+    bounds_override: Optional[
+        tuple[list[Optional[float]], list[Optional[float]]]
+    ] = None,
 ) -> tuple[str, NDArray, str]:
     """
     Fit an inverse model :math:`y = a / x`.
@@ -124,8 +138,14 @@ def fit_inverse_function(
     y = data[y_name]
     a_0 = estimate_inverse_parameter(x, y, 1)
     return _fit_single_param(
-        data, x_name, y_name, inverse_function, 'fit_inverse_function', a_0,
-        initial_guess_override, bounds_override,
+        data,
+        x_name,
+        y_name,
+        inverse_function,
+        "fit_inverse_function",
+        a_0,
+        initial_guess_override,
+        bounds_override,
     )
 
 
@@ -134,7 +154,9 @@ def fit_inverse_square_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[list[Optional[float]]] = None,
-    bounds_override: Optional[tuple[list[Optional[float]], list[Optional[float]]]] = None,
+    bounds_override: Optional[
+        tuple[list[Optional[float]], list[Optional[float]]]
+    ] = None,
 ) -> tuple[str, NDArray, str]:
     """
     Fit an inverse‑square model :math:`y = a / x^2`.
@@ -153,6 +175,12 @@ def fit_inverse_square_function(
     y = data[y_name]
     a_0 = estimate_inverse_parameter(x, y, 2)
     return _fit_single_param(
-        data, x_name, y_name, inverse_square_function, 'fit_inverse_square_function', a_0,
-        initial_guess_override, bounds_override,
+        data,
+        x_name,
+        y_name,
+        inverse_square_function,
+        "fit_inverse_square_function",
+        a_0,
+        initial_guess_override,
+        bounds_override,
     )

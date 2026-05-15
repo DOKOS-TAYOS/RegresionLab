@@ -32,16 +32,16 @@ def save_dataframe(
     """
     path = Path(file_path)
     if file_type is None:
-        ext = path.suffix.lower().lstrip('.')
-        file_type = ext if ext in ('csv', 'txt', 'xlsx') else 'csv'
+        ext = path.suffix.lower().lstrip(".")
+        file_type = ext if ext in ("csv", "txt", "xlsx") else "csv"
 
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    if file_type == 'csv':
-        data.to_csv(path, index=False, na_rep='no')
-    elif file_type == 'txt':
-        data.to_csv(path, sep='\t', index=False, na_rep='no')
-    elif file_type == 'xlsx':
+    if file_type == "csv":
+        data.to_csv(path, index=False, na_rep="no")
+    elif file_type == "txt":
+        data.to_csv(path, sep="\t", index=False, na_rep="no")
+    elif file_type == "xlsx":
         data.to_excel(path, index=False)
     else:
         raise ValueError(f"Unsupported file type: {file_type}")
@@ -53,4 +53,4 @@ def save_dataframe(
 def get_default_save_directory() -> str:
     """Return the default directory for saving (input folder)."""
     root = get_project_root()
-    return str(root / FILE_CONFIG['input_dir'])
+    return str(root / FILE_CONFIG["input_dir"])

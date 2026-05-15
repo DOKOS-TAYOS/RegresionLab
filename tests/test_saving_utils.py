@@ -14,10 +14,12 @@ from loaders import save_dataframe, get_default_save_directory
 @pytest.fixture
 def sample_dataframe() -> pd.DataFrame:
     """Fixture for sample DataFrame."""
-    return pd.DataFrame({
-        'x': [1.0, 2.0, 3.0],
-        'y': [4.0, 5.0, 6.0],
-    })
+    return pd.DataFrame(
+        {
+            "x": [1.0, 2.0, 3.0],
+            "y": [4.0, 5.0, 6.0],
+        }
+    )
 
 
 class TestSaveDataframe:
@@ -25,10 +27,10 @@ class TestSaveDataframe:
 
     def test_save_csv(self, sample_dataframe: pd.DataFrame) -> None:
         """Test saving to CSV format."""
-        with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as tf:
+        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tf:
             path = tf.name
         try:
-            result = save_dataframe(sample_dataframe, path, 'csv')
+            result = save_dataframe(sample_dataframe, path, "csv")
             assert result == path
             loaded = pd.read_csv(path)
             pd.testing.assert_frame_equal(loaded, sample_dataframe)
@@ -37,33 +39,33 @@ class TestSaveDataframe:
 
     def test_save_txt(self, sample_dataframe: pd.DataFrame) -> None:
         """Test saving to TXT format (tab-separated)."""
-        with tempfile.NamedTemporaryFile(suffix='.txt', delete=False) as tf:
+        with tempfile.NamedTemporaryFile(suffix=".txt", delete=False) as tf:
             path = tf.name
         try:
-            result = save_dataframe(sample_dataframe, path, 'txt')
+            result = save_dataframe(sample_dataframe, path, "txt")
             assert result == path
-            loaded = pd.read_csv(path, sep='\t')
+            loaded = pd.read_csv(path, sep="\t")
             pd.testing.assert_frame_equal(loaded, sample_dataframe)
         finally:
             Path(path).unlink(missing_ok=True)
 
     def test_save_xlsx(self, sample_dataframe: pd.DataFrame) -> None:
         """Test saving to Excel format."""
-        with tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False) as tf:
+        with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tf:
             path = tf.name
         try:
-            result = save_dataframe(sample_dataframe, path, 'xlsx')
+            result = save_dataframe(sample_dataframe, path, "xlsx")
             assert result == path
             loaded = pd.read_excel(path)
-            pd.testing.assert_frame_equal(
-                loaded, sample_dataframe, check_dtype=False
-            )
+            pd.testing.assert_frame_equal(loaded, sample_dataframe, check_dtype=False)
         finally:
             Path(path).unlink(missing_ok=True)
 
-    def test_save_infers_type_from_extension(self, sample_dataframe: pd.DataFrame) -> None:
+    def test_save_infers_type_from_extension(
+        self, sample_dataframe: pd.DataFrame
+    ) -> None:
         """Test file_type is inferred from path when None."""
-        with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as tf:
+        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tf:
             path = tf.name
         try:
             result = save_dataframe(sample_dataframe, path)
@@ -76,26 +78,26 @@ class TestSaveDataframe:
     def test_save_creates_directory(self, sample_dataframe: pd.DataFrame) -> None:
         """Test save creates parent directory if it does not exist."""
         temp_dir = tempfile.mkdtemp()
-        nested_path = Path(temp_dir) / 'subdir' / 'output.csv'
+        nested_path = Path(temp_dir) / "subdir" / "output.csv"
         try:
-            result = save_dataframe(sample_dataframe, str(nested_path), 'csv')
+            result = save_dataframe(sample_dataframe, str(nested_path), "csv")
             assert nested_path.exists()
             loaded = pd.read_csv(result)
             pd.testing.assert_frame_equal(loaded, sample_dataframe)
         finally:
-            Path(temp_dir).joinpath('subdir', 'output.csv').unlink(missing_ok=True)
-            Path(temp_dir).joinpath('subdir').rmdir()
+            Path(temp_dir).joinpath("subdir", "output.csv").unlink(missing_ok=True)
+            Path(temp_dir).joinpath("subdir").rmdir()
             Path(temp_dir).rmdir()
 
     def test_save_unsupported_type_raises_value_error(
         self, sample_dataframe: pd.DataFrame
     ) -> None:
         """Test unsupported file type raises ValueError."""
-        with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as tf:
+        with tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as tf:
             path = tf.name
         try:
             with pytest.raises(ValueError, match="Unsupported file type"):
-                save_dataframe(sample_dataframe, path, 'pdf')
+                save_dataframe(sample_dataframe, path, "pdf")
         finally:
             Path(path).unlink(missing_ok=True)
 

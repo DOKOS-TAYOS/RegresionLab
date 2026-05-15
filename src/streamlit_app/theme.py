@@ -11,67 +11,68 @@ from config import get_env_from_schema, lighten_hex, muted_from_hex
 
 # Tk/X11 names that matplotlib may not recognize -> hex or matplotlib name
 _TK_COLOR_ALIASES: dict[str, str] = {
-    'lime green': 'limegreen',
-    'red2': '#ee3b3b',
-    'steel blue': 'steelblue',
-    'gray40': '#666666',
+    "lime green": "limegreen",
+    "red2": "#ee3b3b",
+    "steel blue": "steelblue",
+    "gray40": "#666666",
 }
 
 
 def _color_to_hex(value: str) -> str:
     """Convert color (hex or name) to #rrggbb. No tkinter dependency."""
     if not value or not isinstance(value, str):
-        return '#cccccc'
+        return "#cccccc"
     raw = value.strip()
-    if raw.startswith('#'):
-        if len(raw) == 7 and all(c in '0123456789abcdefABCDEF' for c in raw[1:]):
+    if raw.startswith("#"):
+        if len(raw) == 7 and all(c in "0123456789abcdefABCDEF" for c in raw[1:]):
             return raw
         if len(raw) == 4:
-            return f'#{raw[1]*2}{raw[2]*2}{raw[3]*2}'
+            return f"#{raw[1] * 2}{raw[2] * 2}{raw[3] * 2}"
         return raw
     try:
         from matplotlib.colors import to_hex
+
         name = _TK_COLOR_ALIASES.get(raw.lower(), raw)
         return to_hex(name)
     except (ValueError, TypeError, ImportError):
-        return _TK_COLOR_ALIASES.get(raw.lower(), '#cccccc')
+        return _TK_COLOR_ALIASES.get(raw.lower(), "#cccccc")
 
 
 def _theme_from_ui_style(style: dict[str, Any]) -> dict[str, Any]:
     """Build streamlit theme dict from config.theme.UI_STYLE (hex for CSS)."""
-    fg_hex = _color_to_hex(style.get('fg', style.get('foreground', '#CCCCCC')))
-    bg_hex = _color_to_hex(style.get('bg', style.get('background', '#181818')))
+    fg_hex = _color_to_hex(style.get("fg", style.get("foreground", "#CCCCCC")))
+    bg_hex = _color_to_hex(style.get("bg", style.get("background", "#181818")))
     return {
-        'background': bg_hex,
-        'sidebar_bg': lighten_hex(bg_hex, factor=0.08),
-        'foreground': fg_hex,
-        'muted': muted_from_hex(fg_hex),
-        'button_bg': _color_to_hex(style.get('button_bg', '#1F1F1F')),
-        'button_fg_primary': _color_to_hex(style.get('button_fg_accept', 'lime green')),
-        'button_fg_cancel': _color_to_hex(style.get('button_fg_cancel', 'red2')),
-        'accent2': _color_to_hex(style.get('button_fg_accent2', 'yellow')),
-        'font_size': int(style.get('font_size', 18)),
-        'font_family': str(style.get('font_family', 'Bahnschrift')),
-        'padding': int(style.get('padding', style.get('padding_x', 8))),
+        "background": bg_hex,
+        "sidebar_bg": lighten_hex(bg_hex, factor=0.08),
+        "foreground": fg_hex,
+        "muted": muted_from_hex(fg_hex),
+        "button_bg": _color_to_hex(style.get("button_bg", "#1F1F1F")),
+        "button_fg_primary": _color_to_hex(style.get("button_fg_accept", "lime green")),
+        "button_fg_cancel": _color_to_hex(style.get("button_fg_cancel", "red2")),
+        "accent2": _color_to_hex(style.get("button_fg_accent2", "yellow")),
+        "font_size": int(style.get("font_size", 18)),
+        "font_family": str(style.get("font_family", "Bahnschrift")),
+        "padding": int(style.get("padding", style.get("padding_x", 8))),
     }
 
 
 def _theme_from_env() -> dict[str, Any]:
     """Build streamlit theme dict from config.env only (fallback without theme.py)."""
-    fg_hex = _color_to_hex(get_env_from_schema('UI_FOREGROUND'))
-    bg_hex = _color_to_hex(get_env_from_schema('UI_BACKGROUND'))
+    fg_hex = _color_to_hex(get_env_from_schema("UI_FOREGROUND"))
+    bg_hex = _color_to_hex(get_env_from_schema("UI_BACKGROUND"))
     return {
-        'background': bg_hex,
-        'sidebar_bg': lighten_hex(bg_hex, factor=0.08),
-        'foreground': fg_hex,
-        'muted': muted_from_hex(fg_hex),
-        'button_bg': _color_to_hex(get_env_from_schema('UI_BUTTON_BG')),
-        'button_fg_primary': _color_to_hex(get_env_from_schema('UI_BUTTON_FG')),
-        'button_fg_cancel': _color_to_hex(get_env_from_schema('UI_BUTTON_FG_CANCEL')),
-        'accent2': _color_to_hex(get_env_from_schema('UI_BUTTON_FG_ACCENT2')),
-        'font_size': int(get_env_from_schema('UI_FONT_SIZE')),
-        'font_family': str(get_env_from_schema('UI_FONT_FAMILY')),
-        'padding': int(get_env_from_schema('UI_PADDING')),
+        "background": bg_hex,
+        "sidebar_bg": lighten_hex(bg_hex, factor=0.08),
+        "foreground": fg_hex,
+        "muted": muted_from_hex(fg_hex),
+        "button_bg": _color_to_hex(get_env_from_schema("UI_BUTTON_BG")),
+        "button_fg_primary": _color_to_hex(get_env_from_schema("UI_BUTTON_FG")),
+        "button_fg_cancel": _color_to_hex(get_env_from_schema("UI_BUTTON_FG_CANCEL")),
+        "accent2": _color_to_hex(get_env_from_schema("UI_BUTTON_FG_ACCENT2")),
+        "font_size": int(get_env_from_schema("UI_FONT_SIZE")),
+        "font_family": str(get_env_from_schema("UI_FONT_FAMILY")),
+        "padding": int(get_env_from_schema("UI_PADDING")),
     }
 
 
@@ -84,6 +85,7 @@ def get_streamlit_theme() -> dict[str, Any]:
     """
     try:
         from config import UI_STYLE
+
         return _theme_from_ui_style(UI_STYLE)
     except (ImportError, Exception):
         return _theme_from_env()
@@ -91,15 +93,15 @@ def get_streamlit_theme() -> dict[str, Any]:
 
 def get_main_css(theme: dict[str, Any]) -> str:
     """Generate global Streamlit CSS using theme (same visual rules as tkinter)."""
-    bg = theme['background']
-    sidebar_bg = theme.get('sidebar_bg', lighten_hex(bg, factor=0.08))
-    fg = theme['foreground']
-    primary = theme['button_fg_primary']
-    accent2 = theme['accent2']
-    btn_bg = theme['button_bg']
-    ff = theme['font_family']
-    pad = theme['padding']
-    muted = theme.get('muted', muted_from_hex(fg))
+    bg = theme["background"]
+    sidebar_bg = theme.get("sidebar_bg", lighten_hex(bg, factor=0.08))
+    fg = theme["foreground"]
+    primary = theme["button_fg_primary"]
+    accent2 = theme["accent2"]
+    btn_bg = theme["button_bg"]
+    ff = theme["font_family"]
+    pad = theme["padding"]
+    muted = theme.get("muted", muted_from_hex(fg))
 
     return f"""
     <style>

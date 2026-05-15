@@ -25,15 +25,15 @@ class TestApplyTransformLog:
 
     def test_transform_log(self) -> None:
         """Test natural log transform."""
-        df = pd.DataFrame({'x': [1.0, np.e, np.e**2]})
+        df = pd.DataFrame({"x": [1.0, np.e, np.e**2]})
         result = apply_transform(df, TRANSFORM_LOG)
-        np.testing.assert_array_almost_equal(result['x'], [0.0, 1.0, 2.0])
+        np.testing.assert_array_almost_equal(result["x"], [0.0, 1.0, 2.0])
 
     def test_transform_log10(self) -> None:
         """Test log10 transform."""
-        df = pd.DataFrame({'x': [1.0, 10.0, 100.0]})
+        df = pd.DataFrame({"x": [1.0, 10.0, 100.0]})
         result = apply_transform(df, TRANSFORM_LOG10)
-        np.testing.assert_array_almost_equal(result['x'], [0.0, 1.0, 2.0])
+        np.testing.assert_array_almost_equal(result["x"], [0.0, 1.0, 2.0])
 
 
 class TestApplyTransformExpSqrtSquare:
@@ -41,21 +41,21 @@ class TestApplyTransformExpSqrtSquare:
 
     def test_transform_exp(self) -> None:
         """Test exp transform."""
-        df = pd.DataFrame({'x': [0.0, 1.0, 2.0]})
+        df = pd.DataFrame({"x": [0.0, 1.0, 2.0]})
         result = apply_transform(df, TRANSFORM_EXP)
-        np.testing.assert_array_almost_equal(result['x'], [1.0, np.e, np.e**2])
+        np.testing.assert_array_almost_equal(result["x"], [1.0, np.e, np.e**2])
 
     def test_transform_sqrt(self) -> None:
         """Test sqrt transform."""
-        df = pd.DataFrame({'x': [0.0, 1.0, 4.0, 9.0]})
+        df = pd.DataFrame({"x": [0.0, 1.0, 4.0, 9.0]})
         result = apply_transform(df, TRANSFORM_SQRT)
-        np.testing.assert_array_almost_equal(result['x'], [0.0, 1.0, 2.0, 3.0])
+        np.testing.assert_array_almost_equal(result["x"], [0.0, 1.0, 2.0, 3.0])
 
     def test_transform_square(self) -> None:
         """Test square transform."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0]})
         result = apply_transform(df, TRANSFORM_SQUARE)
-        np.testing.assert_array_almost_equal(result['x'], [1.0, 4.0, 9.0])
+        np.testing.assert_array_almost_equal(result["x"], [1.0, 4.0, 9.0])
 
 
 class TestApplyTransformStandardizeNormalize:
@@ -63,18 +63,18 @@ class TestApplyTransformStandardizeNormalize:
 
     def test_transform_standardize(self) -> None:
         """Test z-score standardize (mean=0, unit scale)."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0, 4.0, 5.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
         result = apply_transform(df, TRANSFORM_STANDARDIZE)
-        assert abs(result['x'].mean()) < 1e-10
+        assert abs(result["x"].mean()) < 1e-10
         # Sample std of z-scores is ~1 (ddof=1); use relaxed tolerance
-        assert 0.9 < result['x'].std() < 1.2
+        assert 0.9 < result["x"].std() < 1.2
 
     def test_transform_normalize(self) -> None:
         """Test normalize to [0, 1] range."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0, 4.0, 5.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
         result = apply_transform(df, TRANSFORM_NORMALIZE)
-        assert result['x'].min() == 0.0
-        assert result['x'].max() == 1.0
+        assert result["x"].min() == 0.0
+        assert result["x"].max() == 1.0
 
 
 class TestApplyTransformFFT:
@@ -82,17 +82,19 @@ class TestApplyTransformFFT:
 
     def test_transform_fft_magnitude(self) -> None:
         """Test FFT magnitude produces real non-negative values."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0, 4.0, 5.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
         result = apply_transform(df, TRANSFORM_FFT_MAGNITUDE)
-        assert np.all(result['x'] >= 0)
-        assert result['x'].dtype == float or np.issubdtype(result['x'].dtype, np.floating)
+        assert np.all(result["x"] >= 0)
+        assert result["x"].dtype == float or np.issubdtype(
+            result["x"].dtype, np.floating
+        )
 
     def test_transform_fft(self) -> None:
         """Test FFT produces values (real part of complex)."""
-        df = pd.DataFrame({'x': [1.0, 0.0, -1.0, 0.0]})
+        df = pd.DataFrame({"x": [1.0, 0.0, -1.0, 0.0]})
         result = apply_transform(df, TRANSFORM_FFT)
         assert len(result) == 4
-        assert isinstance(result['x'].iloc[0], (float, np.floating))
+        assert isinstance(result["x"].iloc[0], (float, np.floating))
 
 
 class TestApplyTransformColumns:
@@ -100,24 +102,28 @@ class TestApplyTransformColumns:
 
     def test_transform_specific_columns(self) -> None:
         """Test transform applies only to specified columns."""
-        df = pd.DataFrame({
-            'x': [1.0, 2.0, 3.0],
-            'y': [4.0, 5.0, 6.0],
-            'z': [7.0, 8.0, 9.0],
-        })
-        result = apply_transform(df, TRANSFORM_SQUARE, columns=['x'])
-        np.testing.assert_array_almost_equal(result['x'], [1.0, 4.0, 9.0])
-        np.testing.assert_array_almost_equal(result['y'], [4.0, 5.0, 6.0])
-        np.testing.assert_array_almost_equal(result['z'], [7.0, 8.0, 9.0])
+        df = pd.DataFrame(
+            {
+                "x": [1.0, 2.0, 3.0],
+                "y": [4.0, 5.0, 6.0],
+                "z": [7.0, 8.0, 9.0],
+            }
+        )
+        result = apply_transform(df, TRANSFORM_SQUARE, columns=["x"])
+        np.testing.assert_array_almost_equal(result["x"], [1.0, 4.0, 9.0])
+        np.testing.assert_array_almost_equal(result["y"], [4.0, 5.0, 6.0])
+        np.testing.assert_array_almost_equal(result["z"], [7.0, 8.0, 9.0])
 
     def test_transform_in_place_false_adds_suffix(self) -> None:
         """Test in_place=False adds new columns with suffix."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0]})
         result = apply_transform(df, TRANSFORM_SQUARE, in_place=False)
-        assert 'x' in result.columns
-        assert f'x_{TRANSFORM_SQUARE}' in result.columns
-        np.testing.assert_array_almost_equal(result['x'], [1.0, 2.0, 3.0])
-        np.testing.assert_array_almost_equal(result[f'x_{TRANSFORM_SQUARE}'], [1.0, 4.0, 9.0])
+        assert "x" in result.columns
+        assert f"x_{TRANSFORM_SQUARE}" in result.columns
+        np.testing.assert_array_almost_equal(result["x"], [1.0, 2.0, 3.0])
+        np.testing.assert_array_almost_equal(
+            result[f"x_{TRANSFORM_SQUARE}"], [1.0, 4.0, 9.0]
+        )
 
 
 class TestApplyTransformUnknown:
@@ -125,7 +131,7 @@ class TestApplyTransformUnknown:
 
     def test_unknown_transform_raises_value_error(self) -> None:
         """Test unknown transform_id raises ValueError from _apply_to_column."""
-        df = pd.DataFrame({'x': [1.0, 2.0, 3.0]})
+        df = pd.DataFrame({"x": [1.0, 2.0, 3.0]})
         # apply_transform catches exceptions and logs; it doesn't re-raise for unknown
         # Actually apply_transform uses _apply_to_column which gets handler from dispatch.
         # If handler is None, it raises ValueError. But apply_transform wraps in try/except
@@ -140,10 +146,10 @@ class TestApplyTransformUnknown:
         # raises ValueError. The except catches it and logs. So the loop continues
         # and we get result. The column might not be transformed. Let me just verify
         # the function doesn't crash with unknown - it will log and return.
-        result = apply_transform(df, 'unknown_transform')
+        result = apply_transform(df, "unknown_transform")
         assert isinstance(result, pd.DataFrame)
         # Column x unchanged (transform failed for it)
-        assert 'x' in result.columns
+        assert "x" in result.columns
 
 
 class TestTransformOptions:
@@ -151,6 +157,11 @@ class TestTransformOptions:
 
     def test_transform_options_contains_key_transforms(self) -> None:
         """Test TRANSFORM_OPTIONS has entries for main transforms."""
-        for tid in [TRANSFORM_LOG, TRANSFORM_SQRT, TRANSFORM_STANDARDIZE, TRANSFORM_NORMALIZE]:
+        for tid in [
+            TRANSFORM_LOG,
+            TRANSFORM_SQRT,
+            TRANSFORM_STANDARDIZE,
+            TRANSFORM_NORMALIZE,
+        ]:
             assert tid in TRANSFORM_OPTIONS
             assert isinstance(TRANSFORM_OPTIONS[tid], str)

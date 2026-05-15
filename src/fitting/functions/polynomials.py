@@ -34,8 +34,10 @@ def generate_polynomial_function(parameters: list[bool]) -> Callable:
     num_params = len(enabled_indices)
 
     if num_params == 0:
+
         def polynomial(t: Numeric) -> Numeric:
             return np.zeros_like(t) if isinstance(t, np.ndarray) else 0.0
+
         return polynomial
 
     def polynomial(t: Numeric, *coeffs: float) -> Numeric:
@@ -44,7 +46,7 @@ def generate_polynomial_function(parameters: list[bool]) -> Callable:
             if power == 0:
                 result = result + coeff
             else:
-                result = result + coeff * (t ** power)
+                result = result + coeff * (t**power)
         return result
 
     return polynomial
@@ -62,7 +64,9 @@ def fit_linear_function_with_n(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a linear model with intercept, :math:`y = m x + n`.
@@ -91,10 +95,14 @@ def fit_linear_function_with_n(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=linear_function_with_n,
-        param_names=get_equation_param_names_for_function('fit_linear_function_with_n'),
-        equation_template=get_equation_format_for_function('fit_linear_function_with_n'),
+        param_names=get_equation_param_names_for_function("fit_linear_function_with_n"),
+        equation_template=get_equation_format_for_function(
+            "fit_linear_function_with_n"
+        ),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -105,7 +113,9 @@ def fit_linear_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a linear model through the origin, :math:`y = m x`.
@@ -131,10 +141,12 @@ def fit_linear_function(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=linear_function,
-        param_names=get_equation_param_names_for_function('fit_linear_function'),
-        equation_template=get_equation_format_for_function('fit_linear_function'),
+        param_names=get_equation_param_names_for_function("fit_linear_function"),
+        equation_template=get_equation_format_for_function("fit_linear_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -145,7 +157,9 @@ def fit_quadratic_function_complete(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a full quadratic model :math:`y = c x^2 + b x + a`.
@@ -171,10 +185,16 @@ def fit_quadratic_function_complete(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=quadratic_function_complete,
-        param_names=get_equation_param_names_for_function('fit_quadratic_function_complete'),
-        equation_template=get_equation_format_for_function('fit_quadratic_function_complete'),
+        param_names=get_equation_param_names_for_function(
+            "fit_quadratic_function_complete"
+        ),
+        equation_template=get_equation_format_for_function(
+            "fit_quadratic_function_complete"
+        ),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -185,7 +205,9 @@ def fit_quadratic_function(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a pure quadratic model through the origin, :math:`y = a x^2`.
@@ -210,10 +232,12 @@ def fit_quadratic_function(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=quadratic_function,
-        param_names=get_equation_param_names_for_function('fit_quadratic_function'),
-        equation_template=get_equation_format_for_function('fit_quadratic_function'),
+        param_names=get_equation_param_names_for_function("fit_quadratic_function"),
+        equation_template=get_equation_format_for_function("fit_quadratic_function"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
@@ -224,7 +248,9 @@ def fit_fourth_power(
     x_name: str,
     y_name: str,
     initial_guess_override: Optional[List[Optional[float]]] = None,
-    bounds_override: Optional[Tuple[List[Optional[float]], List[Optional[float]]]] = None,
+    bounds_override: Optional[
+        Tuple[List[Optional[float]], List[Optional[float]]]
+    ] = None,
 ) -> Tuple[str, NDArray, str]:
     """
     Fit a fourth‑power model through the origin, :math:`y = a x^4`.
@@ -249,10 +275,12 @@ def fit_fourth_power(
         else None
     )
     return generic_fit(
-        data, x_name, y_name,
+        data,
+        x_name,
+        y_name,
         fit_func=fourth_power,
-        param_names=get_equation_param_names_for_function('fit_fourth_power'),
-        equation_template=get_equation_format_for_function('fit_fourth_power'),
+        param_names=get_equation_param_names_for_function("fit_fourth_power"),
+        equation_template=get_equation_format_for_function("fit_fourth_power"),
         initial_guess=initial_guess,
         bounds=bounds,
     )
