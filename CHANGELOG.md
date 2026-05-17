@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-05-17
+
 ### Added
 
 - **Dependabot configuration**: Added weekly dependency update checks for Python, Sphinx documentation, GitHub Actions, and the independent `nodejs` desktop branch.
@@ -234,6 +236,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial 0.8.x release. See repository history and documentation for features and changes prior to 0.8.1.
 
+[1.1.3]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/DOKOS-TAYOS/RegressionLab/compare/v1.0.0...v1.1.0
