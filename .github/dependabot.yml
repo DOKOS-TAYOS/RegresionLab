@@ -16,6 +16,11 @@ updates:
       python-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
 
   - package-ecosystem: "pip"
     directory: "/sphinx-docs"
@@ -32,7 +37,12 @@ updates:
       docs-dependencies:
         patterns:
           - "*"
-
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
+          
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -44,7 +54,12 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
-
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
+          
   - package-ecosystem: "npm"
     directory: "/desktop"
     target-branch: "nodejs"
@@ -62,3 +77,9 @@ updates:
       desktop-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
+          
