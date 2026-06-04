@@ -4,6 +4,9 @@
   "version": "1.1.2",
   "description": "Electron desktop frontend for RegressionLab",
   "main": "dist-electron/electron/main.js",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:electron\" \"npm:dev:app\"",
     "dev:renderer": "vite",

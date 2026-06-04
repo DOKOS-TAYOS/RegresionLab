@@ -30,7 +30,7 @@ set "REGRESSIONLAB_PYTHON=%PYTHON_EXE%"
 where node >nul 2>&1
 if errorlevel 1 (
     echo ERROR: Node.js was not found in PATH
-    echo Install Node.js 20+ and run: npm install --prefix desktop
+    echo Install Node.js 22+ and run: npm install --prefix desktop
     pause
     exit /b 1
 )
@@ -38,7 +38,7 @@ if errorlevel 1 (
 where npm >nul 2>&1
 if errorlevel 1 (
     echo ERROR: npm was not found in PATH
-    echo Install Node.js 20+ and run: npm install --prefix desktop
+    echo Install Node.js 22+ and run: npm install --prefix desktop
     pause
     exit /b 1
 )

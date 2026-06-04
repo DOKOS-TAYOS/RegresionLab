@@ -12,7 +12,7 @@ if not exist .venv (
 where npm >nul 2>&1
 if errorlevel 1 (
     echo ERROR: npm was not found in PATH
-    echo Install Node.js 20+ and run: npm install --prefix desktop
+    echo Install Node.js 22+ and run: npm install --prefix desktop
     exit /b 1
 )
 

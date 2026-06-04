@@ -13,7 +13,7 @@ Streamlit is still available, but it is optional and is not the primary workflow
 ### Required software
 
 - **Python 3.12+**
-- **Node.js 20+**
+- **Node.js 22+**
 - **npm**
 - **Git** (recommended)
 
@@ -52,7 +52,7 @@ git clone https://github.com/DOKOS-TAYOS/RegressionLab.git
 cd RegressionLab
 ```
 
-2. Install Node.js 20+ if needed.
+2. Install Node.js 22+ if needed.
 
 Using `winget`:
 
@@ -115,7 +115,7 @@ git clone https://github.com/DOKOS-TAYOS/RegressionLab.git
 cd RegressionLab
 ```
 
-2. Install Node.js 20+ if needed.
+2. Install Node.js 22+ if needed.
 
 3. Create the virtual environment:
 
@@ -270,7 +270,7 @@ npm --prefix desktop run build
 
 ### `node` or `npm` not found
 
-Install Node.js 20+ and reopen the terminal.
+Install Node.js 22+ and reopen the terminal.
 
 ### `desktop dependencies are not installed`
 

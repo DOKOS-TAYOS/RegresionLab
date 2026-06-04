@@ -35,7 +35,7 @@ The main desktop application in this branch is:
 ## Requirements
 
 - Python 3.12 or newer
-- Node.js 20 or newer
+- Node.js 22 or newer
 - npm
 - Windows 10/11, macOS, or Linux
 

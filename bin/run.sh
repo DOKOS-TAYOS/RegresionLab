@@ -28,13 +28,13 @@ export REGRESSIONLAB_PYTHON="$PWD/.venv/bin/python"
 
 if ! command -v node >/dev/null 2>&1; then
     echo "ERROR: Node.js was not found in PATH"
-    echo "Install Node.js 20+ and run: npm install --prefix desktop"
+    echo "Install Node.js 22+ and run: npm install --prefix desktop"
     exit 1
 fi
 
 if ! command -v npm >/dev/null 2>&1; then
     echo "ERROR: npm was not found in PATH"
-    echo "Install Node.js 20+ and run: npm install --prefix desktop"
+    echo "Install Node.js 22+ and run: npm install --prefix desktop"
     exit 1
 fi
 
