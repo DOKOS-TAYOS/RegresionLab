@@ -23,6 +23,7 @@ build/
 venv/
 ENV/
 env/
+.worktrees/
 
 # IDE
 .vscode/
