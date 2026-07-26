@@ -11,7 +11,7 @@ __version__ = "1.1.3"
 
 # Application metadata
 __author__ = "Alejandro Mata Ali"
-__copyright__ = "Public content for science use"
+__copyright__ = "Copyright (c) 2026 Alejandro Mata Ali (MIT License)"
 __credits__ = ["Alejandro Mata Ali"]
 __maintainer__ = "Alejandro Mata Ali"
 __email__ = "alejandro.mata.ali@gmail.com"

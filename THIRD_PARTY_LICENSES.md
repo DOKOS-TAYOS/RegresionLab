@@ -18,13 +18,13 @@ These libraries are used at application runtime.
 | **numpy**        | `>=2.0,<3.0`               | BSD-3-Clause                                 |
 | **matplotlib**   | `>=3.10,<4.0`              | Matplotlib License (BSD-style + PSF)        |
 | **scipy**        | `>=1.17,<2.0`              | BSD-3-Clause                                 |
-| **pandas**       | `>=2.3,<3.0`               | BSD-3-Clause                                 |
+| **pandas**       | `>=2.3,<4.0`               | BSD-3-Clause                                 |
 | **openpyxl**     | `>=3.1,<4.0`               | MIT                                          |
-| **python-dotenv**| `>=1.0,<2.0`               | BSD-3-Clause                                 |
+| **python-dotenv**| `>=1.2.2,<2.0`             | BSD-3-Clause                                 |
 | **colorama**     | `>=0.4,<1.0`               | BSD-3-Clause                                 |
 | **PyYAML**       | `>=6.0,<7.0`               | MIT                                          |
-| **Pillow**       | `>=10.0,<11.0`             | PIL License / HPND (permissive, MIT-like)     |
-| **streamlit**    | `>=1.31,<2.0`              | Apache License 2.0                           |
+| **Pillow**       | `>=12.2.0,<13.0`           | PIL License / HPND (permissive, MIT-like)     |
+| **streamlit**    | `>=1.54.0,<2.0`            | Apache License 2.0                           |
 
 ---
 
@@ -49,12 +49,12 @@ are not distributed in final binaries, although they may be present if you publi
 
 | Library       | Version Range           | License Type  |
 |------------------|----------------------------|-------------------|
-| **pytest**       | `>=7.0,<8.0`               | MIT               |
-| **pytest-cov**   | `>=4.0,<5.0`               | MIT               |
-| **black**        | `>=23.0,<24.0`             | MIT               |
+| **pytest**       | `>=7.0,<10.0`              | MIT               |
+| **pytest-cov**   | `>=4.0,<8.0`               | MIT               |
+| **black**        | `>=23.0,<27.0`             | MIT               |
 | **ruff**         | `>=0.1,<1.0`               | MIT               |
-| **mypy**         | `>=1.0,<2.0`               | MIT               |
-| **pre-commit**   | `>=3.0,<4.0`               | MIT               |
+| **mypy**         | `>=1.0,<3.0`               | MIT               |
+| **pre-commit**   | `>=3.0,<5.0`               | MIT               |
 
 ---
 
