@@ -3,14 +3,8 @@ name: Python application
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**"
   pull_request:
     branches: [ "main" ]
-    paths-ignore:
-      - "**/*.md"
-      - "docs/**"
 
 permissions:
   contents: read
@@ -49,3 +43,27 @@ jobs:
     - name: Test with pytest
       run: |
         python -m pytest
+
+  required-pr-ci:
+    name: ${{ github.event_name == 'pull_request' && 'required-pr-ci' || 'push-ci-summary' }}
+    if: ${{ always() }}
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Validate required jobs
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BUILD_RESULT: ${{ needs.build.result }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${BUILD_RESULT}" != "success" ]]; then
+            echo "Required job build finished with '${BUILD_RESULT}', expected success."
+            exit 1
+          fi
+
+          echo "All required jobs passed."
