@@ -5,7 +5,7 @@
   "description": "Electron desktop frontend for RegressionLab",
   "main": "dist-electron/electron/main.js",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.22.2"
   },
   "scripts": {
     "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:electron\" \"npm:dev:app\"",
@@ -39,7 +39,7 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^6.0.2",
     "concurrently": "^10.0.3",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.0",
     "typescript": "^7.0.2",
     "vite": "^8.0.13",
     "vitest": "^4.1.7",
