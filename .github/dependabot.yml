@@ -14,13 +14,16 @@ updates:
       - "python"
     groups:
       python-dependencies:
+        applies-to: version-updates
         patterns:
           - "*"
-    ignore:
-      - dependency-name: "*"
         update-types:
-          - "version-update:semver-patch"
-          - "version-update:semver-minor"
+          - "minor"
+          - "patch"
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
 
   - package-ecosystem: "pip"
     directory: "/sphinx-docs"
@@ -35,13 +38,16 @@ updates:
       - "documentation"
     groups:
       docs-dependencies:
+        applies-to: version-updates
         patterns:
           - "*"
-    ignore:
-      - dependency-name: "*"
         update-types:
-          - "version-update:semver-patch"
-          - "version-update:semver-minor"
+          - "minor"
+          - "patch"
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
           
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -54,11 +60,18 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
-    ignore:
-      - dependency-name: "*"
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
         update-types:
-          - "version-update:semver-patch"
-          - "version-update:semver-minor"
+          - "minor"
+          - "patch"
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
           
   - package-ecosystem: "npm"
     directory: "/desktop"
@@ -75,11 +88,14 @@ updates:
       - "nodejs"
     groups:
       desktop-dependencies:
+        applies-to: version-updates
         patterns:
           - "*"
-    ignore:
-      - dependency-name: "*"
         update-types:
-          - "version-update:semver-patch"
-          - "version-update:semver-minor"
+          - "minor"
+          - "patch"
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
           
