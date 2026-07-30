@@ -6,7 +6,7 @@ myst-parser>=5.1.0
 sphinxcontrib-relativeinclude>=0.0.5
 sphinx-autodoc-typehints>=3.13.0
 linkify-it-py>=2.1.0
-docutils>=0.22.4
+docutils>=0.23
 
 # Project dependencies needed for autodoc
 numpy>=2.4.4,<3.0
