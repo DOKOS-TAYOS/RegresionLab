@@ -22,23 +22,23 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "electron": "^43.3.0",
+    "electron": "^43.4.0",
     "plotly.js-dist-min": "^3.7.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-plotly.js": "^4.1.0",
     "react-router-dom": "^7.18.2",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^26.2.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.5",
     "jsdom": "^30.0.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.1",
