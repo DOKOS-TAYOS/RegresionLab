@@ -7,7 +7,7 @@ from typing import Any
 from config.equation_registry import get_equation_registry
 
 # Application version number
-__version__ = "1.1.3"
+__version__ = "1.1.4"
 
 # Application metadata
 __author__ = "Alejandro Mata Ali"
