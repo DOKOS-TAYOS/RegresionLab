@@ -103,6 +103,6 @@ If you need assistance:
 
 ---
 
-**Version**: 1.1.3  
+**Version**: 1.1.4
 **Author**: Alejandro Mata Ali  
 **License**: MIT

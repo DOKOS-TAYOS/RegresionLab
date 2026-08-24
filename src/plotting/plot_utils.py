@@ -7,6 +7,7 @@ save fitted data plots with error bars, using configuration from config (fonts, 
 
 # Standard library
 from pathlib import Path
+import re
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 # Third-party packages
@@ -41,6 +42,80 @@ _PAIR_PLOT_SCATTER_EDGE = "white"
 _PAIR_PLOT_MAX_SIDE_INCHES = 12.0
 _PAIR_PLOT_CELL_INCHES_MAX = 2.8
 _PAIR_PLOT_CELL_INCHES_MIN = 1.4  # Minimum per cell so many variables stay readable
+
+
+def _format_plot_label(name: str) -> str:
+    """Return a MathText-safe label while preserving valid scientific notation."""
+    math_prefix = ""
+    if name.startswith("u$") and name.endswith("$") and name.count("$") == 2:
+        math_prefix = r"\mathrm{u}"
+        content = name[2:-1]
+    elif name.startswith("$") and name.endswith("$") and name.count("$") == 2:
+        content = name[1:-1]
+    else:
+        return name
+
+    match = re.fullmatch(r"(?P<symbol>[^()]+?)\s*\((?P<unit>[^()]*)\)", content)
+    if match is None:
+        return f"${math_prefix}{content}$"
+
+    symbol = match.group("symbol").strip()
+    unit = match.group("unit").strip()
+    return rf"${math_prefix}{symbol}\;(\mathrm{{{unit}}})$"
+
+
+def _plain_plot_label(name: str) -> str:
+    """Return a readable label after MathText parsing has failed."""
+    return name.replace("$", "").replace("\\", "")
+
+
+def _apply_plain_pair_plot_labels(axes: Any, names: List[str]) -> None:
+    """Replace pair-plot labels with text that does not require MathText."""
+    for i, row in enumerate(axes):
+        for j, ax in enumerate(row):
+            if i == j:
+                for text in ax.texts:
+                    text.set_text(_plain_plot_label(names[i]))
+            else:
+                ax.set_xlabel(_plain_plot_label(names[j]))
+                ax.set_ylabel(_plain_plot_label(names[i]))
+
+
+def _tight_layout_pair_plot(fig: Any, axes: Any, names: List[str]) -> None:
+    """Apply pair-plot layout, falling back to plain labels on MathText errors."""
+    try:
+        fig.tight_layout(pad=1.2, h_pad=1.0, w_pad=1.0)
+    except ValueError as error:
+        if "Parse" not in str(error):
+            raise
+        logger.warning("MathText failed in pair plot; retrying with plain labels.")
+        _apply_plain_pair_plot_labels(axes, names)
+        fig.tight_layout(pad=1.2, h_pad=1.0, w_pad=1.0)
+
+
+def _tight_layout_fit_plot(
+    fig: Any,
+    ax: Any,
+    x_name: str,
+    y_name: str,
+    fit_name: str,
+    *,
+    show_title: bool,
+    title_font: Any,
+    axis_font: Any,
+) -> None:
+    """Apply fit-plot layout, falling back to plain text on MathText errors."""
+    try:
+        fig.tight_layout()
+    except ValueError as error:
+        if "Parse" not in str(error):
+            raise
+        logger.warning("MathText failed in fit plot; retrying with plain labels.")
+        ax.set_xlabel(_plain_plot_label(x_name), fontproperties=axis_font)
+        ax.set_ylabel(_plain_plot_label(y_name), fontproperties=axis_font)
+        if show_title:
+            ax.set_title(_plain_plot_label(fit_name), fontproperties=title_font)
+        fig.tight_layout()
 
 
 def _save_figure(
@@ -141,10 +216,11 @@ def create_pair_plots(
             edgecolors=_PAIR_PLOT_SCATTER_EDGE,
             linewidths=0.5,
         )
-        ax.set_xlabel(names[0], fontsize=10)
-        ax.set_ylabel(names[0], fontsize=10)
+        label = _format_plot_label(names[0])
+        ax.set_xlabel(label, fontsize=10)
+        ax.set_ylabel(label, fontsize=10)
         ax.tick_params(axis="both", labelsize=9)
-        plt.tight_layout()
+        fig.tight_layout()
         if output_path:
             return _save_figure(fig, output_path, plot_config, log_saved=True)
         return fig
@@ -164,7 +240,7 @@ def create_pair_plots(
                 ax.text(
                     0.5,
                     0.5,
-                    names[i],
+                    _format_plot_label(names[i]),
                     ha="center",
                     va="center",
                     fontsize=min(10, max(8, 14 - n)),
@@ -185,11 +261,17 @@ def create_pair_plots(
                     linewidths=0.4,
                 )
                 ax.grid(True, linestyle="--", alpha=0.35)
-                ax.set_xlabel(xcol, fontsize=min(9, max(7, 11 - n // 2)))
-                ax.set_ylabel(ycol, fontsize=min(9, max(7, 11 - n // 2)))
+                ax.set_xlabel(
+                    _format_plot_label(xcol),
+                    fontsize=min(9, max(7, 11 - n // 2)),
+                )
+                ax.set_ylabel(
+                    _format_plot_label(ycol),
+                    fontsize=min(9, max(7, 11 - n // 2)),
+                )
                 ax.tick_params(axis="both", labelsize=8)
             ax.set_aspect("auto")
-    plt.tight_layout(pad=1.2, h_pad=1.0, w_pad=1.0)
+    _tight_layout_pair_plot(fig, axes, names)
 
     if output_path:
         return _save_figure(fig, output_path, plot_config, log_saved=True)
@@ -325,17 +407,26 @@ def create_plot(
 
         logger.debug("Data plotted")
 
-        ax.set_xlabel(x_name, fontproperties=fonta)
-        ax.set_ylabel(y_name, fontproperties=fonta)
+        ax.set_xlabel(_format_plot_label(x_name), fontproperties=fonta)
+        ax.set_ylabel(_format_plot_label(y_name), fontproperties=fonta)
 
         if plot_config.get("show_title", False):
-            ax.set_title(fit_name, fontproperties=fontt)
+            ax.set_title(_format_plot_label(fit_name), fontproperties=fontt)
 
         if plot_config.get("show_grid", False):
             ax.grid(True, alpha=0.3)
 
         ax.tick_params(axis="both", which="major", labelsize=font_config["tick_size"])
-        plt.tight_layout()
+        _tight_layout_fit_plot(
+            fig,
+            ax,
+            x_name,
+            y_name,
+            fit_name,
+            show_title=plot_config.get("show_title", False),
+            title_font=fontt,
+            axis_font=fonta,
+        )
 
         logger.debug("Saving plot to: %s", save_path)
         return _save_figure(fig, save_path, plot_config, log_saved=True)
